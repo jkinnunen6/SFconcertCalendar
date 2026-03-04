@@ -77,7 +77,7 @@ export default function CalendarApp({ events, venues }: { events: Event[], venue
   const monthEvents = useMemo(() => {
     const map: Record<number, Event[]> = {}
     filtered.forEach(e => {
-      const d = new Date(e.event_date)
+      const d = parseLocalDate(e.event_date)
       if (d.getFullYear() === calYear && d.getMonth() === calMonth) {
         const day = d.getDate()
         if (!map[day]) map[day] = []
