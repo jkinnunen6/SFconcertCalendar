@@ -1,26 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server'
 
-const USERNAME = 'jeff'
-const PASSWORD = 'bayarea2026'
-
 export function middleware(req: NextRequest) {
-  const auth = req.headers.get('authorization')
-  if (auth) {
-    const [scheme, encoded] = auth.split(' ')
-    if (scheme === 'Basic') {
-      const decoded = Buffer.from(encoded, 'base64').toString('utf-8')
-      const [user, pass] = decoded.split(':')
-      if (user === USERNAME && pass === PASSWORD) {
-        return NextResponse.next()
-      }
-    }
+  const { pathname } = req.nextUrl
+  if (pathname.startsWith('/api/auth') || pathname === '/gate') {
+    return NextResponse.next()
   }
-  return new NextResponse('Unauthorized', {
-    status: 401,
-    headers: { 'WWW-Authenticate': 'Basic realm="Bay Area Shows"' },
-  })
+  const auth = req.cookies.get('site_auth')
+  if (auth?.value === 'true') {
+    return NextResponse.next()
+  }
+  const gateUrl = req.nextUrl.clone()
+  gateUrl.pathname = '/gate'
+  return NextResponse.redirect(gateUrl)
 }
 
 export const config = {
-  matcher: ['/((?!_next|favicon.ico).*)'],
+  matcher: ['/((?!_next|favicon.ico|fonts).*)'],
 }
