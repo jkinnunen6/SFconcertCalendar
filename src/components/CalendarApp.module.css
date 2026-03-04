@@ -1,0 +1,524 @@
+/* ── App shell ─────────────────────────────────────────── */
+.app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg);
+}
+
+/* ── Header ────────────────────────────────────────────── */
+.header {
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: var(--bg);
+  backdrop-filter: blur(12px);
+}
+
+.headerInner {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.wordmark {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  letter-spacing: 0.08em;
+}
+
+.wordmarkBay {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  color: var(--accent);
+  line-height: 1;
+}
+
+.wordmarkArea {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  color: var(--text);
+  line-height: 1;
+}
+
+.wordmarkShows {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  color: var(--text-muted);
+  line-height: 1;
+}
+
+.headerMeta {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.eventCount {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  letter-spacing: 0.05em;
+}
+
+.viewToggle {
+  display: flex;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.viewBtn {
+  padding: 0.35rem 0.85rem;
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+  transition: all 0.15s;
+  font-family: var(--font-body);
+}
+
+.viewBtn:hover { color: var(--text); background: var(--bg3); }
+
+.viewBtnActive {
+  background: var(--accent);
+  color: #000 !important;
+}
+
+/* ── Layout ────────────────────────────────────────────── */
+.layout {
+  flex: 1;
+  max-width: 1400px;
+  margin: 0 auto;
+  width: 100%;
+  padding: 2rem;
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  gap: 2.5rem;
+  align-items: start;
+}
+
+/* ── Sidebar ───────────────────────────────────────────── */
+.sidebar {
+  position: sticky;
+  top: 80px;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.sideSection { display: flex; flex-direction: column; gap: 0.75rem; }
+
+.sideLabel {
+  font-size: 0.65rem;
+  font-weight: 500;
+  letter-spacing: 0.15em;
+  color: var(--text-muted);
+}
+
+.sideLabelRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.clearAll {
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  letter-spacing: 0.05em;
+  text-decoration: underline;
+  transition: color 0.15s;
+}
+.clearAll:hover { color: var(--text); }
+
+/* Search */
+.searchWrap {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 0.5rem 0.75rem;
+  color: var(--text-muted);
+  transition: border-color 0.15s;
+}
+.searchWrap:focus-within { border-color: var(--accent); color: var(--accent); }
+
+.searchInput {
+  background: none;
+  border: none;
+  outline: none;
+  color: var(--text);
+  font-size: 0.8rem;
+  flex: 1;
+  min-width: 0;
+}
+.searchInput::placeholder { color: var(--text-muted); }
+
+.clearBtn {
+  color: var(--text-muted);
+  font-size: 1.1rem;
+  line-height: 1;
+  transition: color 0.15s;
+}
+.clearBtn:hover { color: var(--text); }
+
+/* Venue chips */
+.venueList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.venueChip {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 0.6rem;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  font-size: 0.75rem;
+  color: var(--text-dim);
+  text-align: left;
+  transition: all 0.15s;
+  background: none;
+}
+.venueChip:hover { border-color: #444; color: var(--text); }
+.venueChipActive { background: var(--bg2); }
+
+.venueDot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* ── Main ──────────────────────────────────────────────── */
+.main { min-width: 0; }
+
+.empty {
+  padding: 4rem;
+  text-align: center;
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+/* ── List view ─────────────────────────────────────────── */
+.listView { display: flex; flex-direction: column; gap: 0; }
+
+.dayGroup { border-bottom: 1px solid var(--border); }
+
+.dayHeader {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+  padding: 1.25rem 0 0.75rem;
+  position: sticky;
+  top: 64px;
+  background: var(--bg);
+  z-index: 10;
+}
+
+.dayDow {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  color: var(--text-muted);
+  letter-spacing: 0.05em;
+  line-height: 1;
+}
+
+.dayDate {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  color: var(--text);
+  letter-spacing: 0.05em;
+  line-height: 1;
+}
+
+.dayCount {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  margin-left: auto;
+  letter-spacing: 0.05em;
+}
+
+.eventList { display: flex; flex-direction: column; padding-bottom: 1rem; }
+
+/* ── Event card ────────────────────────────────────────── */
+.eventCard {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid var(--border);
+  transition: background 0.15s;
+}
+.eventCard:last-child { border-bottom: none; }
+.eventCard:hover { background: none; }
+
+.eventImg {
+  width: 56px;
+  height: 56px;
+  flex-shrink: 0;
+  border-radius: 4px;
+  overflow: hidden;
+  background: var(--bg3);
+}
+
+.eventImg img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.eventInfo { flex: 1; min-width: 0; }
+
+.eventVenue {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 0.2rem;
+}
+
+.eventVenueDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.eventArtist {
+  font-family: var(--font-serif);
+  font-size: 1.05rem;
+  font-weight: 400;
+  color: var(--text);
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.eventSubtitle {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-top: 0.15rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.eventMeta {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 0.3rem;
+}
+
+.eventTime {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  letter-spacing: 0.03em;
+}
+
+.eventStatus {
+  font-size: 0.65rem;
+  color: var(--accent2);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.ticketBtn {
+  flex-shrink: 0;
+  padding: 0.4rem 0.9rem;
+  border: 1px solid var(--accent);
+  color: var(--accent);
+  font-size: 0.65rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  border-radius: 3px;
+  transition: all 0.15s;
+  font-family: var(--font-body);
+}
+.ticketBtn:hover {
+  background: var(--accent);
+  color: #000;
+}
+
+/* ── Calendar view ─────────────────────────────────────── */
+.calView { display: flex; flex-direction: column; gap: 1.5rem; }
+
+.calHeader {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.calNav {
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  color: var(--text-muted);
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s;
+}
+.calNav:hover { border-color: var(--text-muted); color: var(--text); }
+
+.calTitle {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  letter-spacing: 0.05em;
+  color: var(--text);
+  line-height: 1;
+}
+
+.calYear { color: var(--text-muted); }
+
+.calGrid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.calDayLabel {
+  background: var(--bg2);
+  padding: 0.5rem;
+  text-align: center;
+  font-size: 0.62rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+}
+
+.calCell {
+  background: var(--bg);
+  min-height: 80px;
+  padding: 0.5rem;
+}
+
+.calCellDay {
+  cursor: default;
+  transition: background 0.1s;
+}
+
+.calCellHasEvents { cursor: pointer; }
+.calCellHasEvents:hover { background: var(--bg2); }
+
+.calCellToday .calDayNum {
+  background: var(--accent);
+  color: #000;
+  border-radius: 50%;
+  width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.calCellSelected { background: var(--bg3) !important; }
+
+.calDayNum {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  display: block;
+  margin-bottom: 0.4rem;
+  width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.calEventDots {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px;
+  align-items: center;
+}
+
+.calEventDot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+}
+
+.calEventMore {
+  font-size: 0.6rem;
+  color: var(--text-muted);
+  letter-spacing: -0.02em;
+}
+
+/* Day panel */
+.calDayPanel {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+  animation: slideDown 0.15s ease;
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.calDayPanelHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1rem;
+  background: var(--bg2);
+  border-bottom: 1px solid var(--border);
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  letter-spacing: 0.05em;
+}
+
+.calDayClose {
+  color: var(--text-muted);
+  font-size: 1.3rem;
+  line-height: 1;
+  transition: color 0.15s;
+}
+.calDayClose:hover { color: var(--text); }
+
+.calDayPanel .eventList {
+  padding: 0 1rem;
+}
+
+/* ── Responsive ────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .layout {
+    grid-template-columns: 1fr;
+    padding: 1rem;
+    gap: 1.5rem;
+  }
+
+  .sidebar { position: static; }
+
+  .venueList {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  .wordmarkBay, .wordmarkArea, .wordmarkShows { font-size: 1.5rem; }
+
+  .calCell { min-height: 56px; }
+}
