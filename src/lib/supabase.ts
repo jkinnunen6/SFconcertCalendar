@@ -14,6 +14,7 @@ export type Event = {
   event_date: string
   ticket_url: string | null
   image_url: string | null
+  show_time: string | null
   ticket_status: string | null
   venue: Venue
 }

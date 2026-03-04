@@ -6,9 +6,16 @@ import styles from './CalendarApp.module.css'
 
 type View = 'grid' | 'list'
 
-function formatTime(dateStr: string) {
-  const d = new Date(dateStr)
-  return d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })
+function formatTime(showTime: string | null | undefined, dateStr: string) {
+  if (showTime) return showTime
+  // fallback: parse from datetime string if it has a time component
+  if (dateStr && dateStr.includes('T')) {
+    const d = new Date(dateStr)
+    if (!isNaN(d.getTime()) && (d.getHours() || d.getMinutes())) {
+      return d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })
+    }
+  }
+  return null
 }
 
 function formatDateShort(dateStr: string) {
@@ -301,7 +308,9 @@ function EventCard({ event: e }: { event: Event }) {
         <h3 className={styles.eventArtist}>{e.artist}</h3>
         {e.subtitle && <p className={styles.eventSubtitle}>{e.subtitle}</p>}
         <div className={styles.eventMeta}>
-          <span className={styles.eventTime}>{formatTime(e.event_date)}</span>
+          {formatTime(e.show_time, e.event_date) && (
+          <span className={styles.eventTime}>{formatTime(e.show_time, e.event_date)}</span>
+        )}
           {e.ticket_status && e.ticket_status !== 'Available' && (
             <span className={styles.eventStatus}>{e.ticket_status}</span>
           )}
