@@ -18,13 +18,19 @@ function formatTime(showTime: string | null | undefined, dateStr: string) {
   return null
 }
 
+function parseLocalDate(dateStr: string) {
+  // Parse YYYY-MM-DD as local time to avoid UTC timezone shift
+  const [year, month, day] = dateStr.split('T')[0].split('-').map(Number)
+  return new Date(year, month - 1, day)
+}
+
 function formatDateShort(dateStr: string) {
-  const d = new Date(dateStr)
+  const d = parseLocalDate(dateStr)
   return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
 }
 
 function formatDayOfWeek(dateStr: string) {
-  const d = new Date(dateStr)
+  const d = parseLocalDate(dateStr)
   return d.toLocaleDateString('en-US', { weekday: 'short' }).toUpperCase()
 }
 
@@ -238,7 +244,8 @@ export default function CalendarApp({ events, venues }: { events: Event[], venue
                   const day = i + 1
                   const dayStr = `${calYear}-${String(calMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`
                   const evts = monthEvents[day] || []
-                  const isToday = dayStr === new Date().toISOString().split('T')[0]
+                  const todayStr = new Date().toLocaleDateString('en-CA')
+          const isToday = dayStr === todayStr
                   const isSelected = selectedDay === dayStr
 
                   return (
