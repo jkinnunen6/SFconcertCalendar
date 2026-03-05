@@ -8,7 +8,6 @@ type View = 'grid' | 'list'
 
 function formatTime(showTime: string | null | undefined, dateStr: string) {
   if (showTime) return showTime
-  // fallback: parse from datetime string if it has a time component
   if (dateStr && dateStr.includes('T')) {
     const d = new Date(dateStr)
     if (!isNaN(d.getTime()) && (d.getHours() || d.getMinutes())) {
@@ -19,7 +18,6 @@ function formatTime(showTime: string | null | undefined, dateStr: string) {
 }
 
 function parseLocalDate(dateStr: string) {
-  // Parse YYYY-MM-DD as local time to avoid UTC timezone shift
   const [year, month, day] = dateStr.split('T')[0].split('-').map(Number)
   return new Date(year, month - 1, day)
 }
@@ -57,7 +55,6 @@ export default function CalendarApp({ events, venues }: { events: Event[], venue
   const [tooltipPos, setTooltipPos] = useState({ x: 0, y: 0 })
   const [selectedRegions, setSelectedRegions] = useState<string[]>([])
 
-  // Filter events
   const filtered = useMemo(() => {
     return events.filter(e => {
       if (search && !e.artist.toLowerCase().includes(search.toLowerCase())) return false
@@ -67,7 +64,6 @@ export default function CalendarApp({ events, venues }: { events: Event[], venue
     })
   }, [events, search, selectedVenues, selectedRegions])
 
-  // Group by date for list view
   const grouped = useMemo(() => {
     const map: Record<string, Event[]> = {}
     filtered.forEach(e => {
@@ -78,7 +74,6 @@ export default function CalendarApp({ events, venues }: { events: Event[], venue
     return map
   }, [filtered])
 
-  // Events for current calendar month
   const monthEvents = useMemo(() => {
     const map: Record<number, Event[]> = {}
     filtered.forEach(e => {
@@ -92,7 +87,6 @@ export default function CalendarApp({ events, venues }: { events: Event[], venue
     return map
   }, [filtered, calYear, calMonth])
 
-  // Events for selected day in grid view
   const dayEvents = useMemo(() => {
     if (!selectedDay) return []
     return filtered.filter(e => e.event_date.startsWith(selectedDay))
@@ -119,7 +113,6 @@ export default function CalendarApp({ events, venues }: { events: Event[], venue
 
   return (
     <div className={styles.app}>
-      {/* Header */}
       <header className={styles.header}>
         <div className={styles.headerInner}>
           <div className={styles.wordmark}>
@@ -188,65 +181,16 @@ export default function CalendarApp({ events, venues }: { events: Event[], venue
                 {venues
                   .filter(v => selectedRegions.length === 0 || selectedRegions.includes(v.region || ''))
                   .map(v => (
-                  <button key={v.id} onClick={() => toggleVenue(v.id)}
-                    className={`${styles.venueChip} ${selectedVenues.includes(v.id) ? styles.venueChipActive : ''}`}>
-                    <span className={styles.venueDot} style={{background: v.color}} />
-                    {v.short_name}
-                  </button>
-                ))}
+                    <button key={v.id} onClick={() => toggleVenue(v.id)}
+                      className={`${styles.venueChip} ${selectedVenues.includes(v.id) ? styles.venueChipActive : ''}`}>
+                      <span className={styles.venueDot} style={{background: v.color}} />
+                      {v.short_name}
+                    </button>
+                  ))}
               </div>
             </div>
           )}
         </div>
-        <aside className={styles.sidebar} style={{display:'none'}}>
-          {/* Search */}
-          <div className={styles.sideSection}>
-            <label className={styles.sideLabel}>SEARCH</label>
-            <div className={styles.searchWrap}>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
-              </svg>
-              <input
-                className={styles.searchInput}
-                type="text"
-                placeholder="Artist name..."
-                value={search}
-                onChange={e => setSearch(e.target.value)}
-              />
-              {search && (
-                <button className={styles.clearBtn} onClick={() => setSearch('')}>×</button>
-              )}
-            </div>
-          </div>
-
-          {/* Venue filter */}
-          <div className={styles.sideSection}>
-            <div className={styles.sideLabelRow}>
-              <label className={styles.sideLabel}>VENUES</label>
-              {selectedVenues.length > 0 && (
-                <button className={styles.clearAll} onClick={() => setSelectedVenues([])}>
-                  clear
-                </button>
-              )}
-            </div>
-            <div className={styles.venueList}>
-              {venues.map(v => (
-                <button
-                  key={v.id}
-                  className={`${styles.venueChip} ${selectedVenues.includes(v.id) ? styles.venueChipActive : ''}`}
-                  onClick={() => toggleVenue(v.id)}
-                  style={selectedVenues.includes(v.id) ? { borderColor: v.color, color: v.color } : {}}
-                >
-                  <span
-                    className={styles.venueDot}
-                    style={{ background: v.color }}
-                  />
-                  {v.short_name || v.name}
-                </button>
-              ))}
-            </div>
-          </div>
-        </aside>
 
         {/* Main content */}
         <main className={styles.main}>
@@ -277,7 +221,6 @@ export default function CalendarApp({ events, venues }: { events: Event[], venue
             </div>
           ) : (
             <div className={styles.calView}>
-              {/* Month nav */}
               <div className={styles.calHeader}>
                 <button className={styles.calNav} onClick={prevMonth}>←</button>
                 <div className={styles.calHeaderCenter}>
@@ -305,24 +248,19 @@ export default function CalendarApp({ events, venues }: { events: Event[], venue
                 <button className={styles.calNav} onClick={nextMonth}>→</button>
               </div>
 
-              {/* Day labels */}
               <div className={styles.calGrid}>
                 {['SUN','MON','TUE','WED','THU','FRI','SAT'].map(d => (
                   <div key={d} className={styles.calDayLabel}>{d}</div>
                 ))}
-
-                {/* Empty cells */}
                 {Array.from({ length: firstDay }).map((_, i) => (
                   <div key={`empty-${i}`} className={styles.calCell} />
                 ))}
-
-                {/* Day cells */}
                 {Array.from({ length: daysInMonth }).map((_, i) => {
                   const day = i + 1
                   const dayStr = `${calYear}-${String(calMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`
                   const evts = monthEvents[day] || []
                   const todayStr = new Date().toLocaleDateString('en-CA')
-          const isToday = dayStr === todayStr
+                  const isToday = dayStr === todayStr
                   const isSelected = selectedDay === dayStr
 
                   return (
@@ -355,7 +293,6 @@ export default function CalendarApp({ events, venues }: { events: Event[], venue
                 })}
               </div>
 
-              {/* Selected day events */}
               {selectedDay && dayEvents.length > 0 && (
                 <div className={styles.calDayPanel}>
                   <div className={styles.calDayPanelHeader}>
@@ -373,7 +310,8 @@ export default function CalendarApp({ events, venues }: { events: Event[], venue
           )}
         </main>
       </div>
-    {/* Hover tooltip */}
+
+      {/* Hover tooltip */}
       {hoveredEvent && (
         <div
           className={styles.eventTooltip}
@@ -419,8 +357,8 @@ function EventCard({ event: e }: { event: Event }) {
         {e.subtitle && <p className={styles.eventSubtitle}>{e.subtitle}</p>}
         <div className={styles.eventMeta}>
           {formatTime(e.show_time, e.event_date) && (
-          <span className={styles.eventTime}>{formatTime(e.show_time, e.event_date)}</span>
-        )}
+            <span className={styles.eventTime}>{formatTime(e.show_time, e.event_date)}</span>
+          )}
           {e.ticket_status && e.ticket_status !== 'Available' && (
             <span className={styles.eventStatus}>{e.ticket_status}</span>
           )}
@@ -435,28 +373,6 @@ function EventCard({ event: e }: { event: Event }) {
         >
           TICKETS
         </a>
-      )}
-    {/* Hover tooltip */}
-      {hoveredEvent && (
-        <div
-          className={styles.eventTooltip}
-          style={{ top: tooltipPos.y + 16, left: tooltipPos.x + 16 }}
-        >
-          {hoveredEvent.image_url && (
-            <img src={hoveredEvent.image_url} alt={hoveredEvent.artist} className={styles.tooltipImage} />
-          )}
-          <div className={styles.tooltipBody}>
-            <div className={styles.tooltipVenue} style={{ color: hoveredEvent.venue?.color || '#aaa' }}>
-              {hoveredEvent.venue?.short_name}
-            </div>
-            <div className={styles.tooltipArtist}>{hoveredEvent.artist}</div>
-            {hoveredEvent.subtitle && <div className={styles.tooltipSubtitle}>{hoveredEvent.subtitle}</div>}
-            {hoveredEvent.show_time && <div className={styles.tooltipTime}>{hoveredEvent.show_time}</div>}
-            {hoveredEvent.ticket_status && hoveredEvent.ticket_status !== 'Available' && (
-              <div className={styles.tooltipStatus}>{hoveredEvent.ticket_status}</div>
-            )}
-          </div>
-        </div>
       )}
     </div>
   )
