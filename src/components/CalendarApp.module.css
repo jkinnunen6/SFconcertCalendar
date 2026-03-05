@@ -326,6 +326,41 @@
   line-height: 1;
 }
 
+.dayJump {
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  color: var(--text-muted);
+  font-size: 0.7rem;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.15s;
+  flex-shrink: 0;
+}
+.dayJump:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
+.dayJump:disabled { opacity: 0.2; cursor: default; }
+
+.backToTop {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  color: var(--text-muted);
+  font-size: 0.65rem;
+  letter-spacing: 0.1em;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  z-index: 100;
+  transition: all 0.15s;
+}
+.backToTop:hover { border-color: var(--accent); color: var(--accent); }
+
 .dayCount {
   font-size: 0.7rem;
   color: var(--text-muted);

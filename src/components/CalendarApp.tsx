@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useRef, useEffect, useCallback } from 'react'
 import type { Event, Venue } from '@/lib/supabase'
 import styles from './CalendarApp.module.css'
 
@@ -54,6 +54,24 @@ export default function CalendarApp({ events, venues }: { events: Event[], venue
   const [hoveredEvent, setHoveredEvent] = useState<typeof events[0] | null>(null)
   const [tooltipPos, setTooltipPos] = useState({ x: 0, y: 0 })
   const [selectedRegions, setSelectedRegions] = useState<string[]>([])
+  const [showBackToTop, setShowBackToTop] = useState(false)
+  const dayRefs = useRef<Record<string, HTMLDivElement | null>>({})
+
+  const sortedDays = useMemo(() => Object.keys(grouped).sort(), [grouped])
+
+  const jumpToDay = useCallback((delta: number, currentDay: string) => {
+    const idx = sortedDays.indexOf(currentDay)
+    const target = sortedDays[idx + delta]
+    if (target && dayRefs.current[target]) {
+      dayRefs.current[target]?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }
+  }, [sortedDays])
+
+  useEffect(() => {
+    const onScroll = () => setShowBackToTop(window.scrollY > 400)
+    window.addEventListener('scroll', onScroll)
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [])
 
   const filtered = useMemo(() => {
     return events.filter(e => {
@@ -200,8 +218,13 @@ export default function CalendarApp({ events, venues }: { events: Event[], venue
                 <div className={styles.empty}>No shows found</div>
               ) : (
                 Object.entries(grouped).map(([day, dayEvts]) => (
-                  <div key={day} className={styles.dayGroup}>
+                  <div key={day} className={styles.dayGroup} ref={el => { dayRefs.current[day] = el }}>
                     <div className={styles.dayHeader}>
+                      <button
+                        className={styles.dayJump}
+                        onClick={() => jumpToDay(-1, day)}
+                        disabled={sortedDays.indexOf(day) === 0}
+                      >↑</button>
                       <span className={styles.dayDow}>
                         {formatDayOfWeek(day + 'T00:00:00')}
                       </span>
@@ -209,6 +232,11 @@ export default function CalendarApp({ events, venues }: { events: Event[], venue
                         {formatDateShort(day + 'T00:00:00')}
                       </span>
                       <span className={styles.dayCount}>{dayEvts.length} show{dayEvts.length !== 1 ? 's' : ''}</span>
+                      <button
+                        className={styles.dayJump}
+                        onClick={() => jumpToDay(1, day)}
+                        disabled={sortedDays.indexOf(day) === sortedDays.length - 1}
+                      >↓</button>
                     </div>
                     <div className={styles.eventList}>
                       {dayEvts.map(e => (
@@ -310,6 +338,14 @@ export default function CalendarApp({ events, venues }: { events: Event[], venue
           )}
         </main>
       </div>
+
+      {/* Back to top */}
+      {showBackToTop && (
+        <button
+          className={styles.backToTop}
+          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+        >↑ TOP</button>
+      )}
 
       {/* Hover tooltip */}
       {hoveredEvent && (
