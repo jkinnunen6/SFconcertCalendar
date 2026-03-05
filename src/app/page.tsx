@@ -2,7 +2,7 @@ import { supabase, type Event, type Venue } from '@/lib/supabase'
 import CalendarApp from '@/components/CalendarApp'
 
 async function getEvents(): Promise<Event[]> {
-  const today = new Date().toISOString().split('T')[0]
+  const today = new Date().toLocaleDateString('en-CA') // en-CA gives YYYY-MM-DD in local time
   const { data, error } = await supabase
     .from('events')
     .select(`*, venue:venues(*)`)
