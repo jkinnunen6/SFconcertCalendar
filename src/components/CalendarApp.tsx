@@ -52,6 +52,7 @@ export default function CalendarApp({ events, venues }: { events: Event[], venue
   const [calYear, setCalYear] = useState(new Date().getFullYear())
   const [calMonth, setCalMonth] = useState(new Date().getMonth())
   const [selectedDay, setSelectedDay] = useState<string | null>(null)
+  const [venueOpen, setVenueOpen] = useState(false)
 
   // Filter events
   const filtered = useMemo(() => {
@@ -124,6 +125,21 @@ export default function CalendarApp({ events, venues }: { events: Event[], venue
           </div>
           <div className={styles.headerMeta}>
             <span className={styles.eventCount}>{filtered.length} upcoming shows</span>
+            <div className={styles.searchWrap}>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+              </svg>
+              <input
+                className={styles.searchInput}
+                type="text"
+                placeholder="Artist name..."
+                value={search}
+                onChange={e => setSearch(e.target.value)}
+              />
+              {search && (
+                <button className={styles.searchClear} onClick={() => setSearch('')}>×</button>
+              )}
+            </div>
             <div className={styles.viewToggle}>
               <button
                 className={`${styles.viewBtn} ${view === 'list' ? styles.viewBtnActive : ''}`}
@@ -139,8 +155,31 @@ export default function CalendarApp({ events, venues }: { events: Event[], venue
       </header>
 
       <div className={styles.layout}>
-        {/* Sidebar */}
-        <aside className={styles.sidebar}>
+        {/* Venue accordion filter */}
+        <div className={styles.filterBar}>
+          <button className={styles.accordionToggle} onClick={() => setVenueOpen(v => !v)}>
+            <span>VENUES</span>
+            {selectedVenues.length > 0 && <span className={styles.filterCount}>{selectedVenues.length} selected</span>}
+            <span className={styles.accordionChevron}>{venueOpen ? '▲' : '▼'}</span>
+          </button>
+          {venueOpen && (
+            <div className={styles.accordionContent}>
+              {selectedVenues.length > 0 && (
+                <button className={styles.clearAll} onClick={() => setSelectedVenues([])}>clear all</button>
+              )}
+              <div className={styles.venueGrid}>
+                {venues.map(v => (
+                  <button key={v.id} onClick={() => toggleVenue(v.id)}
+                    className={`${styles.venueChip} ${selectedVenues.includes(v.id) ? styles.venueChipActive : ''}`}>
+                    <span className={styles.venueDot} style={{background: v.color}} />
+                    {v.short_name}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+        <aside className={styles.sidebar} style={{display:'none'}}>
           {/* Search */}
           <div className={styles.sideSection}>
             <label className={styles.sideLabel}>SEARCH</label>
@@ -256,17 +295,16 @@ export default function CalendarApp({ events, venues }: { events: Event[], venue
                     >
                       <span className={styles.calDayNum}>{day}</span>
                       {evts.length > 0 && (
-                        <div className={styles.calEventDots}>
-                          {evts.slice(0, 3).map(e => (
-                            <span
-                              key={e.id}
-                              className={styles.calEventDot}
-                              style={{ background: e.venue?.color || '#666' }}
-                            />
+                        <div className={styles.calEventList}>
+                          {evts.map(e => (
+                            <div key={e.id} className={styles.calEventRow}>
+                              <span
+                                className={styles.calEventDot}
+                                style={{ background: e.venue?.color || '#666' }}
+                              />
+                              <span className={styles.calEventName}>{e.artist}</span>
+                            </div>
                           ))}
-                          {evts.length > 3 && (
-                            <span className={styles.calEventMore}>+{evts.length - 3}</span>
-                          )}
                         </div>
                       )}
                     </div>
