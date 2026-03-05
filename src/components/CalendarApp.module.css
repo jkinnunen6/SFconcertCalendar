@@ -479,6 +479,40 @@
 
 .calYear { color: var(--text-muted); }
 
+.calTitleSelectors {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  justify-content: center;
+}
+
+.calSelect {
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--border);
+  color: var(--text);
+  font-family: var(--font-display);
+  font-size: 2rem;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  padding: 0 0.25rem;
+  appearance: none;
+  -webkit-appearance: none;
+  text-align: center;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.calSelect:hover, .calSelect:focus {
+  border-bottom-color: var(--accent);
+}
+
+.calSelect option {
+  background: var(--bg);
+  color: var(--text);
+  font-size: 1rem;
+}
+
 .calGrid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);

@@ -279,9 +279,26 @@ export default function CalendarApp({ events, venues }: { events: Event[], venue
               <div className={styles.calHeader}>
                 <button className={styles.calNav} onClick={prevMonth}>←</button>
                 <div className={styles.calHeaderCenter}>
-                <h2 className={styles.calTitle}>
-                  {MONTH_NAMES[calMonth]} <span className={styles.calYear}>{calYear}</span>
-                </h2>
+                  <div className={styles.calTitleSelectors}>
+                    <select
+                      className={styles.calSelect}
+                      value={calMonth}
+                      onChange={e => setCalMonth(Number(e.target.value))}
+                    >
+                      {MONTH_NAMES.map((m, i) => (
+                        <option key={i} value={i}>{m}</option>
+                      ))}
+                    </select>
+                    <select
+                      className={styles.calSelect}
+                      value={calYear}
+                      onChange={e => setCalYear(Number(e.target.value))}
+                    >
+                      {[new Date().getFullYear() - 1, new Date().getFullYear(), new Date().getFullYear() + 1].map(y => (
+                        <option key={y} value={y}>{y}</option>
+                      ))}
+                    </select>
+                  </div>
                 </div>
                 <button className={styles.calNav} onClick={nextMonth}>→</button>
               </div>
