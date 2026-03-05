@@ -231,12 +231,12 @@ export default function CalendarApp({ events, venues }: { events: Event[], venue
                       <span className={styles.dayDate}>
                         {formatDateShort(day + 'T00:00:00')}
                       </span>
-                      <span className={styles.dayCount}>{dayEvts.length} show{dayEvts.length !== 1 ? 's' : ''}</span>
                       <button
                         className={styles.dayJump}
                         onClick={() => jumpToDay(1, day)}
                         disabled={sortedDays.indexOf(day) === sortedDays.length - 1}
                       >↓</button>
+                      <span className={styles.dayCount}>{dayEvts.length} show{dayEvts.length !== 1 ? 's' : ''}</span>
                     </div>
                     <div className={styles.eventList}>
                       {dayEvts.map(e => (
