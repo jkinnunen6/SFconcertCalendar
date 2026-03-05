@@ -53,6 +53,8 @@ export default function CalendarApp({ events, venues }: { events: Event[], venue
   const [calMonth, setCalMonth] = useState(new Date().getMonth())
   const [selectedDay, setSelectedDay] = useState<string | null>(null)
   const [venueOpen, setVenueOpen] = useState(false)
+  const [hoveredEvent, setHoveredEvent] = useState<typeof events[0] | null>(null)
+  const [tooltipPos, setTooltipPos] = useState({ x: 0, y: 0 })
   const [selectedRegions, setSelectedRegions] = useState<string[]>([])
 
   // Filter events
@@ -333,7 +335,13 @@ export default function CalendarApp({ events, venues }: { events: Event[], venue
                       {evts.length > 0 && (
                         <div className={styles.calEventList}>
                           {evts.map(e => (
-                            <div key={e.id} className={styles.calEventRow}>
+                            <div
+                              key={e.id}
+                              className={styles.calEventRow}
+                              onMouseEnter={ev => { setHoveredEvent(e); setTooltipPos({ x: ev.clientX, y: ev.clientY }) }}
+                              onMouseMove={ev => setTooltipPos({ x: ev.clientX, y: ev.clientY })}
+                              onMouseLeave={() => setHoveredEvent(null)}
+                            >
                               <span
                                 className={styles.calEventName}
                                 style={{ background: e.venue?.color || '#666' }}
@@ -365,6 +373,28 @@ export default function CalendarApp({ events, venues }: { events: Event[], venue
           )}
         </main>
       </div>
+    {/* Hover tooltip */}
+      {hoveredEvent && (
+        <div
+          className={styles.eventTooltip}
+          style={{ top: tooltipPos.y + 16, left: tooltipPos.x + 16 }}
+        >
+          {hoveredEvent.image_url && (
+            <img src={hoveredEvent.image_url} alt={hoveredEvent.artist} className={styles.tooltipImage} />
+          )}
+          <div className={styles.tooltipBody}>
+            <div className={styles.tooltipVenue} style={{ color: hoveredEvent.venue?.color || '#aaa' }}>
+              {hoveredEvent.venue?.short_name}
+            </div>
+            <div className={styles.tooltipArtist}>{hoveredEvent.artist}</div>
+            {hoveredEvent.subtitle && <div className={styles.tooltipSubtitle}>{hoveredEvent.subtitle}</div>}
+            {hoveredEvent.show_time && <div className={styles.tooltipTime}>{hoveredEvent.show_time}</div>}
+            {hoveredEvent.ticket_status && hoveredEvent.ticket_status !== 'Available' && (
+              <div className={styles.tooltipStatus}>{hoveredEvent.ticket_status}</div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   )
 }
@@ -405,6 +435,28 @@ function EventCard({ event: e }: { event: Event }) {
         >
           TICKETS
         </a>
+      )}
+    {/* Hover tooltip */}
+      {hoveredEvent && (
+        <div
+          className={styles.eventTooltip}
+          style={{ top: tooltipPos.y + 16, left: tooltipPos.x + 16 }}
+        >
+          {hoveredEvent.image_url && (
+            <img src={hoveredEvent.image_url} alt={hoveredEvent.artist} className={styles.tooltipImage} />
+          )}
+          <div className={styles.tooltipBody}>
+            <div className={styles.tooltipVenue} style={{ color: hoveredEvent.venue?.color || '#aaa' }}>
+              {hoveredEvent.venue?.short_name}
+            </div>
+            <div className={styles.tooltipArtist}>{hoveredEvent.artist}</div>
+            {hoveredEvent.subtitle && <div className={styles.tooltipSubtitle}>{hoveredEvent.subtitle}</div>}
+            {hoveredEvent.show_time && <div className={styles.tooltipTime}>{hoveredEvent.show_time}</div>}
+            {hoveredEvent.ticket_status && hoveredEvent.ticket_status !== 'Available' && (
+              <div className={styles.tooltipStatus}>{hoveredEvent.ticket_status}</div>
+            )}
+          </div>
+        </div>
       )}
     </div>
   )
