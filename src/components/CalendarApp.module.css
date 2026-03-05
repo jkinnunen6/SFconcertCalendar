@@ -604,6 +604,8 @@
   line-height: 1.2;
   min-width: 0;
   flex: 1;
+  padding: 0.05rem 0.25rem;
+  border-radius: 2px;
 }
 
 .calEventDot {

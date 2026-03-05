@@ -336,7 +336,7 @@ export default function CalendarApp({ events, venues }: { events: Event[], venue
                             <div key={e.id} className={styles.calEventRow}>
                               <span
                                 className={styles.calEventName}
-                                style={{ borderBottom: `2px solid ${e.venue?.color || '#666'}` }}
+                                style={{ background: e.venue?.color || '#666' }}
                               >{e.artist}</span>
                             </div>
                           ))}
