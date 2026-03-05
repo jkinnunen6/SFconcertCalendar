@@ -53,11 +53,13 @@ export default function CalendarApp({ events, venues }: { events: Event[], venue
   const [calMonth, setCalMonth] = useState(new Date().getMonth())
   const [selectedDay, setSelectedDay] = useState<string | null>(null)
   const [venueOpen, setVenueOpen] = useState(false)
+  const [selectedRegion, setSelectedRegion] = useState<string | null>(null)
 
   // Filter events
   const filtered = useMemo(() => {
     return events.filter(e => {
       if (search && !e.artist.toLowerCase().includes(search.toLowerCase())) return false
+      if (selectedRegion && e.venue?.region !== selectedRegion) return false
       if (selectedVenues.length > 0 && !selectedVenues.includes(e.venue_id)) return false
       return true
     })
@@ -155,6 +157,19 @@ export default function CalendarApp({ events, venues }: { events: Event[], venue
       </header>
 
       <div className={styles.layout}>
+        {/* Region tabs */}
+        <div className={styles.regionTabs}>
+          {['San Francisco', 'East Bay', 'North Bay', 'South Bay'].map(r => (
+            <button
+              key={r}
+              className={`${styles.regionTab} ${selectedRegion === r ? styles.regionTabActive : ''}`}
+              onClick={() => setSelectedRegion(selectedRegion === r ? null : r)}
+            >
+              {r}
+            </button>
+          ))}
+        </div>
+
         {/* Venue accordion filter */}
         <div className={styles.filterBar}>
           <button className={styles.accordionToggle} onClick={() => setVenueOpen(v => !v)}>

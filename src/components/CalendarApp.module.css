@@ -102,6 +102,33 @@
   gap: 1.5rem;
 }
 
+/* ── Region tabs ───────────────────────────────────────── */
+.regionTabs {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.regionTab {
+  padding: 0.4rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  background: none;
+  color: var(--text-muted);
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.regionTab:hover { border-color: #444; color: var(--text); }
+.regionTabActive {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #000;
+  font-weight: 600;
+}
+
 /* ── Filter bar / Accordion ────────────────────────────── */
 .filterBar {
   border: 1px solid var(--border);
