@@ -275,7 +275,7 @@
   background: none;
 }
 .venueChip:hover { border-color: #444; color: var(--text); }
-.venueChipActive { background: var(--bg2); }
+.venueChipActive { color: #ffffff !important; }
 
 .venueDot {
   width: 7px;

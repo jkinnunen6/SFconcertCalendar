@@ -44,7 +44,7 @@ const MONTH_NAMES = ['January','February','March','April','May','June',
                      'July','August','September','October','November','December']
 
 export default function CalendarApp({ events, venues }: { events: Event[], venues: Venue[] }) {
-  const [view, setView] = useState<View>('list')
+  const [view, setView] = useState<View>('grid')
   const [search, setSearch] = useState('')
   const [selectedVenues, setSelectedVenues] = useState<number[]>([])
   const [calYear, setCalYear] = useState(new Date().getFullYear())
@@ -60,11 +60,10 @@ export default function CalendarApp({ events, venues }: { events: Event[], venue
   const filtered = useMemo(() => {
     return events.filter(e => {
       if (search && !e.artist.toLowerCase().includes(search.toLowerCase())) return false
-      if (selectedRegions.length > 0 && !selectedRegions.includes(e.venue?.region || '')) return false
       if (selectedVenues.length > 0 && !selectedVenues.includes(e.venue_id)) return false
       return true
     })
-  }, [events, search, selectedVenues, selectedRegions])
+  }, [events, search, selectedVenues])
 
   const grouped = useMemo(() => {
     const map: Record<string, Event[]> = {}
@@ -176,7 +175,16 @@ export default function CalendarApp({ events, venues }: { events: Event[], venue
             <button
               key={r}
               className={`${styles.regionTab} ${selectedRegions.includes(r) ? styles.regionTabActive : ''}`}
-              onClick={() => setSelectedRegions(prev => prev.includes(r) ? prev.filter(x => x !== r) : [...prev, r])}
+              onClick={() => {
+                const regionVenueIds = venues.filter(v => v.region === r).map(v => v.id)
+                const isActive = selectedRegions.includes(r)
+                setSelectedRegions(prev => isActive ? prev.filter(x => x !== r) : [...prev, r])
+                if (isActive) {
+                  setSelectedVenues(prev => prev.filter(id => !regionVenueIds.includes(id)))
+                } else {
+                  setSelectedVenues(prev => [...new Set([...prev, ...regionVenueIds])])
+                }
+              }}
             >
               {r}
             </button>
@@ -196,15 +204,13 @@ export default function CalendarApp({ events, venues }: { events: Event[], venue
                 <button className={styles.clearAll} onClick={() => setSelectedVenues([])}>clear all</button>
               )}
               <div className={styles.venueGrid}>
-                {venues
-                  .filter(v => selectedRegions.length === 0 || selectedRegions.includes(v.region || ''))
-                  .map(v => (
+                {venues.map(v => (
                     <button key={v.id} onClick={() => toggleVenue(v.id)}
-                      className={`${styles.venueChip} ${selectedVenues.includes(v.id) ? styles.venueChipActive : ''}`}>
-                      <span className={styles.venueDot} style={{background: v.color}} />
+                      className={`${styles.venueChip} ${selectedVenues.includes(v.id) ? styles.venueChipActive : ''}`}
+                      style={selectedVenues.includes(v.id) ? { background: v.color, borderColor: v.color, color: '#fff' } : { borderColor: v.color }}>
                       {v.short_name}
                     </button>
-                  ))}
+                ))}
               </div>
             </div>
           )}
