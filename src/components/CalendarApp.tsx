@@ -315,7 +315,12 @@ export default function CalendarApp({ events, venues }: { events: Event[], venue
       {hoveredEvent && (
         <div
           className={styles.eventTooltip}
-          style={{ top: tooltipPos.y + 16, left: tooltipPos.x + 16 }}
+          style={{
+            top: tooltipPos.y + 16,
+            ...(tooltipPos.x + 260 > window.innerWidth
+              ? { right: window.innerWidth - tooltipPos.x + 8, left: 'auto' }
+              : { left: tooltipPos.x + 16 })
+          }}
         >
           {hoveredEvent.image_url && (
             <img src={hoveredEvent.image_url} alt={hoveredEvent.artist} className={styles.tooltipImage} />
