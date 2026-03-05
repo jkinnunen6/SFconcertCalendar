@@ -53,13 +53,13 @@ export default function CalendarApp({ events, venues }: { events: Event[], venue
   const [calMonth, setCalMonth] = useState(new Date().getMonth())
   const [selectedDay, setSelectedDay] = useState<string | null>(null)
   const [venueOpen, setVenueOpen] = useState(false)
-  const [selectedRegion, setSelectedRegion] = useState<string | null>(null)
+  const [selectedRegions, setSelectedRegions] = useState<string[]>([])
 
   // Filter events
   const filtered = useMemo(() => {
     return events.filter(e => {
       if (search && !e.artist.toLowerCase().includes(search.toLowerCase())) return false
-      if (selectedRegion && e.venue?.region !== selectedRegion) return false
+      if (selectedRegions.length > 0 && !selectedRegions.includes(e.venue?.region || '')) return false
       if (selectedVenues.length > 0 && !selectedVenues.includes(e.venue_id)) return false
       return true
     })
@@ -162,8 +162,8 @@ export default function CalendarApp({ events, venues }: { events: Event[], venue
           {['San Francisco', 'East Bay', 'North Bay', 'South Bay'].map(r => (
             <button
               key={r}
-              className={`${styles.regionTab} ${selectedRegion === r ? styles.regionTabActive : ''}`}
-              onClick={() => setSelectedRegion(selectedRegion === r ? null : r)}
+              className={`${styles.regionTab} ${selectedRegions.includes(r) ? styles.regionTabActive : ''}`}
+              onClick={() => setSelectedRegions(prev => prev.includes(r) ? prev.filter(x => x !== r) : [...prev, r])}
             >
               {r}
             </button>
@@ -183,7 +183,9 @@ export default function CalendarApp({ events, venues }: { events: Event[], venue
                 <button className={styles.clearAll} onClick={() => setSelectedVenues([])}>clear all</button>
               )}
               <div className={styles.venueGrid}>
-                {venues.map(v => (
+                {venues
+                  .filter(v => selectedRegions.length === 0 || selectedRegions.includes(v.region || ''))
+                  .map(v => (
                   <button key={v.id} onClick={() => toggleVenue(v.id)}
                     className={`${styles.venueChip} ${selectedVenues.includes(v.id) ? styles.venueChipActive : ''}`}>
                     <span className={styles.venueDot} style={{background: v.color}} />
