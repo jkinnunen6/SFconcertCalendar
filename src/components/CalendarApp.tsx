@@ -278,9 +278,11 @@ export default function CalendarApp({ events, venues }: { events: Event[], venue
               {/* Month nav */}
               <div className={styles.calHeader}>
                 <button className={styles.calNav} onClick={prevMonth}>←</button>
+                <div className={styles.calHeaderCenter}>
                 <h2 className={styles.calTitle}>
                   {MONTH_NAMES[calMonth]} <span className={styles.calYear}>{calYear}</span>
                 </h2>
+                </div>
                 <button className={styles.calNav} onClick={nextMonth}>→</button>
               </div>
 
