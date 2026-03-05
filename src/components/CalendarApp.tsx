@@ -63,7 +63,7 @@ export default function CalendarApp({ events, venues }: { events: Event[], venue
       if (selectedVenues.length > 0 && !selectedVenues.includes(e.venue_id)) return false
       return true
     })
-  }, [events, search, selectedVenues])
+  }, [events, search, selectedVenues, selectedRegions])
 
   // Group by date for list view
   const grouped = useMemo(() => {
