@@ -335,10 +335,9 @@ export default function CalendarApp({ events, venues }: { events: Event[], venue
                           {evts.map(e => (
                             <div key={e.id} className={styles.calEventRow}>
                               <span
-                                className={styles.calEventDot}
-                                style={{ background: e.venue?.color || '#666' }}
-                              />
-                              <span className={styles.calEventName}>{e.artist}</span>
+                                className={styles.calEventName}
+                                style={{ borderBottom: `2px solid ${e.venue?.color || '#666'}` }}
+                              >{e.artist}</span>
                             </div>
                           ))}
                         </div>
