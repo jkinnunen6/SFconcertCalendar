@@ -182,7 +182,7 @@ export default function CalendarApp({ events, venues }: { events: Event[], venue
                 if (isActive) {
                   setSelectedVenues(prev => prev.filter(id => !regionVenueIds.includes(id)))
                 } else {
-                  setSelectedVenues(prev => [...new Set([...prev, ...regionVenueIds])])
+                  setSelectedVenues(prev => Array.from(new Set([...prev, ...regionVenueIds])))
                 }
               }}
             >
