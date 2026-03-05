@@ -57,22 +57,6 @@ export default function CalendarApp({ events, venues }: { events: Event[], venue
   const [showBackToTop, setShowBackToTop] = useState(false)
   const dayRefs = useRef<Record<string, HTMLDivElement | null>>({})
 
-  const sortedDays = useMemo(() => Object.keys(grouped).sort(), [grouped])
-
-  const jumpToDay = useCallback((delta: number, currentDay: string) => {
-    const idx = sortedDays.indexOf(currentDay)
-    const target = sortedDays[idx + delta]
-    if (target && dayRefs.current[target]) {
-      dayRefs.current[target]?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-    }
-  }, [sortedDays])
-
-  useEffect(() => {
-    const onScroll = () => setShowBackToTop(window.scrollY > 400)
-    window.addEventListener('scroll', onScroll)
-    return () => window.removeEventListener('scroll', onScroll)
-  }, [])
-
   const filtered = useMemo(() => {
     return events.filter(e => {
       if (search && !e.artist.toLowerCase().includes(search.toLowerCase())) return false
@@ -91,6 +75,22 @@ export default function CalendarApp({ events, venues }: { events: Event[], venue
     })
     return map
   }, [filtered])
+
+  const sortedDays = useMemo(() => Object.keys(grouped).sort(), [grouped])
+
+  const jumpToDay = useCallback((delta: number, currentDay: string) => {
+    const idx = sortedDays.indexOf(currentDay)
+    const target = sortedDays[idx + delta]
+    if (target && dayRefs.current[target]) {
+      dayRefs.current[target]?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }
+  }, [sortedDays])
+
+  useEffect(() => {
+    const onScroll = () => setShowBackToTop(window.scrollY > 400)
+    window.addEventListener('scroll', onScroll)
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [])
 
   const monthEvents = useMemo(() => {
     const map: Record<number, Event[]> = {}
