@@ -27,4 +27,5 @@ export type Venue = {
   address: string
   city: string
   url: string
+  region: string | null
 }
