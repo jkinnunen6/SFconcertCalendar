@@ -330,81 +330,88 @@ export default function CalendarApp({ events, venues }: { events: Event[], venue
                         {['SUN','MON','TUE','WED','THU','FRI','SAT'].map(d => (
                           <div key={d} className={styles.calDayLabel}>{d}</div>
                         ))}
-                        {Array.from({ length: firstDay }).map((_, i) => (
-                          <div key={`empty-${i}`} className={styles.calCell} />
-                        ))}
-                        {Array.from({ length: daysInMonth }).map((_, i) => {
-                          const day = i + 1
-                          const dayStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`
-                          const evts = eventsForMonth[day] || []
-                          const isToday = dayStr === todayStr
-                          const isSelected = selectedDay === dayStr
+                      </div>
+                      {(() => {
+                        // Build rows of 7 cells each
+                        const totalCells = firstDay + daysInMonth
+                        const numRows = Math.ceil(totalCells / 7)
+                        const selectedRow = selectedDay
+                          ? Math.floor((firstDay + (parseInt(selectedDay.split('-')[2]) - 1)) / 7)
+                          : -1
+
+                        return Array.from({ length: numRows }).map((_, rowIdx) => {
+                          const cells = Array.from({ length: 7 }).map((_, colIdx) => {
+                            const cellIdx = rowIdx * 7 + colIdx
+                            const day = cellIdx - firstDay + 1
+                            if (day < 1 || day > daysInMonth) {
+                              return <div key={`empty-${cellIdx}`} className={styles.calCell} />
+                            }
+                            const dayStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`
+                            const evts = eventsForMonth[day] || []
+                            const isToday = dayStr === todayStr
+                            const isSelected = selectedDay === dayStr
+                            return (
+                              <div
+                                key={day}
+                                className={`${styles.calCell} ${styles.calCellDay} ${evts.length ? styles.calCellHasEvents : ''} ${isToday ? styles.calCellToday : ''} ${isSelected ? styles.calCellSelected : ''}`}
+                                onClick={() => { setSelectedDay(isSelected ? null : dayStr); setMobilePanelDay(isSelected ? null : dayStr) }}
+                              >
+                                <span className={styles.calDayNum}>{day}</span>
+                                {evts.length > 0 && (
+                                  <div className={styles.calEventList}>
+                                    {evts.map(e => (
+                                      <div
+                                        key={e.id}
+                                        className={styles.calEventRow}
+                                        onMouseEnter={ev => { setHoveredEvent(e); setTooltipPos({ x: ev.clientX, y: ev.clientY }) }}
+                                        onMouseMove={ev => setTooltipPos({ x: ev.clientX, y: ev.clientY })}
+                                        onMouseLeave={() => setHoveredEvent(null)}
+                                      >
+                                        <span
+                                          className={styles.calEventName}
+                                          style={{ borderLeftColor: e.venue?.color || '#666' }}
+                                        >{isNew(e) && <span className={styles.newStar}>◆</span>}{e.artist}</span>
+                                      </div>
+                                    ))}
+                                  </div>
+                                )}
+                              </div>
+                            )
+                          })
+
+                          const panelEvents = selectedRow === rowIdx && selectedDay && dayEvents.length > 0
 
                           return (
-                            <div
-                              key={day}
-                              className={`${styles.calCell} ${styles.calCellDay} ${evts.length ? styles.calCellHasEvents : ''} ${isToday ? styles.calCellToday : ''} ${isSelected ? styles.calCellSelected : ''}`}
-                              onClick={() => { setSelectedDay(isSelected ? null : dayStr); setMobilePanelDay(isSelected ? null : dayStr) }}
-                            >
-                              <span className={styles.calDayNum}>{day}</span>
-                              {evts.length > 0 && (
-                                <div className={styles.calEventList}>
-                                  {evts.map(e => (
-                                    <div
-                                      key={e.id}
-                                      className={styles.calEventRow}
-                                      onMouseEnter={ev => { setHoveredEvent(e); setTooltipPos({ x: ev.clientX, y: ev.clientY }) }}
-                                      onMouseMove={ev => setTooltipPos({ x: ev.clientX, y: ev.clientY })}
-                                      onMouseLeave={() => setHoveredEvent(null)}
-                                    >
-                                      <span
-                                        className={styles.calEventName}
-                                        style={{ borderLeftColor: e.venue?.color || '#666' }}
-                                      >{isNew(e) && <span className={styles.newStar}>◆</span>}{e.artist}</span>
-                                    </div>
-                                  ))}
+                            <div key={`row-${rowIdx}`}>
+                              <div className={styles.calRow}>{cells}</div>
+                              {panelEvents && (
+                                <div className={styles.calInlinePanel}>
+                                  <div className={styles.calInlinePanelHeader}>
+                                    <span>{formatDayOfWeek(selectedDay + 'T00:00:00')} · {formatDateShort(selectedDay + 'T00:00:00')} · {dayEvents.length} show{dayEvents.length !== 1 ? 's' : ''}</span>
+                                    <button className={styles.calDayClose} onClick={() => { setSelectedDay(null); setMobilePanelDay(null) }}>×</button>
+                                  </div>
+                                  <div className={styles.calInlinePanelList}>
+                                    {dayEvents.map(e => (
+                                      <div key={e.id} className={styles.calInlineEvent}>
+                                        <div className={styles.calInlineEventBar} style={{ background: e.venue?.color || '#666' }} />
+                                        <div className={styles.calInlineEventInfo}>
+                                          <div className={styles.calInlineEventArtist}>{isNew(e) && <span className={styles.newStar}>◆</span>}{e.artist}</div>
+                                          <div className={styles.calInlineEventMeta}>{e.venue?.short_name}{e.show_time ? ` · ${e.show_time}` : ''}</div>
+                                        </div>
+                                        {e.ticket_url && (
+                                          <a href={e.ticket_url} target="_blank" rel="noopener noreferrer" className={styles.mobileDayTicketBtn}>TIX</a>
+                                        )}
+                                      </div>
+                                    ))}
+                                  </div>
                                 </div>
                               )}
                             </div>
                           )
-                        })}
-                      </div>
+                        })
+                      })()}
 
-                      {selectedDay && selectedDay.startsWith(`${year}-${String(month + 1).padStart(2, '0')}`) && dayEvents.length > 0 && (
-                        <div className={styles.calDayPanel}>
-                          <div className={styles.calDayPanelHeader}>
-                            <span>{formatDayOfWeek(selectedDay + 'T00:00:00')} {formatDateShort(selectedDay + 'T00:00:00')}</span>
-                            <button className={styles.calDayClose} onClick={() => { setSelectedDay(null); setMobilePanelDay(null) }}>×</button>
-                          </div>
-                          <div className={styles.eventList}>
-                            {dayEvents.map(e => (
-                              <EventCard key={e.id} event={e} />
-                            ))}
-                          </div>
-                        </div>
-                      )}
-                      {mobilePanelDay && mobilePanelDay.startsWith(`${year}-${String(month + 1).padStart(2, '0')}`) && dayEvents.length > 0 && (
-                        <div className={styles.mobileDayPanel}>
-                          <div className={styles.mobileDayPanelHeader}>
-                            <span>{formatDayOfWeek(mobilePanelDay + 'T00:00:00')} · {formatDateShort(mobilePanelDay + 'T00:00:00')} · {dayEvents.length} show{dayEvents.length !== 1 ? 's' : ''}</span>
-                            <button className={styles.calDayClose} onClick={() => { setMobilePanelDay(null); setSelectedDay(null) }}>×</button>
-                          </div>
-                          <div className={styles.mobileDayList}>
-                            {dayEvents.map(e => (
-                              <div key={e.id} className={styles.mobileDayEvent}>
-                                <div className={styles.mobileDayEventBar} style={{ background: e.venue?.color || '#666' }} />
-                                <div className={styles.mobileDayEventInfo}>
-                                  <div className={styles.mobileDayEventArtist}>{isNew(e) && <span className={styles.newStar}>◆</span>}{e.artist}</div>
-                                  <div className={styles.mobileDayEventMeta}>{e.venue?.short_name}{e.show_time ? ` · ${e.show_time}` : ''}</div>
-                                </div>
-                                {e.ticket_url && (
-                                  <a href={e.ticket_url} target="_blank" rel="noopener noreferrer" className={styles.mobileDayTicketBtn}>TIX</a>
-                                )}
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                      )}
+
                     </div>
                   )
                 })

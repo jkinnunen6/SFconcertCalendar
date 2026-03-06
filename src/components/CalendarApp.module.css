@@ -553,13 +553,87 @@
   font-size: 1rem;
 }
 
+.calRow {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 1px;
+  background: var(--border);
+}
+
+.calInlinePanel {
+  background: #1c1c1c;
+  border-top: 2px solid var(--border);
+  border-bottom: 2px solid var(--border);
+  animation: slideOpen 0.2s ease-out;
+  overflow: hidden;
+}
+
+@keyframes slideOpen {
+  from { max-height: 0; opacity: 0; }
+  to { max-height: 1000px; opacity: 1; }
+}
+
+.calInlinePanelHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.6rem 1rem;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.65rem;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+.calInlinePanelList {
+  display: flex;
+  flex-direction: column;
+  padding: 0.5rem 0;
+}
+
+.calInlineEvent {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem 1rem;
+  border-bottom: 1px solid #242424;
+}
+.calInlineEvent:last-child { border-bottom: none; }
+
+.calInlineEventBar {
+  width: 3px;
+  height: 36px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.calInlineEventInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.calInlineEventArtist {
+  font-size: 0.9rem;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.calInlineEventMeta {
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  margin-top: 0.15rem;
+  letter-spacing: 0.05em;
+}
+
 .calGrid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   gap: 1px;
   background: var(--border);
   border: 1px solid var(--border);
-  border-radius: 8px;
+  border-radius: 8px 8px 0 0;
   overflow: hidden;
 }
 
