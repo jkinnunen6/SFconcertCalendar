@@ -62,6 +62,7 @@ export default function CalendarApp({ events, venues }: { events: Event[], venue
   const [venueOpen, setVenueOpen] = useState(false)
   const [hoveredEvent, setHoveredEvent] = useState<typeof events[0] | null>(null)
   const [searchOpen, setSearchOpen] = useState(false)
+  const [mobilePanelDay, setMobilePanelDay] = useState<string | null>(null)
   const [tooltipPos, setTooltipPos] = useState({ x: 0, y: 0 })
   const [selectedRegions, setSelectedRegions] = useState<string[]>([])
   const [showBackToTop, setShowBackToTop] = useState(false)
@@ -343,7 +344,7 @@ export default function CalendarApp({ events, venues }: { events: Event[], venue
                             <div
                               key={day}
                               className={`${styles.calCell} ${styles.calCellDay} ${evts.length ? styles.calCellHasEvents : ''} ${isToday ? styles.calCellToday : ''} ${isSelected ? styles.calCellSelected : ''}`}
-                              onClick={() => setSelectedDay(isSelected ? null : dayStr)}
+                              onClick={() => { setSelectedDay(isSelected ? null : dayStr); setMobilePanelDay(isSelected ? null : dayStr) }}
                             >
                               <span className={styles.calDayNum}>{day}</span>
                               {evts.length > 0 && (
@@ -358,8 +359,8 @@ export default function CalendarApp({ events, venues }: { events: Event[], venue
                                     >
                                       <span
                                         className={styles.calEventName}
-                                        style={{ background: e.venue?.color || '#666' }}
-                                      >{e.artist}{isNew(e) && <span className={styles.newStar}>★</span>}</span>
+                                        style={{ borderLeftColor: e.venue?.color || '#666' }}
+                                      >{isNew(e) && <span className={styles.newStar}>◆</span>}{e.artist}</span>
                                     </div>
                                   ))}
                                 </div>
@@ -373,11 +374,33 @@ export default function CalendarApp({ events, venues }: { events: Event[], venue
                         <div className={styles.calDayPanel}>
                           <div className={styles.calDayPanelHeader}>
                             <span>{formatDayOfWeek(selectedDay + 'T00:00:00')} {formatDateShort(selectedDay + 'T00:00:00')}</span>
-                            <button className={styles.calDayClose} onClick={() => setSelectedDay(null)}>×</button>
+                            <button className={styles.calDayClose} onClick={() => { setSelectedDay(null); setMobilePanelDay(null) }}>×</button>
                           </div>
                           <div className={styles.eventList}>
                             {dayEvents.map(e => (
                               <EventCard key={e.id} event={e} />
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                      {mobilePanelDay && mobilePanelDay.startsWith(`${year}-${String(month + 1).padStart(2, '0')}`) && dayEvents.length > 0 && (
+                        <div className={styles.mobileDayPanel}>
+                          <div className={styles.mobileDayPanelHeader}>
+                            <span>{formatDayOfWeek(mobilePanelDay + 'T00:00:00')} · {formatDateShort(mobilePanelDay + 'T00:00:00')} · {dayEvents.length} show{dayEvents.length !== 1 ? 's' : ''}</span>
+                            <button className={styles.calDayClose} onClick={() => { setMobilePanelDay(null); setSelectedDay(null) }}>×</button>
+                          </div>
+                          <div className={styles.mobileDayList}>
+                            {dayEvents.map(e => (
+                              <div key={e.id} className={styles.mobileDayEvent}>
+                                <div className={styles.mobileDayEventBar} style={{ background: e.venue?.color || '#666' }} />
+                                <div className={styles.mobileDayEventInfo}>
+                                  <div className={styles.mobileDayEventArtist}>{isNew(e) && <span className={styles.newStar}>◆</span>}{e.artist}</div>
+                                  <div className={styles.mobileDayEventMeta}>{e.venue?.short_name}{e.show_time ? ` · ${e.show_time}` : ''}</div>
+                                </div>
+                                {e.ticket_url && (
+                                  <a href={e.ticket_url} target="_blank" rel="noopener noreferrer" className={styles.mobileDayTicketBtn}>TIX</a>
+                                )}
+                              </div>
                             ))}
                           </div>
                         </div>
@@ -447,8 +470,8 @@ function EventCard({ event: e }: { event: Event }) {
           {e.venue?.short_name || e.venue?.name}
         </div>
         <h3 className={styles.eventArtist}>
+          {isNew(e) && <span className={styles.newStar} title="Recently added or updated">◆</span>}
           {e.artist}
-          {isNew(e) && <span className={styles.newStar} title="Recently added or updated">★</span>}
         </h3>
         {e.subtitle && <p className={styles.eventSubtitle}>{e.subtitle}</p>}
         <div className={styles.eventMeta}>

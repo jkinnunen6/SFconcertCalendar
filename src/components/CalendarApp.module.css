@@ -297,7 +297,7 @@
 /* ── List view ─────────────────────────────────────────── */
 .listView { display: flex; flex-direction: column; gap: 0; }
 
-.dayGroup { border-bottom: 1px solid var(--border); }
+.dayGroup { border-bottom: 1px solid var(--border); scroll-margin-top: 70px; }
 
 .dayHeader {
   display: flex;
@@ -480,6 +480,7 @@
 
 .calMonth {
   margin-bottom: 3rem;
+  scroll-margin-top: 70px;
 }
 
 .calHeader {
@@ -643,8 +644,10 @@
   line-height: 1.2;
   min-width: 0;
   flex: 1;
-  padding: 0.05rem 0.25rem;
+  padding: 0.15rem 0.4rem;
   border-radius: 2px;
+  background: #1a1a1a !important;
+  border-left: 3px solid;
 }
 
 .calEventDot {
@@ -870,6 +873,87 @@
   }
 }
 
+/* ── Mobile Day Panel ──────────────────────────────────── */
+.mobileDayPanel {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .mobileDayPanel {
+    display: block;
+    background: #161616;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    margin-top: 0.75rem;
+    overflow: hidden;
+  }
+}
+
+.mobileDayPanelHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.6rem 0.75rem;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.65rem;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+.mobileDayList {
+  display: flex;
+  flex-direction: column;
+}
+
+.mobileDayEvent {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.6rem 0.75rem;
+  border-bottom: 1px solid #1e1e1e;
+}
+.mobileDayEvent:last-child { border-bottom: none; }
+
+.mobileDayEventBar {
+  width: 3px;
+  height: 36px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.mobileDayEventInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.mobileDayEventArtist {
+  font-size: 0.85rem;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mobileDayEventMeta {
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  margin-top: 0.1rem;
+  letter-spacing: 0.05em;
+}
+
+.mobileDayTicketBtn {
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--accent);
+  border: 1px solid var(--accent);
+  border-radius: 3px;
+  padding: 0.25rem 0.4rem;
+  text-decoration: none;
+  flex-shrink: 0;
+}
+
 /* ── Event Tooltip ─────────────────────────────────────── */
 .eventTooltip {
   position: fixed;
@@ -932,8 +1016,8 @@
 
 /* ── New/Updated star ──────────────────────────────────── */
 .newStar {
-  color: var(--accent);
-  font-size: 0.7em;
-  margin-left: 0.3rem;
+  color: #ffffff;
+  font-size: 0.55em;
+  margin-right: 0.3rem;
   vertical-align: super;
 }
