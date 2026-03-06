@@ -56,6 +56,19 @@ export default function CalendarApp({ events, venues }: { events: Event[], venue
   useEffect(() => {
     if (window.innerWidth <= 768) setView('list')
   }, [])
+
+  // Auto-scroll to today in list view
+  useEffect(() => {
+    if (view !== 'list') return
+    const todayStr = new Date().toLocaleDateString('en-CA')
+    // Find closest day >= today
+    const target = sortedDays.find(d => d >= todayStr)
+    if (target && dayRefs.current[target]) {
+      setTimeout(() => {
+        dayRefs.current[target]?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      }, 100)
+    }
+  }, [view, sortedDays])
   const [search, setSearch] = useState('')
   const [selectedVenues, setSelectedVenues] = useState<number[]>([])
   const [selectedDay, setSelectedDay] = useState<string | null>(null)
