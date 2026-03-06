@@ -43,15 +43,25 @@ function getFirstDayOfMonth(year: number, month: number) {
 const MONTH_NAMES = ['January','February','March','April','May','June',
                      'July','August','September','October','November','December']
 
+function isNew(event: { first_seen_at?: string | null, last_updated_at?: string | null }) {
+  const cutoff = new Date()
+  cutoff.setDate(cutoff.getDate() - 3)
+  const ts = event.last_updated_at || event.first_seen_at
+  return ts ? new Date(ts) > cutoff : false
+}
+
 export default function CalendarApp({ events, venues }: { events: Event[], venues: Venue[] }) {
   const [view, setView] = useState<View>('grid')
+
+  useEffect(() => {
+    if (window.innerWidth <= 768) setView('list')
+  }, [])
   const [search, setSearch] = useState('')
   const [selectedVenues, setSelectedVenues] = useState<number[]>([])
-  const [calYear, setCalYear] = useState(new Date().getFullYear())
-  const [calMonth, setCalMonth] = useState(new Date().getMonth())
   const [selectedDay, setSelectedDay] = useState<string | null>(null)
   const [venueOpen, setVenueOpen] = useState(false)
   const [hoveredEvent, setHoveredEvent] = useState<typeof events[0] | null>(null)
+  const [searchOpen, setSearchOpen] = useState(false)
   const [tooltipPos, setTooltipPos] = useState({ x: 0, y: 0 })
   const [selectedRegions, setSelectedRegions] = useState<string[]>([])
   const [showBackToTop, setShowBackToTop] = useState(false)
@@ -92,17 +102,17 @@ export default function CalendarApp({ events, venues }: { events: Event[], venue
   }, [])
 
   const monthEvents = useMemo(() => {
-    const map: Record<number, Event[]> = {}
+    const map: Record<string, Record<number, Event[]>> = {}
     filtered.forEach(e => {
       const d = parseLocalDate(e.event_date)
-      if (d.getFullYear() === calYear && d.getMonth() === calMonth) {
-        const day = d.getDate()
-        if (!map[day]) map[day] = []
-        map[day].push(e)
-      }
+      const key = `${d.getFullYear()}-${String(d.getMonth()).padStart(2, '0')}`
+      if (!map[key]) map[key] = {}
+      const day = d.getDate()
+      if (!map[key][day]) map[key][day] = []
+      map[key][day].push(e)
     })
     return map
-  }, [filtered, calYear, calMonth])
+  }, [filtered])
 
   const dayEvents = useMemo(() => {
     if (!selectedDay) return []
@@ -113,20 +123,28 @@ export default function CalendarApp({ events, venues }: { events: Event[], venue
     setSelectedVenues(v => v.includes(id) ? v.filter(x => x !== id) : [...v, id])
   }
 
-  const prevMonth = () => {
-    if (calMonth === 0) { setCalYear(y => y - 1); setCalMonth(11) }
-    else setCalMonth(m => m - 1)
-    setSelectedDay(null)
-  }
+  const monthRefs = useRef<Record<string, HTMLDivElement | null>>({})
 
-  const nextMonth = () => {
-    if (calMonth === 11) { setCalYear(y => y + 1); setCalMonth(0) }
-    else setCalMonth(m => m + 1)
-    setSelectedDay(null)
-  }
+  // Compute which months have events
+  const activeMonths = useMemo(() => {
+    const seen = new Set<string>()
+    filtered.forEach(e => {
+      const d = parseLocalDate(e.event_date)
+      seen.add(`${d.getFullYear()}-${String(d.getMonth()).padStart(2, '0')}`)
+    })
+    return Array.from(seen).sort().map(key => {
+      const parts = key.split('-'); const y = Number(parts[0]); const m = Number(parts[1])
+      return { year: y, month: m, key }
+    })
+  }, [filtered])
 
-  const daysInMonth = getDaysInMonth(calYear, calMonth)
-  const firstDay = getFirstDayOfMonth(calYear, calMonth)
+  const jumpToMonth = (delta: number, currentKey: string) => {
+    const idx = activeMonths.findIndex(m => m.key === currentKey)
+    const target = activeMonths[idx + delta]
+    if (target && monthRefs.current[target.key]) {
+      monthRefs.current[target.key]?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }
+  }
 
   return (
     <div className={styles.app}>
@@ -139,7 +157,8 @@ export default function CalendarApp({ events, venues }: { events: Event[], venue
           </div>
           <div className={styles.headerMeta}>
             <span className={styles.eventCount}>{filtered.length} upcoming shows</span>
-            <div className={styles.searchWrap}>
+            {/* Desktop search — always visible */}
+            <div className={`${styles.searchWrap} ${styles.searchDesktop}`}>
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
               </svg>
@@ -154,17 +173,47 @@ export default function CalendarApp({ events, venues }: { events: Event[], venue
                 <button className={styles.searchClear} onClick={() => setSearch('')}>×</button>
               )}
             </div>
-            <div className={styles.viewToggle}>
-              <button
-                className={`${styles.viewBtn} ${view === 'list' ? styles.viewBtnActive : ''}`}
-                onClick={() => setView('list')}
-              >LIST</button>
-              <button
-                className={`${styles.viewBtn} ${view === 'grid' ? styles.viewBtnActive : ''}`}
-                onClick={() => setView('grid')}
-              >CAL</button>
+            {/* Mobile controls — search icon + toggle inline with title */}
+            <div className={styles.mobileControls}>
+              <button className={styles.mobileSearchBtn} onClick={() => setSearchOpen(o => !o)}>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+                </svg>
+                {search && <span className={styles.mobileSearchDot} />}
+              </button>
+              <div className={styles.viewToggle}>
+                <button className={`${styles.viewBtn} ${view === 'list' ? styles.viewBtnActive : ''}`} onClick={() => setView('list')}>LIST</button>
+                <button className={`${styles.viewBtn} ${view === 'grid' ? styles.viewBtnActive : ''}`} onClick={() => setView('grid')}>CAL</button>
+              </div>
+            </div>
+            {/* Desktop view toggle */}
+            <div className={`${styles.viewToggle} ${styles.desktopToggle}`}>
+              <button className={`${styles.viewBtn} ${view === 'list' ? styles.viewBtnActive : ''}`} onClick={() => setView('list')}>LIST</button>
+              <button className={`${styles.viewBtn} ${view === 'grid' ? styles.viewBtnActive : ''}`} onClick={() => setView('grid')}>CAL</button>
             </div>
           </div>
+          {/* Mobile search flyout */}
+          {searchOpen && (
+            <div className={styles.mobileSearchFlyout}>
+              <div className={styles.searchWrap}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+                </svg>
+                <input
+                  className={styles.searchInput}
+                  type="text"
+                  placeholder="Artist name..."
+                  value={search}
+                  onChange={e => setSearch(e.target.value)}
+                  autoFocus
+                />
+                {search && (
+                  <button className={styles.searchClear} onClick={() => setSearch('')}>×</button>
+                )}
+                <button className={styles.searchClose} onClick={() => setSearchOpen(false)}>✕</button>
+              </div>
+            </div>
+          )}
         </div>
       </header>
 
@@ -255,90 +304,87 @@ export default function CalendarApp({ events, venues }: { events: Event[], venue
             </div>
           ) : (
             <div className={styles.calView}>
-              <div className={styles.calHeader}>
-                <button className={styles.calNav} onClick={prevMonth}>←</button>
-                <div className={styles.calHeaderCenter}>
-                  <div className={styles.calTitleSelectors}>
-                    <select
-                      className={styles.calSelect}
-                      value={calMonth}
-                      onChange={e => setCalMonth(Number(e.target.value))}
-                    >
-                      {MONTH_NAMES.map((m, i) => (
-                        <option key={i} value={i}>{m}</option>
-                      ))}
-                    </select>
-                    <select
-                      className={styles.calSelect}
-                      value={calYear}
-                      onChange={e => setCalYear(Number(e.target.value))}
-                    >
-                      {[new Date().getFullYear() - 1, new Date().getFullYear(), new Date().getFullYear() + 1].map(y => (
-                        <option key={y} value={y}>{y}</option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
-                <button className={styles.calNav} onClick={nextMonth}>→</button>
-              </div>
-
-              <div className={styles.calGrid}>
-                {['SUN','MON','TUE','WED','THU','FRI','SAT'].map(d => (
-                  <div key={d} className={styles.calDayLabel}>{d}</div>
-                ))}
-                {Array.from({ length: firstDay }).map((_, i) => (
-                  <div key={`empty-${i}`} className={styles.calCell} />
-                ))}
-                {Array.from({ length: daysInMonth }).map((_, i) => {
-                  const day = i + 1
-                  const dayStr = `${calYear}-${String(calMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`
-                  const evts = monthEvents[day] || []
+              {activeMonths.length === 0 ? (
+                <div className={styles.empty}>No shows found</div>
+              ) : (
+                activeMonths.map(({ year, month, key }, idx) => {
+                  const daysInMonth = getDaysInMonth(year, month)
+                  const firstDay = getFirstDayOfMonth(year, month)
+                  const eventsForMonth = monthEvents[`${year}-${String(month).padStart(2, '0')}`] || {}
                   const todayStr = new Date().toLocaleDateString('en-CA')
-                  const isToday = dayStr === todayStr
-                  const isSelected = selectedDay === dayStr
 
                   return (
-                    <div
-                      key={day}
-                      className={`${styles.calCell} ${styles.calCellDay} ${evts.length ? styles.calCellHasEvents : ''} ${isToday ? styles.calCellToday : ''} ${isSelected ? styles.calCellSelected : ''}`}
-                      onClick={() => setSelectedDay(isSelected ? null : dayStr)}
-                    >
-                      <span className={styles.calDayNum}>{day}</span>
-                      {evts.length > 0 && (
-                        <div className={styles.calEventList}>
-                          {evts.map(e => (
+                    <div key={key} className={styles.calMonth} ref={el => { monthRefs.current[key] = el }}>
+                      <div className={styles.calHeader}>
+                        <button className={styles.calNav} onClick={() => jumpToMonth(-1, key)} disabled={idx === 0}>←</button>
+                        <div className={styles.calHeaderCenter}>
+                          <span className={styles.calTitle}>
+                            {MONTH_NAMES[month]} <span className={styles.calYear}>{year}</span>
+                          </span>
+                        </div>
+                        <button className={styles.calNav} onClick={() => jumpToMonth(1, key)} disabled={idx === activeMonths.length - 1}>→</button>
+                      </div>
+
+                      <div className={styles.calGrid}>
+                        {['SUN','MON','TUE','WED','THU','FRI','SAT'].map(d => (
+                          <div key={d} className={styles.calDayLabel}>{d}</div>
+                        ))}
+                        {Array.from({ length: firstDay }).map((_, i) => (
+                          <div key={`empty-${i}`} className={styles.calCell} />
+                        ))}
+                        {Array.from({ length: daysInMonth }).map((_, i) => {
+                          const day = i + 1
+                          const dayStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`
+                          const evts = eventsForMonth[day] || []
+                          const isToday = dayStr === todayStr
+                          const isSelected = selectedDay === dayStr
+
+                          return (
                             <div
-                              key={e.id}
-                              className={styles.calEventRow}
-                              onMouseEnter={ev => { setHoveredEvent(e); setTooltipPos({ x: ev.clientX, y: ev.clientY }) }}
-                              onMouseMove={ev => setTooltipPos({ x: ev.clientX, y: ev.clientY })}
-                              onMouseLeave={() => setHoveredEvent(null)}
+                              key={day}
+                              className={`${styles.calCell} ${styles.calCellDay} ${evts.length ? styles.calCellHasEvents : ''} ${isToday ? styles.calCellToday : ''} ${isSelected ? styles.calCellSelected : ''}`}
+                              onClick={() => setSelectedDay(isSelected ? null : dayStr)}
                             >
-                              <span
-                                className={styles.calEventName}
-                                style={{ background: e.venue?.color || '#666' }}
-                              >{e.artist}</span>
+                              <span className={styles.calDayNum}>{day}</span>
+                              {evts.length > 0 && (
+                                <div className={styles.calEventList}>
+                                  {evts.map(e => (
+                                    <div
+                                      key={e.id}
+                                      className={styles.calEventRow}
+                                      onMouseEnter={ev => { setHoveredEvent(e); setTooltipPos({ x: ev.clientX, y: ev.clientY }) }}
+                                      onMouseMove={ev => setTooltipPos({ x: ev.clientX, y: ev.clientY })}
+                                      onMouseLeave={() => setHoveredEvent(null)}
+                                    >
+                                      <span
+                                        className={styles.calEventName}
+                                        style={{ background: e.venue?.color || '#666' }}
+                                      >{e.artist}{isNew(e) && <span className={styles.newStar}>★</span>}</span>
+                                    </div>
+                                  ))}
+                                </div>
+                              )}
                             </div>
-                          ))}
+                          )
+                        })}
+                      </div>
+
+                      {selectedDay && selectedDay.startsWith(`${year}-${String(month + 1).padStart(2, '0')}`) && dayEvents.length > 0 && (
+                        <div className={styles.calDayPanel}>
+                          <div className={styles.calDayPanelHeader}>
+                            <span>{formatDayOfWeek(selectedDay + 'T00:00:00')} {formatDateShort(selectedDay + 'T00:00:00')}</span>
+                            <button className={styles.calDayClose} onClick={() => setSelectedDay(null)}>×</button>
+                          </div>
+                          <div className={styles.eventList}>
+                            {dayEvents.map(e => (
+                              <EventCard key={e.id} event={e} />
+                            ))}
+                          </div>
                         </div>
                       )}
                     </div>
                   )
-                })}
-              </div>
-
-              {selectedDay && dayEvents.length > 0 && (
-                <div className={styles.calDayPanel}>
-                  <div className={styles.calDayPanelHeader}>
-                    <span>{formatDayOfWeek(selectedDay + 'T00:00:00')} {formatDateShort(selectedDay + 'T00:00:00')}</span>
-                    <button className={styles.calDayClose} onClick={() => setSelectedDay(null)}>×</button>
-                  </div>
-                  <div className={styles.eventList}>
-                    {dayEvents.map(e => (
-                      <EventCard key={e.id} event={e} />
-                    ))}
-                  </div>
-                </div>
+                })
               )}
             </div>
           )}
@@ -400,7 +446,10 @@ function EventCard({ event: e }: { event: Event }) {
           />
           {e.venue?.short_name || e.venue?.name}
         </div>
-        <h3 className={styles.eventArtist}>{e.artist}</h3>
+        <h3 className={styles.eventArtist}>
+          {e.artist}
+          {isNew(e) && <span className={styles.newStar} title="Recently added or updated">★</span>}
+        </h3>
         {e.subtitle && <p className={styles.eventSubtitle}>{e.subtitle}</p>}
         <div className={styles.eventMeta}>
           {formatTime(e.show_time, e.event_date) && (

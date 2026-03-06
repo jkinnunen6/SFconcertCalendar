@@ -478,6 +478,10 @@
 /* ── Calendar view ─────────────────────────────────────── */
 .calView { display: flex; flex-direction: column; gap: 1.5rem; }
 
+.calMonth {
+  margin-bottom: 3rem;
+}
+
 .calHeader {
   display: flex;
   align-items: center;
@@ -693,23 +697,177 @@
 }
 
 /* ── Responsive ────────────────────────────────────────── */
+/* Mobile search flyout + controls */
+.mobileControls { display: none; }
+.mobileSearchFlyout { display: none; }
+.mobileSearchBtn { display: none; }
+.mobileSearchDot {
+  width: 6px;
+  height: 6px;
+  background: var(--accent);
+  border-radius: 50%;
+  position: absolute;
+  top: 2px;
+  right: 2px;
+}
+
 @media (max-width: 768px) {
+  /* Layout */
   .layout {
-    grid-template-columns: 1fr;
-    padding: 1rem;
-    gap: 1.5rem;
+    padding: 0.75rem;
+    gap: 1rem;
   }
 
-  .sidebar { position: static; }
+  /* Header */
+  .headerInner {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+  }
 
+  .wordmarkBay, .wordmarkArea, .wordmarkShows { font-size: 1.2rem; }
+
+  .headerMeta {
+    width: 100%;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .eventCount {
+    width: 100%;
+    order: 1;
+  }
+
+  .searchWrap {
+    flex: 1;
+    min-width: 0;
+    order: 2;
+  }
+
+  .viewToggle {
+    order: 3;
+    margin-left: auto;
+  }
+
+  /* Region tabs */
+  .regionTabs {
+    flex-wrap: wrap;
+    gap: 0.35rem;
+  }
+
+  .regionTab {
+    font-size: 0.65rem;
+    padding: 0.35rem 0.75rem;
+  }
+
+  /* Venue chips */
   .venueList {
     flex-direction: row;
     flex-wrap: wrap;
   }
 
-  .wordmarkBay, .wordmarkArea, .wordmarkShows { font-size: 1.5rem; }
+  /* Calendar */
+  .calMonth {
+    margin-bottom: 2rem;
+  }
 
-  .calCell { min-height: 56px; }
+  .calCell {
+    min-height: 48px;
+    padding: 0.25rem;
+  }
+
+  .calEventName {
+    font-size: 0.55rem;
+    padding: 0.05rem 0.15rem;
+  }
+
+  .calDayNum {
+    font-size: 0.65rem;
+  }
+
+  .calSelect {
+    font-size: 1.2rem;
+  }
+
+  .calTitle {
+    font-size: 1.2rem;
+  }
+
+  /* List view cards */
+  .eventCard {
+    padding: 0.75rem 0;
+  }
+
+  .eventImg {
+    width: 64px;
+    height: 64px;
+    flex-shrink: 0;
+  }
+
+  /* Tooltip — disable on mobile */
+  .eventTooltip {
+    display: none;
+  }
+
+  /* Search — hide desktop, show mobile */
+  .searchDesktop { display: none; }
+  .desktopToggle { display: none; }
+  .mobileControls {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-left: auto;
+  }
+  .mobileSearchBtn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    color: var(--text-muted);
+    width: 32px;
+    height: 32px;
+    cursor: pointer;
+  }
+  .mobileSearchFlyout {
+    display: block;
+    padding: 0.5rem 1rem 0.75rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .searchClose {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-size: 1rem;
+    cursor: pointer;
+    padding: 0 0.25rem;
+    flex-shrink: 0;
+  }
+
+  /* Header layout on mobile */
+  .headerInner {
+    flex-wrap: nowrap;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .headerMeta {
+    flex-direction: row;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .eventCount {
+    display: none;
+  }
+
+  /* Back to top */
+  .backToTop {
+    bottom: 1rem;
+    right: 1rem;
+  }
 }
 
 /* ── Event Tooltip ─────────────────────────────────────── */
@@ -770,4 +928,12 @@
   color: #e74c3c;
   text-transform: uppercase;
   letter-spacing: 0.08em;
+}
+
+/* ── New/Updated star ──────────────────────────────────── */
+.newStar {
+  color: var(--accent);
+  font-size: 0.7em;
+  margin-left: 0.3rem;
+  vertical-align: super;
 }
