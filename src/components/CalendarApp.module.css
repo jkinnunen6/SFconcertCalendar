@@ -879,6 +879,10 @@
 }
 
 @media (max-width: 768px) {
+  .calDayPanel {
+    display: none;
+  }
+
   .mobileDayPanel {
     display: block;
     background: #161616;
