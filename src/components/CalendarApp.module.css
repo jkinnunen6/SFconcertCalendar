@@ -96,11 +96,91 @@
   max-width: 1400px;
   margin: 0 auto;
   width: 100%;
-  padding: 2rem;
-  display: grid;
-  grid-template-columns: 220px 1fr;
-  gap: 2.5rem;
-  align-items: start;
+  padding: 0 2rem 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* ── Region tabs ───────────────────────────────────────── */
+.regionTabs {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.regionTab {
+  padding: 0.4rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  background: none;
+  color: var(--text-muted);
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.regionTab:hover { border-color: #444; color: var(--text); }
+.regionTabActive {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #000;
+  font-weight: 600;
+}
+
+/* ── Filter bar / Accordion ────────────────────────────── */
+.filterBar {
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.accordionToggle {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 0.65rem;
+  font-weight: 500;
+  letter-spacing: 0.15em;
+  cursor: pointer;
+  transition: color 0.15s;
+  text-align: left;
+}
+.accordionToggle:hover { color: var(--text); }
+
+.filterCount {
+  font-size: 0.6rem;
+  background: var(--accent);
+  color: #000;
+  padding: 0.1rem 0.4rem;
+  border-radius: 10px;
+  font-weight: 600;
+}
+
+.accordionChevron {
+  margin-left: auto;
+  font-size: 0.5rem;
+  opacity: 0.5;
+}
+
+.accordionContent {
+  border-top: 1px solid var(--border);
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.venueGrid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
 }
 
 /* ── Sidebar ───────────────────────────────────────────── */
@@ -137,6 +217,11 @@
 .clearAll:hover { color: var(--text); }
 
 /* Search */
+.headerMeta .searchWrap {
+  flex: 1;
+  max-width: 300px;
+}
+
 .searchWrap {
   display: flex;
   align-items: center;
@@ -190,7 +275,7 @@
   background: none;
 }
 .venueChip:hover { border-color: #444; color: var(--text); }
-.venueChipActive { background: var(--bg2); }
+.venueChipActive { color: #ffffff !important; }
 
 .venueDot {
   width: 7px;
@@ -212,7 +297,7 @@
 /* ── List view ─────────────────────────────────────────── */
 .listView { display: flex; flex-direction: column; gap: 0; }
 
-.dayGroup { border-bottom: 1px solid var(--border); }
+.dayGroup { border-bottom: 1px solid var(--border); scroll-margin-top: 70px; }
 
 .dayHeader {
   display: flex;
@@ -240,6 +325,41 @@
   letter-spacing: 0.05em;
   line-height: 1;
 }
+
+.dayJump {
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  color: var(--text-muted);
+  font-size: 0.7rem;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.15s;
+  flex-shrink: 0;
+}
+.dayJump:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
+.dayJump:disabled { opacity: 0.2; cursor: default; }
+
+.backToTop {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  color: var(--text-muted);
+  font-size: 0.65rem;
+  letter-spacing: 0.1em;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  z-index: 100;
+  transition: all 0.15s;
+}
+.backToTop:hover { border-color: var(--accent); color: var(--accent); }
 
 .dayCount {
   font-size: 0.7rem;
@@ -338,8 +458,116 @@
   text-transform: uppercase;
 }
 
+.eventBtns {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.calDropWrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.calDropOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+}
+
+.calDrop {
+  position: absolute;
+  bottom: calc(100% + 4px);
+  right: 0;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  overflow: hidden;
+  z-index: 51;
+  min-width: 150px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+}
+
+.calDropItem {
+  display: block;
+  width: 100%;
+  padding: 0.6rem 0.9rem;
+  font-size: 0.75rem;
+  font-family: var(--font-body);
+  color: var(--text);
+  background: none;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background 0.1s;
+}
+
+.calDropItem:hover {
+  background: var(--bg3);
+  color: var(--accent);
+}
+
+.calBtn {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  padding: 0.4rem 0.9rem;
+  border: 1px solid var(--accent);
+  color: var(--accent);
+  font-size: 0.65rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  border-radius: 3px;
+  background: none;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s;
+  font-family: var(--font-body);
+  line-height: 1;
+}
+
+.calBtn:hover {
+  background: var(--accent);
+  color: #000;
+}
+
+.inlinePanelBtns {
+  display: flex;
+  gap: 0.35rem;
+  align-items: center;
+}
+
+.mobileDayCalBtn {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.4rem 0.9rem;
+  font-size: 0.65rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  border: 1px solid var(--accent);
+  border-radius: 3px;
+  color: var(--accent);
+  background: none;
+  cursor: pointer;
+  white-space: nowrap;
+  font-family: var(--font-body);
+  line-height: 1;
+  transition: all 0.15s;
+}
+
+.mobileDayCalBtn:hover {
+  background: var(--accent);
+  color: #000;
+}
+
 .ticketBtn {
   flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
   padding: 0.4rem 0.9rem;
   border: 1px solid var(--accent);
   color: var(--accent);
@@ -349,6 +577,7 @@
   border-radius: 3px;
   transition: all 0.15s;
   font-family: var(--font-body);
+  line-height: 1;
 }
 .ticketBtn:hover {
   background: var(--accent);
@@ -358,10 +587,21 @@
 /* ── Calendar view ─────────────────────────────────────── */
 .calView { display: flex; flex-direction: column; gap: 1.5rem; }
 
+.calMonth {
+  margin-bottom: 3rem;
+  scroll-margin-top: 70px;
+}
+
 .calHeader {
   display: flex;
   align-items: center;
-  gap: 1.5rem;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.calHeaderCenter {
+  flex: 1;
+  text-align: center;
 }
 
 .calNav {
@@ -388,13 +628,121 @@
 
 .calYear { color: var(--text-muted); }
 
+.calTitleSelectors {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  justify-content: center;
+}
+
+.calSelect {
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--border);
+  color: var(--text);
+  font-family: var(--font-display);
+  font-size: 2rem;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  padding: 0 0.25rem;
+  appearance: none;
+  -webkit-appearance: none;
+  text-align: center;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.calSelect:hover, .calSelect:focus {
+  border-bottom-color: var(--accent);
+}
+
+.calSelect option {
+  background: var(--bg);
+  color: var(--text);
+  font-size: 1rem;
+}
+
+.calRow {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 1px;
+  background: var(--border);
+}
+
+.calInlinePanel {
+  background: #1c1c1c;
+  border-top: 2px solid var(--border);
+  border-bottom: 2px solid var(--border);
+  animation: slideOpen 0.2s ease-out;
+  overflow: hidden;
+}
+
+@keyframes slideOpen {
+  from { max-height: 0; opacity: 0; }
+  to { max-height: 1000px; opacity: 1; }
+}
+
+.calInlinePanelHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.6rem 1rem;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.65rem;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+.calInlinePanelList {
+  display: flex;
+  flex-direction: column;
+  padding: 0.5rem 0;
+}
+
+.calInlineEvent {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem 1rem;
+  border-bottom: 1px solid #242424;
+}
+.calInlineEvent:last-child { border-bottom: none; }
+
+.calInlineEventBar {
+  width: 3px;
+  height: 36px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.calInlineEventInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.calInlineEventArtist {
+  font-size: 0.9rem;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.calInlineEventMeta {
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  margin-top: 0.15rem;
+  letter-spacing: 0.05em;
+}
+
 .calGrid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   gap: 1px;
   background: var(--border);
   border: 1px solid var(--border);
-  border-radius: 8px;
+  border-radius: 8px 8px 0 0;
   overflow: hidden;
 }
 
@@ -412,6 +760,8 @@
   background: var(--bg);
   min-height: 80px;
   padding: 0.5rem;
+  min-width: 0;
+  overflow: hidden;
 }
 
 .calCellDay {
@@ -452,6 +802,35 @@
   flex-wrap: wrap;
   gap: 3px;
   align-items: center;
+}
+
+.calEventList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  margin-top: 0.3rem;
+  width: 100%;
+}
+
+.calEventRow {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+}
+
+.calEventName {
+  font-size: 0.9rem;
+  color: #ffffff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.2;
+  min-width: 0;
+  flex: 1;
+  padding: 0.15rem 0.4rem;
+  border-radius: 2px;
+  background: #1a1a1a !important;
+  border-left: 3px solid;
 }
 
 .calEventDot {
@@ -504,21 +883,349 @@
 }
 
 /* ── Responsive ────────────────────────────────────────── */
+/* Mobile search flyout + controls */
+.mobileControls { display: none; }
+.mobileSearchFlyout { display: none; }
+.mobileSearchBtn { display: none; }
+.mobileSearchDot {
+  width: 6px;
+  height: 6px;
+  background: var(--accent);
+  border-radius: 50%;
+  position: absolute;
+  top: 2px;
+  right: 2px;
+}
+
 @media (max-width: 768px) {
+  /* Layout */
   .layout {
-    grid-template-columns: 1fr;
-    padding: 1rem;
-    gap: 1.5rem;
+    padding: 0.75rem;
+    gap: 1rem;
   }
 
-  .sidebar { position: static; }
+  /* Header */
+  .headerInner {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+  }
 
+  .wordmarkBay, .wordmarkArea, .wordmarkShows { font-size: 1.2rem; }
+
+  .headerMeta {
+    width: 100%;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .eventCount {
+    width: 100%;
+    order: 1;
+  }
+
+  .searchWrap {
+    flex: 1;
+    min-width: 0;
+    order: 2;
+  }
+
+  .viewToggle {
+    order: 3;
+    margin-left: auto;
+  }
+
+  /* Region tabs */
+  .regionTabs {
+    flex-wrap: wrap;
+    gap: 0.35rem;
+  }
+
+  .regionTab {
+    font-size: 0.65rem;
+    padding: 0.35rem 0.75rem;
+  }
+
+  /* Venue chips */
   .venueList {
     flex-direction: row;
     flex-wrap: wrap;
   }
 
-  .wordmarkBay, .wordmarkArea, .wordmarkShows { font-size: 1.5rem; }
+  /* Calendar */
+  .calMonth {
+    margin-bottom: 2rem;
+  }
 
-  .calCell { min-height: 56px; }
+  .calCell {
+    min-height: 48px;
+    padding: 0.25rem;
+  }
+
+  .calEventName {
+    font-size: 0.55rem;
+    padding: 0.05rem 0.15rem;
+  }
+
+  .calDayNum {
+    font-size: 0.65rem;
+  }
+
+  .calSelect {
+    font-size: 1.2rem;
+  }
+
+  .calTitle {
+    font-size: 1.2rem;
+  }
+
+  /* List view cards */
+  .eventCard {
+    padding: 0.75rem 0;
+  }
+
+  .eventImg {
+    width: 64px;
+    height: 64px;
+    flex-shrink: 0;
+  }
+
+  /* Tooltip — disable on mobile */
+  .eventTooltip {
+    display: none;
+  }
+
+  /* Search — hide desktop, show mobile */
+  .searchDesktop { display: none; }
+  .desktopToggle { display: none; }
+  .mobileControls .viewBtnActive {
+    background: var(--accent) !important;
+    color: #000 !important;
+  }
+  .mobileControls {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-left: auto;
+  }
+  .mobileSearchBtn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    color: var(--text-muted);
+    width: 32px;
+    height: 32px;
+    cursor: pointer;
+  }
+  .mobileSearchFlyout {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    padding: 0.75rem 1rem;
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
+    z-index: 200;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+  }
+  .searchClose {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-size: 1rem;
+    cursor: pointer;
+    padding: 0 0.25rem;
+    flex-shrink: 0;
+  }
+
+  /* Header layout on mobile */
+  .headerInner {
+    flex-wrap: nowrap;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .headerMeta {
+    flex-direction: row;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .eventCount {
+    display: none;
+  }
+
+  /* Back to top */
+  .backToTop {
+    bottom: 1rem;
+    right: 1rem;
+  }
+}
+
+/* ── Mobile Day Panel ──────────────────────────────────── */
+.mobileDayPanel {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .calDayPanel {
+    display: none;
+  }
+
+  .mobileDayPanel {
+    display: block;
+    background: #161616;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    margin-top: 0.75rem;
+    overflow: hidden;
+  }
+}
+
+.mobileDayPanelHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.6rem 0.75rem;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.65rem;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+.mobileDayList {
+  display: flex;
+  flex-direction: column;
+}
+
+.mobileDayEvent {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.6rem 0.75rem;
+  border-bottom: 1px solid #1e1e1e;
+}
+.mobileDayEvent:last-child { border-bottom: none; }
+
+.mobileDayEventBar {
+  width: 3px;
+  height: 36px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.mobileDayEventInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.mobileDayEventArtist {
+  font-size: 0.85rem;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mobileDayEventMeta {
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  margin-top: 0.1rem;
+  letter-spacing: 0.05em;
+}
+
+.mobileDayTicketBtn {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.65rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  color: var(--accent);
+  border: 1px solid var(--accent);
+  border-radius: 3px;
+  padding: 0.4rem 0.9rem;
+  text-decoration: none;
+  flex-shrink: 0;
+  line-height: 1;
+  transition: all 0.15s;
+  font-family: var(--font-body);
+}
+
+.mobileDayTicketBtn:hover {
+  background: var(--accent);
+  color: #000;
+}
+
+/* ── Event Tooltip ─────────────────────────────────────── */
+.eventTooltip {
+  position: fixed;
+  z-index: 1000;
+  width: 240px;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+  pointer-events: none;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+}
+
+.tooltipImage {
+  width: 100%;
+  height: 140px;
+  object-fit: cover;
+  display: block;
+}
+
+.tooltipBody {
+  padding: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.tooltipVenue {
+  font-size: 0.6rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.tooltipArtist {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  color: var(--text);
+  line-height: 1.2;
+}
+
+.tooltipSubtitle {
+  font-size: 0.75rem;
+  color: var(--text-dim);
+}
+
+.tooltipTime {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-top: 0.25rem;
+}
+
+.tooltipStatus {
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: #e74c3c;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+/* ── New/Updated star ──────────────────────────────────── */
+.newStar {
+  color: #ffffff;
+  font-size: 0.55em;
+  margin-right: 0.3rem;
+  vertical-align: super;
 }

@@ -2,7 +2,10 @@ import { supabase, type Event, type Venue } from '@/lib/supabase'
 import CalendarApp from '@/components/CalendarApp'
 
 async function getEvents(): Promise<Event[]> {
-  const today = new Date().toISOString().split('T')[0]
+  // Keep events for 48 hours after they occur
+  const cutoff = new Date()
+  cutoff.setDate(cutoff.getDate() - 2)
+  const today = cutoff.toLocaleDateString('en-CA')
   const { data, error } = await supabase
     .from('events')
     .select(`*, venue:venues(*)`)

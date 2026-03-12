@@ -16,6 +16,8 @@ export type Event = {
   image_url: string | null
   show_time: string | null
   ticket_status: string | null
+  first_seen_at: string | null
+  last_updated_at: string | null
   venue: Venue
 }
 
@@ -27,4 +29,5 @@ export type Venue = {
   address: string
   city: string
   url: string
+  region: string | null
 }
