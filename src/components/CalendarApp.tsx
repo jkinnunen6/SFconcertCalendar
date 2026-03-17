@@ -413,9 +413,12 @@ export default function CalendarApp({ events, venues }: { events: Event[], venue
                                           <div className={styles.calInlineEventArtist}>{isNew(e) && <span className={styles.newStar}>◆</span>}{e.artist}</div>
                                           <div className={styles.calInlineEventMeta}>{e.venue?.short_name}{e.show_time ? ` · ${e.show_time}` : ''}</div>
                                         </div>
-                                        <div className={styles.inlinePanelBtns}>
+                                        <div className={styles.eventBtns}>
                                           {e.ticket_url && (
-                                            <a href={e.ticket_url} target="_blank" rel="noopener noreferrer" className={styles.mobileDayTicketBtn}>TIX</a>
+                                            <a href={e.ticket_url} target="_blank" rel="noopener noreferrer" className={styles.ticketBtn}>
+                                              <span className={styles.btnDesktop}>TICKETS</span>
+                                              <span className={styles.btnMobile}>TIX</span>
+                                            </a>
                                           )}
                                           <AddToCalBtn event={e} />
                                         </div>
@@ -530,7 +533,10 @@ function AddToCalBtn({ event }: { event: Event }) {
   const [open, setOpen] = useState(false)
   return (
     <div className={styles.calDropWrap}>
-      <button className={styles.calBtn} onClick={() => setOpen(o => !o)}>ADD TO CAL</button>
+      <button className={styles.calBtn} onClick={() => setOpen(o => !o)}>
+        <span className={styles.calBtnDesktop}>ADD TO CAL</span>
+        <span className={styles.calBtnMobile}>+ CAL</span>
+      </button>
       {open && (
         <>
           <div className={styles.calDropOverlay} onClick={() => setOpen(false)} />
@@ -581,7 +587,10 @@ function EventCard({ event: e }: { event: Event }) {
       </div>
       <div className={styles.eventBtns}>
         {e.ticket_url && (
-          <a href={e.ticket_url} target="_blank" rel="noopener noreferrer" className={styles.ticketBtn}>TICKETS</a>
+          <a href={e.ticket_url} target="_blank" rel="noopener noreferrer" className={styles.ticketBtn}>
+            <span className={styles.btnDesktop}>TICKETS</span>
+            <span className={styles.btnMobile}>TIX</span>
+          </a>
         )}
         <AddToCalBtn event={e} />
       </div>

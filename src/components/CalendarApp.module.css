@@ -465,10 +465,56 @@
   flex-shrink: 0;
 }
 
+@media (max-width: 600px) {
+  .eventBtns {
+    flex-direction: column;
+    gap: 0.25rem;
+    align-items: stretch;
+    width: 80px;
+  }
+
+  .eventBtns .ticketBtn,
+  .eventBtns .calDropWrap,
+  .eventBtns .calBtn {
+    width: 100%;
+    justify-content: center;
+    text-align: center;
+  }
+}
+
+@media (max-width: 600px) {
+  .eventBtns {
+    flex-direction: column;
+    gap: 0.25rem;
+    align-items: stretch;
+    width: 72px;
+  }
+
+  .eventBtns .ticketBtn,
+  .eventBtns .calDropWrap,
+  .eventBtns .calBtn {
+    width: 100%;
+    justify-content: center;
+    text-align: center;
+  }
+}
+
+.calBtnDesktop { display: inline; }
+.calBtnMobile { display: none; }
+.btnDesktop { display: inline; }
+.btnMobile { display: none; }
+
+@media (max-width: 600px) {
+  .calBtnDesktop { display: none; }
+  .calBtnMobile { display: inline; }
+  .btnDesktop { display: none; }
+  .btnMobile { display: inline; }
+}
+
 .calDropWrap {
   position: relative;
-  display: inline-flex;
-  align-items: center;
+  display: flex;
+  align-items: stretch;
 }
 
 .calDropOverlay {
@@ -1143,6 +1189,7 @@
 .mobileDayTicketBtn {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   font-size: 0.65rem;
   font-weight: 500;
   letter-spacing: 0.12em;
