@@ -11,6 +11,7 @@ export type Event = {
   external_id: string
   artist: string
   subtitle: string | null
+  support: string | null
   event_date: string
   ticket_url: string | null
   image_url: string | null

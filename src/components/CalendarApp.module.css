@@ -235,6 +235,22 @@
 }
 .searchWrap:focus-within { border-color: var(--accent); color: var(--accent); }
 
+.searchClear {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 1rem;
+  padding: 0 0.25rem;
+  line-height: 1;
+  flex-shrink: 0;
+  transition: color 0.15s;
+}
+
+.searchClear:hover {
+  color: var(--text);
+}
+
 .searchInput {
   background: none;
   border: none;
@@ -431,7 +447,7 @@
 
 .eventSubtitle {
   font-size: 0.75rem;
-  color: var(--text-muted);
+  color: var(--text);
   margin-top: 0.15rem;
   white-space: nowrap;
   overflow: hidden;
@@ -773,6 +789,12 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.calInlineEventSupport {
+  font-size: 0.72rem;
+  color: var(--text);
+  margin-bottom: 0.1rem;
 }
 
 .calInlineEventMeta {
@@ -1252,7 +1274,7 @@
 
 .tooltipSubtitle {
   font-size: 0.75rem;
-  color: var(--text-dim);
+  color: var(--text);
 }
 
 .tooltipTime {

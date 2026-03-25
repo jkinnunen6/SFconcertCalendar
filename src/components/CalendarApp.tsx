@@ -411,6 +411,7 @@ export default function CalendarApp({ events, venues }: { events: Event[], venue
                                         <div className={styles.calInlineEventBar} style={{ background: e.venue?.color || '#666' }} />
                                         <div className={styles.calInlineEventInfo}>
                                           <div className={styles.calInlineEventArtist}>{isNew(e) && <span className={styles.newStar}>◆</span>}{e.artist}</div>
+                                          {e.support && <div className={styles.calInlineEventSupport}>w/ {e.support}</div>}
                                           <div className={styles.calInlineEventMeta}>{e.venue?.short_name}{e.show_time ? ` · ${e.show_time}` : ''}</div>
                                         </div>
                                         <div className={styles.eventBtns}>
@@ -469,7 +470,7 @@ export default function CalendarApp({ events, venues }: { events: Event[], venue
               {hoveredEvent.venue?.short_name}
             </div>
             <div className={styles.tooltipArtist}>{hoveredEvent.artist}</div>
-            {hoveredEvent.subtitle && <div className={styles.tooltipSubtitle}>{hoveredEvent.subtitle}</div>}
+            {hoveredEvent.support && <div className={styles.tooltipSubtitle}>w/ {hoveredEvent.support}</div>}
             {hoveredEvent.show_time && <div className={styles.tooltipTime}>{hoveredEvent.show_time}</div>}
             {hoveredEvent.ticket_status && hoveredEvent.ticket_status !== 'Available' && (
               <div className={styles.tooltipStatus}>{hoveredEvent.ticket_status}</div>
@@ -575,7 +576,7 @@ function EventCard({ event: e }: { event: Event }) {
           {isNew(e) && <span className={styles.newStar} title="Recently added or updated">◆</span>}
           {e.artist}
         </h3>
-        {e.subtitle && <p className={styles.eventSubtitle}>{e.subtitle}</p>}
+        {e.support && <p className={styles.eventSubtitle}>w/ {e.support}</p>}
         <div className={styles.eventMeta}>
           {formatTime(e.show_time, e.event_date) && (
             <span className={styles.eventTime}>{formatTime(e.show_time, e.event_date)}</span>
