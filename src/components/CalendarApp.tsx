@@ -46,7 +46,7 @@ const MONTH_NAMES = ['January','February','March','April','May','June',
 function isNew(event: { first_seen_at?: string | null, last_updated_at?: string | null }) {
   const cutoff = new Date()
   cutoff.setDate(cutoff.getDate() - 1)
-  const ts = event.last_updated_at || event.first_seen_at
+  const ts = event.first_seen_at
   return ts ? new Date(ts) > cutoff : false
 }
 
@@ -573,7 +573,7 @@ function EventCard({ event: e }: { event: Event }) {
           {e.venue?.short_name || e.venue?.name}
         </div>
         <h3 className={styles.eventArtist}>
-          {isNew(e) && <span className={styles.newStar} title="Recently added or updated">◆</span>}
+          {isNew(e) && <span className={styles.newStar} title="Recently added">◆</span>}
           {e.artist}
         </h3>
         {e.support && <p className={styles.eventSubtitle}>w/ {e.support}</p>}
