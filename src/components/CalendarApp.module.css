@@ -209,7 +209,7 @@
 
 .clearAll {
   font-size: 0.65rem;
-  color: var(--text-muted);
+  color: var(--accent);
   letter-spacing: 0.05em;
   text-decoration: underline;
   transition: color 0.15s;
