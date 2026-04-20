@@ -557,8 +557,12 @@ function AddToCalBtn({ event }: { event: Event }) {
 }
 
 function EventCard({ event: e }: { event: Event }) {
+  const [expanded, setExpanded] = useState(false)
   return (
-    <div className={styles.eventCard}>
+    <div
+      className={`${styles.eventCard} ${expanded ? styles.eventCardExpanded : ''}`}
+      onClick={() => setExpanded(x => !x)}
+    >
       {e.image_url && (
         <div className={styles.eventImg}>
           <img src={e.image_url} alt={e.artist} loading="lazy" />
@@ -572,11 +576,11 @@ function EventCard({ event: e }: { event: Event }) {
           />
           {e.venue?.short_name || e.venue?.name}
         </div>
-        <h3 className={styles.eventArtist}>
+        <h3 className={`${styles.eventArtist} ${expanded ? styles.eventArtistExpanded : ''}`}>
           {isNew(e) && <span className={styles.newStar} title="Recently added">◆</span>}
           {e.artist}
         </h3>
-        {e.support && <p className={styles.eventSubtitle}>w/ {e.support}</p>}
+        {e.support && <p className={`${styles.eventSubtitle} ${expanded ? styles.eventSubtitleExpanded : ''}`}>w/ {e.support}</p>}
         <div className={styles.eventMeta}>
           {formatTime(e.show_time, e.event_date) && (
             <span className={styles.eventTime}>{formatTime(e.show_time, e.event_date)}</span>
@@ -586,7 +590,7 @@ function EventCard({ event: e }: { event: Event }) {
           )}
         </div>
       </div>
-      <div className={styles.eventBtns}>
+      <div className={styles.eventBtns} onClick={ev => ev.stopPropagation()}>
         {e.ticket_url && (
           <a href={e.ticket_url} target="_blank" rel="noopener noreferrer" className={styles.ticketBtn}>
             <span className={styles.btnDesktop}>TICKETS</span>

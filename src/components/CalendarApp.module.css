@@ -397,6 +397,8 @@
 }
 .eventCard:last-child { border-bottom: none; }
 .eventCard:hover { background: none; }
+.eventCard { cursor: pointer; }
+.eventCardExpanded { align-items: flex-start; }
 
 .eventImg {
   width: 56px;
@@ -444,6 +446,11 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
+.eventArtistExpanded {
+  white-space: normal;
+  overflow: visible;
+  text-overflow: unset;
+}
 
 .eventSubtitle {
   font-size: 0.75rem;
@@ -452,6 +459,11 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+.eventSubtitleExpanded {
+  white-space: normal;
+  overflow: visible;
+  text-overflow: unset;
 }
 
 .eventMeta {
