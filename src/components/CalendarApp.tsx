@@ -479,7 +479,7 @@ export default function CalendarApp({ events, venues }: { events: Event[], venue
                                             statuses[e.id] === 'watching' ? styles.calEventNameWatching : '',
                                             statuses[e.id] === 'going' ? styles.calEventNameGoing : '',
                                           ].join(' ')}
-                                          style={{ borderLeftColor: statuses[e.id] === 'watching' ? '#e8ff47' : statuses[e.id] === 'going' ? '#4dff91' : e.venue?.color || '#666' }}
+                                          style={{ borderLeftColor: e.venue?.color || '#666' }}
                                         >{isNew(e) && <span className={styles.newStar}>◆</span>}{e.artist}</span>
                                       </div>
                                     ))}
@@ -504,7 +504,7 @@ export default function CalendarApp({ events, venues }: { events: Event[], venue
                                   <div className={styles.calInlinePanelList}>
                                     {dayEvents.map(e => (
                                       <div key={e.id} className={`${styles.calInlineEvent} ${statuses[e.id] === 'watching' ? styles.calInlineWatching : ''} ${statuses[e.id] === 'going' ? styles.calInlineGoing : ''}`}>
-                                        <div className={styles.calInlineEventBar} style={{ background: statuses[e.id] === 'watching' ? '#e8ff47' : statuses[e.id] === 'going' ? '#4dff91' : e.venue?.color || '#666' }} />
+                                        <div className={styles.calInlineEventBar} style={{ background: e.venue?.color || '#666' }} />
                                         <div className={styles.calInlineEventInfo}>
                                           <div className={styles.calInlineEventArtist}>{isNew(e) && <span className={styles.newStar}>◆</span>}{e.artist}</div>
                                           {e.support && <div className={styles.calInlineEventSupport}>w/ {e.support}</div>}
@@ -681,6 +681,7 @@ function EventCard({ event: e, status, onToggleStatus }: {
         status === 'watching' ? styles.eventCardWatching : '',
         status === 'going' ? styles.eventCardGoing : '',
       ].join(' ')}
+      style={{ borderLeft: `3px solid ${e.venue?.color || '#333'}` }}
       onClick={() => setExpanded(x => !x)}
     >
       {e.image_url && (
