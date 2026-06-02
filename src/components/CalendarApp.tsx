@@ -67,6 +67,7 @@ export default function CalendarApp({ events, venues }: { events: Event[], venue
   const [selectedVenues, setSelectedVenues] = useState<number[]>([])
   const [selectedDay, setSelectedDay] = useState<string | null>(null)
   const [venueOpen, setVenueOpen] = useState(false)
+  const [regionOpen, setRegionOpen] = useState(false)
   const [hoveredEvent, setHoveredEvent] = useState<typeof events[0] | null>(null)
   const [searchOpen, setSearchOpen] = useState(false)
   const [mobilePanelDay, setMobilePanelDay] = useState<string | null>(null)
@@ -285,65 +286,91 @@ export default function CalendarApp({ events, venues }: { events: Event[], venue
       </header>
 
       <div className={styles.layout}>
-        {/* Single unified filter bar */}
-        <div className={styles.filterRow}>
-          {['San Francisco', 'East Bay', 'North Bay', 'South Bay'].map(r => (
+        {/* Sticky filter bar */}
+        <div className={styles.stickyFilters}>
+          <div className={styles.filterRow}>
+            {/* Region dropdown */}
             <button
-              key={r}
-              className={`${styles.regionTab} ${selectedRegions.includes(r) ? styles.regionTabActive : ''}`}
-              onClick={() => {
-                const regionVenueIds = venues.filter(v => v.region === r).map(v => v.id)
-                const isActive = selectedRegions.includes(r)
-                setSelectedRegions(prev => isActive ? prev.filter(x => x !== r) : [...prev, r])
-                if (isActive) {
-                  setSelectedVenues(prev => prev.filter(id => !regionVenueIds.includes(id)))
-                } else {
-                  setSelectedVenues(prev => Array.from(new Set([...prev, ...regionVenueIds])))
-                }
-              }}
+              className={`${styles.filterBtn} ${selectedRegions.length > 0 ? styles.filterBtnActive : ''} ${regionOpen ? styles.filterBtnOpen : ''}`}
+              onClick={() => { setRegionOpen(o => !o); setVenueOpen(false) }}
             >
-              {r}
+              REGION
+              {selectedRegions.length > 0 && <span className={styles.filterCount}>{selectedRegions.length}</span>}
+              <span className={styles.accordionChevron}>{regionOpen ? '▲' : '▼'}</span>
             </button>
-          ))}
 
-          <span className={styles.filterDivider} />
-
-          {user && (
+            {/* Venues dropdown */}
             <button
-              className={`${styles.myShowsBtn} ${myShowsOnly ? styles.myShowsBtnActive : ''}`}
-              onClick={() => setMyShowsOnly(o => !o)}
+              className={`${styles.filterBtn} ${selectedVenues.length > 0 ? styles.filterBtnActive : ''} ${venueOpen ? styles.filterBtnOpen : ''}`}
+              onClick={() => { setVenueOpen(o => !o); setRegionOpen(false) }}
             >
-              {myShowsOnly ? '● MY SHOWS' : '○ MY SHOWS'}
+              VENUES
+              {selectedVenues.length > 0 && <span className={styles.filterCount}>{selectedVenues.length}</span>}
+              <span className={styles.accordionChevron}>{venueOpen ? '▲' : '▼'}</span>
             </button>
+
+            {user && (
+              <button
+                className={`${styles.filterBtn} ${myShowsOnly ? styles.filterBtnMyShows : ''}`}
+                onClick={() => setMyShowsOnly(o => !o)}
+              >
+                {myShowsOnly ? '● MY SHOWS' : '○ MY SHOWS'}
+              </button>
+            )}
+
+            {(selectedRegions.length > 0 || selectedVenues.length > 0) && (
+              <button className={styles.clearAllInline} onClick={() => { setSelectedRegions([]); setSelectedVenues([]) }}>
+                clear all
+              </button>
+            )}
+          </div>
+
+          {/* Region dropdown panel */}
+          {regionOpen && (
+            <div className={styles.filterDropdown}>
+              <div className={styles.venueGrid}>
+                {['San Francisco', 'East Bay', 'North Bay', 'South Bay'].map(r => {
+                  const isActive = selectedRegions.includes(r)
+                  return (
+                    <button
+                      key={r}
+                      className={`${styles.venueChip} ${isActive ? styles.venueChipActiveRegion : ''}`}
+                      onClick={() => {
+                        const regionVenueIds = venues.filter(v => v.region === r).map(v => v.id)
+                        setSelectedRegions(prev => isActive ? prev.filter(x => x !== r) : [...prev, r])
+                        if (isActive) {
+                          setSelectedVenues(prev => prev.filter(id => !regionVenueIds.includes(id)))
+                        } else {
+                          setSelectedVenues(prev => Array.from(new Set([...prev, ...regionVenueIds])))
+                        }
+                      }}
+                    >
+                      {r}
+                    </button>
+                  )
+                })}
+              </div>
+            </div>
           )}
 
-          <button
-            className={`${styles.venuesBtn} ${venueOpen ? styles.venuesBtnOpen : ''}`}
-            onClick={() => setVenueOpen(v => !v)}
-          >
-            VENUES
-            {selectedVenues.length > 0 && <span className={styles.filterCount}>{selectedVenues.length}</span>}
-            <span className={styles.accordionChevron}>{venueOpen ? '▲' : '▼'}</span>
-          </button>
-        </div>
-
-        {/* Venue dropdown */}
-        {venueOpen && (
-          <div className={styles.venueDropdown}>
-            {selectedVenues.length > 0 && (
-              <button className={styles.clearAll} onClick={() => setSelectedVenues([])}>clear all</button>
-            )}
-            <div className={styles.venueGrid}>
-              {[...venues].sort((a, b) => a.name.replace(/^the /i, '').localeCompare(b.name.replace(/^the /i, ''))).map(v => (
-                <button key={v.id} onClick={() => toggleVenue(v.id)}
-                  className={`${styles.venueChip} ${selectedVenues.includes(v.id) ? styles.venueChipActive : ''}`}
-                  style={selectedVenues.includes(v.id) ? { background: v.color, borderColor: v.color, color: '#fff' } : { borderColor: v.color }}>
-                  {v.short_name}
-                </button>
-              ))}
+          {/* Venue dropdown panel */}
+          {venueOpen && (
+            <div className={styles.filterDropdown}>
+              {selectedVenues.length > 0 && (
+                <button className={styles.clearAll} onClick={() => setSelectedVenues([])}>clear all</button>
+              )}
+              <div className={styles.venueGrid}>
+                {[...venues].sort((a, b) => a.name.replace(/^the /i, '').localeCompare(b.name.replace(/^the /i, ''))).map(v => (
+                  <button key={v.id} onClick={() => toggleVenue(v.id)}
+                    className={`${styles.venueChip} ${selectedVenues.includes(v.id) ? styles.venueChipActive : ''}`}
+                    style={selectedVenues.includes(v.id) ? { background: v.color, borderColor: v.color, color: '#fff' } : { borderColor: v.color }}>
+                    {v.short_name}
+                  </button>
+                ))}
+              </div>
             </div>
-          </div>
-        )}
+          )}
+        </div>
 
         {/* Main content */}
         <main className={styles.main}>

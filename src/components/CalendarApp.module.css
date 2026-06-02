@@ -102,46 +102,27 @@
   gap: 1.5rem;
 }
 
-/* ── Unified filter row ─────────────────────────────────── */
+/* ── Sticky filter bar ──────────────────────────────────── */
+.stickyFilters {
+  position: sticky;
+  top: 64px;
+  z-index: 50;
+  background: var(--bg);
+  padding: 0.6rem 0;
+  border-bottom: 1px solid var(--border);
+  margin: 0 -2rem;
+  padding-left: 2rem;
+  padding-right: 2rem;
+}
+
 .filterRow {
   display: flex;
   align-items: center;
   gap: 0.5rem;
   flex-wrap: wrap;
-  padding-bottom: 0.75rem;
-  border-bottom: 1px solid var(--border);
 }
 
-.filterDivider {
-  width: 1px;
-  height: 16px;
-  background: var(--border);
-  margin: 0 0.25rem;
-  flex-shrink: 0;
-}
-
-.regionTab {
-  padding: 0.35rem 0.85rem;
-  border: 1px solid var(--border);
-  border-radius: 20px;
-  background: none;
-  color: var(--text-muted);
-  font-size: 0.65rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  cursor: pointer;
-  transition: all 0.15s;
-  white-space: nowrap;
-}
-.regionTab:hover { border-color: #444; color: var(--text); }
-.regionTabActive {
-  background: var(--accent);
-  border-color: var(--accent);
-  color: #000;
-  font-weight: 600;
-}
-
-.venuesBtn {
+.filterBtn {
   display: flex;
   align-items: center;
   gap: 0.4rem;
@@ -157,15 +138,37 @@
   transition: all 0.15s;
   white-space: nowrap;
 }
-.venuesBtn:hover { border-color: #444; color: var(--text); }
-.venuesBtnOpen { border-color: #444; color: var(--text); }
+.filterBtn:hover { border-color: #444; color: var(--text); }
+.filterBtnOpen { border-color: #555; color: var(--text); }
+.filterBtnActive {
+  border-color: var(--accent);
+  color: var(--text);
+}
+.filterBtnMyShows {
+  border-color: #e8ff47;
+  color: #e8ff47;
+}
 
-.venueDropdown {
+.filterDropdown {
   padding: 0.75rem;
   border: 1px solid var(--border);
-  border-radius: 6px;
-  margin-top: -0.5rem;
+  border-top: none;
+  background: var(--bg);
 }
+
+.clearAllInline {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 0.6rem;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+  padding: 0.2rem 0.5rem;
+  margin-left: auto;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.clearAllInline:hover { color: var(--text); }
 
 .filterCount {
   font-size: 0.6rem;
@@ -461,23 +464,10 @@
 .statusBtnWatching { border-color: #e8ff47 !important; color: #e8ff47 !important; }
 .statusBtnGoing { border-color: #4dff91 !important; color: #4dff91 !important; }
 
-/* My Shows button (inline in filter row) */
-.myShowsBtn {
-  padding: 0.35rem 0.85rem;
-  border: 1px solid var(--border);
-  border-radius: 20px;
-  background: none;
-  color: var(--text-muted);
-  font-size: 0.65rem;
-  letter-spacing: 0.08em;
-  cursor: pointer;
-  transition: all 0.15s;
-  white-space: nowrap;
-}
-.myShowsBtn:hover { border-color: #444; color: var(--text); }
-.myShowsBtnActive {
-  border-color: #e8ff47 !important;
-  color: #e8ff47 !important;
+.venueChipActiveRegion {
+  background: var(--accent) !important;
+  border-color: var(--accent) !important;
+  color: #000 !important;
 }
 
 /* Calendar inline panel status tint */
@@ -1105,13 +1095,16 @@
   }
 
   /* Filter row on mobile */
-  .filterRow {
-    gap: 0.35rem;
+  .stickyFilters {
+    top: 56px;
+    margin: 0 -1rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
   }
 
-  .filterDivider { display: none; }
+  .filterRow { gap: 0.35rem; }
 
-  .regionTab {
+  .filterBtn {
     font-size: 0.65rem;
     padding: 0.35rem 0.75rem;
   }
