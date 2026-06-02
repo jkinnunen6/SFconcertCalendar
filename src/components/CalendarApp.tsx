@@ -3,6 +3,7 @@
 import { useState, useMemo, useRef, useEffect, useCallback } from 'react'
 import type { Event, Venue } from '@/lib/supabase'
 import styles from './CalendarApp.module.css'
+import AuthButton from './AuthButton'
 
 type View = 'grid' | 'list'
 
@@ -206,6 +207,7 @@ export default function CalendarApp({ events, venues }: { events: Event[], venue
               <button className={`${styles.viewBtn} ${view === 'list' ? styles.viewBtnActive : ''}`} onClick={() => setView('list')}>LIST</button>
               <button className={`${styles.viewBtn} ${view === 'grid' ? styles.viewBtnActive : ''}`} onClick={() => setView('grid')}>CAL</button>
             </div>
+            <AuthButton />
           </div>
           {/* Mobile search flyout */}
           {searchOpen && (
