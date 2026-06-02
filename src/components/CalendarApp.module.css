@@ -475,8 +475,12 @@
 }
 
 /* Calendar inline panel status tint */
-.calInlineWatching { border-left: 2px solid #e8ff47; padding-left: 8px; }
-.calInlineGoing { border-left: 2px solid #4dff91; padding-left: 8px; }
+.calInlineWatching { background: rgba(232,255,71,0.04); }
+.calInlineGoing { background: rgba(77,255,145,0.04); }
+
+/* Calendar cell event name status colors */
+.calEventNameWatching { background: rgba(232,255,71,0.15); }
+.calEventNameGoing { background: rgba(77,255,145,0.15); }
 
 .eventImg {
   width: 56px;

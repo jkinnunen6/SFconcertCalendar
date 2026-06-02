@@ -74,6 +74,7 @@ export default function CalendarApp({ events, venues }: { events: Event[], venue
   const [selectedRegions, setSelectedRegions] = useState<string[]>([])
   const [showBackToTop, setShowBackToTop] = useState(false)
   const dayRefs = useRef<Record<string, HTMLDivElement | null>>({})
+  const hasAutoScrolled = useRef(false)
 
   // Auth + show statuses
   const supabase = createClient()
@@ -138,12 +139,14 @@ export default function CalendarApp({ events, venues }: { events: Event[], venue
 
   const sortedDays = useMemo(() => Object.keys(grouped).sort(), [grouped])
 
-  // Auto-scroll to today in list view
+  // Auto-scroll to today in list view — only once on initial load
   useEffect(() => {
-    if (view !== 'list') return
+    if (view !== 'list') { hasAutoScrolled.current = false; return }
+    if (hasAutoScrolled.current) return
     const todayStr = new Date().toLocaleDateString('en-CA')
     const target = sortedDays.find(d => d >= todayStr)
     if (target && dayRefs.current[target]) {
+      hasAutoScrolled.current = true
       setTimeout(() => {
         dayRefs.current[target]?.scrollIntoView({ behavior: 'smooth', block: 'start' })
       }, 100)
@@ -448,8 +451,12 @@ export default function CalendarApp({ events, venues }: { events: Event[], venue
                                         onMouseLeave={() => setHoveredEvent(null)}
                                       >
                                         <span
-                                          className={styles.calEventName}
-                                          style={{ borderLeftColor: e.venue?.color || '#666' }}
+                                          className={[
+                                            styles.calEventName,
+                                            statuses[e.id] === 'watching' ? styles.calEventNameWatching : '',
+                                            statuses[e.id] === 'going' ? styles.calEventNameGoing : '',
+                                          ].join(' ')}
+                                          style={{ borderLeftColor: statuses[e.id] === 'watching' ? '#e8ff47' : statuses[e.id] === 'going' ? '#4dff91' : e.venue?.color || '#666' }}
                                         >{isNew(e) && <span className={styles.newStar}>◆</span>}{e.artist}</span>
                                       </div>
                                     ))}
@@ -474,11 +481,26 @@ export default function CalendarApp({ events, venues }: { events: Event[], venue
                                   <div className={styles.calInlinePanelList}>
                                     {dayEvents.map(e => (
                                       <div key={e.id} className={`${styles.calInlineEvent} ${statuses[e.id] === 'watching' ? styles.calInlineWatching : ''} ${statuses[e.id] === 'going' ? styles.calInlineGoing : ''}`}>
-                                        <div className={styles.calInlineEventBar} style={{ background: e.venue?.color || '#666' }} />
+                                        <div className={styles.calInlineEventBar} style={{ background: statuses[e.id] === 'watching' ? '#e8ff47' : statuses[e.id] === 'going' ? '#4dff91' : e.venue?.color || '#666' }} />
                                         <div className={styles.calInlineEventInfo}>
                                           <div className={styles.calInlineEventArtist}>{isNew(e) && <span className={styles.newStar}>◆</span>}{e.artist}</div>
                                           {e.support && <div className={styles.calInlineEventSupport}>w/ {e.support}</div>}
-                                          <div className={styles.calInlineEventMeta}>{e.venue?.short_name}{e.show_time ? ` · ${e.show_time}` : ''}</div>
+                                          <div className={styles.calInlineEventMeta}>
+                                            {e.venue?.short_name}{e.show_time ? ` · ${e.show_time}` : ''}
+                                            {statuses[e.id] && <span className={statuses[e.id] === 'watching' ? styles.statusLabelWatching : styles.statusLabelGoing}> · {statuses[e.id] === 'watching' ? 'WATCHING' : 'GOING'}</span>}
+                                          </div>
+                                          {user && (
+                                            <div className={styles.statusBtns}>
+                                              <button
+                                                className={`${styles.statusBtn} ${statuses[e.id] === 'watching' ? styles.statusBtnWatching : ''}`}
+                                                onClick={() => toggleStatus(e.id, 'watching')}
+                                              >WATCHING</button>
+                                              <button
+                                                className={`${styles.statusBtn} ${statuses[e.id] === 'going' ? styles.statusBtnGoing : ''}`}
+                                                onClick={() => toggleStatus(e.id, 'going')}
+                                              >GOING</button>
+                                            </div>
+                                          )}
                                         </div>
                                         <div className={styles.eventBtns}>
                                           {e.ticket_url && (
