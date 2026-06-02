@@ -2,8 +2,12 @@
 
 import { useState, useMemo, useRef, useEffect, useCallback } from 'react'
 import type { Event, Venue } from '@/lib/supabase'
+import type { User } from '@supabase/supabase-js'
+import { createClient } from '@/lib/supabase-browser'
 import styles from './CalendarApp.module.css'
 import AuthButton from './AuthButton'
+
+type ShowStatus = 'watching' | 'going'
 
 type View = 'grid' | 'list'
 
@@ -71,13 +75,56 @@ export default function CalendarApp({ events, venues }: { events: Event[], venue
   const [showBackToTop, setShowBackToTop] = useState(false)
   const dayRefs = useRef<Record<string, HTMLDivElement | null>>({})
 
+  // Auth + show statuses
+  const supabase = createClient()
+  const [user, setUser] = useState<User | null>(null)
+  const [statuses, setStatuses] = useState<Record<number, ShowStatus>>({})
+  const [myShowsOnly, setMyShowsOnly] = useState(false)
+
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data }) => {
+      setUser(data.user)
+      if (data.user) loadStatuses()
+    })
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_e, session) => {
+      setUser(session?.user ?? null)
+      if (session?.user) loadStatuses()
+      else { setStatuses({}); setMyShowsOnly(false) }
+    })
+    return () => subscription.unsubscribe()
+  }, [])
+
+  async function loadStatuses() {
+    const { data } = await supabase.from('user_show_status').select('event_id,status')
+    if (data) {
+      const map: Record<number, ShowStatus> = {}
+      data.forEach(r => { map[r.event_id] = r.status })
+      setStatuses(map)
+    }
+  }
+
+  async function toggleStatus(eventId: number, status: ShowStatus) {
+    if (!user) return
+    if (statuses[eventId] === status) {
+      await supabase.from('user_show_status').delete().eq('event_id', eventId)
+      setStatuses(prev => { const n = { ...prev }; delete n[eventId]; return n })
+    } else {
+      await supabase.from('user_show_status').upsert(
+        { user_id: user.id, event_id: eventId, status },
+        { onConflict: 'user_id,event_id' }
+      )
+      setStatuses(prev => ({ ...prev, [eventId]: status }))
+    }
+  }
+
   const filtered = useMemo(() => {
     return events.filter(e => {
       if (search && !e.artist.toLowerCase().includes(search.toLowerCase())) return false
       if (selectedVenues.length > 0 && !selectedVenues.includes(e.venue_id)) return false
+      if (myShowsOnly && !statuses[e.id]) return false
       return true
     })
-  }, [events, search, selectedVenues])
+  }, [events, search, selectedVenues, myShowsOnly, statuses])
 
   const grouped = useMemo(() => {
     const map: Record<string, Event[]> = {}
@@ -257,6 +304,23 @@ export default function CalendarApp({ events, venues }: { events: Event[], venue
           ))}
         </div>
 
+        {/* My Shows toggle — only when signed in */}
+        {user && (
+          <div className={styles.myShowsBar}>
+            <button
+              className={`${styles.myShowsBtn} ${myShowsOnly ? styles.myShowsBtnActive : ''}`}
+              onClick={() => setMyShowsOnly(o => !o)}
+            >
+              {myShowsOnly ? '● MY SHOWS' : '○ MY SHOWS'}
+            </button>
+            {myShowsOnly && (
+              <span className={styles.myShowsCount}>
+                {Object.keys(statuses).length} saved
+              </span>
+            )}
+          </div>
+        )}
+
         {/* Venue accordion filter */}
         <div className={styles.filterBar}>
           <button className={styles.accordionToggle} onClick={() => setVenueOpen(v => !v)}>
@@ -312,7 +376,7 @@ export default function CalendarApp({ events, venues }: { events: Event[], venue
                     </div>
                     <div className={styles.eventList}>
                       {dayEvts.map(e => (
-                        <EventCard key={e.id} event={e} />
+                        <EventCard key={e.id} event={e} status={statuses[e.id]} onToggleStatus={user ? (s) => toggleStatus(e.id, s) : undefined} />
                       ))}
                     </div>
                   </div>
@@ -409,7 +473,7 @@ export default function CalendarApp({ events, venues }: { events: Event[], venue
                                   </div>
                                   <div className={styles.calInlinePanelList}>
                                     {dayEvents.map(e => (
-                                      <div key={e.id} className={styles.calInlineEvent}>
+                                      <div key={e.id} className={`${styles.calInlineEvent} ${statuses[e.id] === 'watching' ? styles.calInlineWatching : ''} ${statuses[e.id] === 'going' ? styles.calInlineGoing : ''}`}>
                                         <div className={styles.calInlineEventBar} style={{ background: e.venue?.color || '#666' }} />
                                         <div className={styles.calInlineEventInfo}>
                                           <div className={styles.calInlineEventArtist}>{isNew(e) && <span className={styles.newStar}>◆</span>}{e.artist}</div>
@@ -558,11 +622,20 @@ function AddToCalBtn({ event }: { event: Event }) {
   )
 }
 
-function EventCard({ event: e }: { event: Event }) {
+function EventCard({ event: e, status, onToggleStatus }: {
+  event: Event
+  status?: ShowStatus
+  onToggleStatus?: (status: ShowStatus) => void
+}) {
   const [expanded, setExpanded] = useState(false)
   return (
     <div
-      className={`${styles.eventCard} ${expanded ? styles.eventCardExpanded : ''}`}
+      className={[
+        styles.eventCard,
+        expanded ? styles.eventCardExpanded : '',
+        status === 'watching' ? styles.eventCardWatching : '',
+        status === 'going' ? styles.eventCardGoing : '',
+      ].join(' ')}
       onClick={() => setExpanded(x => !x)}
     >
       {e.image_url && (
@@ -587,10 +660,27 @@ function EventCard({ event: e }: { event: Event }) {
           {formatTime(e.show_time, e.event_date) && (
             <span className={styles.eventTime}>{formatTime(e.show_time, e.event_date)}</span>
           )}
+          {status && (
+            <span className={status === 'watching' ? styles.statusLabelWatching : styles.statusLabelGoing}>
+              {status === 'watching' ? 'WATCHING' : 'GOING'}
+            </span>
+          )}
           {e.ticket_status && e.ticket_status !== 'Available' && (
             <span className={styles.eventStatus}>{e.ticket_status}</span>
           )}
         </div>
+        {expanded && onToggleStatus && (
+          <div className={styles.statusBtns} onClick={ev => ev.stopPropagation()}>
+            <button
+              className={`${styles.statusBtn} ${status === 'watching' ? styles.statusBtnWatching : ''}`}
+              onClick={() => onToggleStatus('watching')}
+            >WATCHING</button>
+            <button
+              className={`${styles.statusBtn} ${status === 'going' ? styles.statusBtnGoing : ''}`}
+              onClick={() => onToggleStatus('going')}
+            >GOING</button>
+          </div>
+        )}
       </div>
       <div className={styles.eventBtns} onClick={ev => ev.stopPropagation()}>
         {e.ticket_url && (

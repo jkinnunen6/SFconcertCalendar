@@ -397,8 +397,86 @@
 }
 .eventCard:last-child { border-bottom: none; }
 .eventCard:hover { background: none; }
-.eventCard { cursor: pointer; }
+.eventCard { cursor: pointer; position: relative; padding-left: 10px; }
 .eventCardExpanded { align-items: flex-start; }
+
+/* Status left border */
+.eventCard::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 10px;
+  bottom: 10px;
+  width: 2px;
+  border-radius: 1px;
+  background: transparent;
+}
+.eventCardWatching::before { background: #e8ff47; }
+.eventCardGoing::before { background: #4dff91; }
+
+/* Status label in meta row */
+.statusLabelWatching {
+  font-size: 0.6rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #e8ff47;
+}
+.statusLabelGoing {
+  font-size: 0.6rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #4dff91;
+}
+
+/* Status buttons shown in expanded card */
+.statusBtns {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+.statusBtn {
+  background: none;
+  border: 1px solid #2a2a2a;
+  color: #555;
+  font-size: 0.6rem;
+  letter-spacing: 0.12em;
+  padding: 0.4rem 0.75rem;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.statusBtn:hover { border-color: #555; color: #f0ece4; }
+.statusBtnWatching { border-color: #e8ff47 !important; color: #e8ff47 !important; }
+.statusBtnGoing { border-color: #4dff91 !important; color: #4dff91 !important; }
+
+/* My Shows bar */
+.myShowsBar {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--border);
+}
+.myShowsBtn {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 0.65rem;
+  letter-spacing: 0.12em;
+  cursor: pointer;
+  padding: 0;
+  transition: color 0.15s;
+}
+.myShowsBtn:hover { color: var(--text); }
+.myShowsBtnActive { color: #e8ff47 !important; }
+.myShowsCount {
+  font-size: 0.6rem;
+  color: var(--text-muted);
+  letter-spacing: 0.08em;
+}
+
+/* Calendar inline panel status tint */
+.calInlineWatching { border-left: 2px solid #e8ff47; padding-left: 8px; }
+.calInlineGoing { border-left: 2px solid #4dff91; padding-left: 8px; }
 
 .eventImg {
   width: 56px;
