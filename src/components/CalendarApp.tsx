@@ -285,8 +285,8 @@ export default function CalendarApp({ events, venues }: { events: Event[], venue
       </header>
 
       <div className={styles.layout}>
-        {/* Region tabs */}
-        <div className={styles.regionTabs}>
+        {/* Single unified filter bar */}
+        <div className={styles.filterRow}>
           {['San Francisco', 'East Bay', 'North Bay', 'South Bay'].map(r => (
             <button
               key={r}
@@ -305,49 +305,45 @@ export default function CalendarApp({ events, venues }: { events: Event[], venue
               {r}
             </button>
           ))}
-        </div>
 
-        {/* My Shows toggle — only when signed in */}
-        {user && (
-          <div className={styles.myShowsBar}>
+          <span className={styles.filterDivider} />
+
+          {user && (
             <button
               className={`${styles.myShowsBtn} ${myShowsOnly ? styles.myShowsBtnActive : ''}`}
               onClick={() => setMyShowsOnly(o => !o)}
             >
               {myShowsOnly ? '● MY SHOWS' : '○ MY SHOWS'}
             </button>
-            {myShowsOnly && (
-              <span className={styles.myShowsCount}>
-                {Object.keys(statuses).length} saved
-              </span>
-            )}
-          </div>
-        )}
+          )}
 
-        {/* Venue accordion filter */}
-        <div className={styles.filterBar}>
-          <button className={styles.accordionToggle} onClick={() => setVenueOpen(v => !v)}>
-            <span>VENUES</span>
-            {selectedVenues.length > 0 && <span className={styles.filterCount}>{selectedVenues.length} selected</span>}
+          <button
+            className={`${styles.venuesBtn} ${venueOpen ? styles.venuesBtnOpen : ''}`}
+            onClick={() => setVenueOpen(v => !v)}
+          >
+            VENUES
+            {selectedVenues.length > 0 && <span className={styles.filterCount}>{selectedVenues.length}</span>}
             <span className={styles.accordionChevron}>{venueOpen ? '▲' : '▼'}</span>
           </button>
-          {venueOpen && (
-            <div className={styles.accordionContent}>
-              {selectedVenues.length > 0 && (
-                <button className={styles.clearAll} onClick={() => setSelectedVenues([])}>clear all</button>
-              )}
-              <div className={styles.venueGrid}>
-                {[...venues].sort((a, b) => a.name.replace(/^the /i, '').localeCompare(b.name.replace(/^the /i, ''))).map(v => (
-                    <button key={v.id} onClick={() => toggleVenue(v.id)}
-                      className={`${styles.venueChip} ${selectedVenues.includes(v.id) ? styles.venueChipActive : ''}`}
-                      style={selectedVenues.includes(v.id) ? { background: v.color, borderColor: v.color, color: '#fff' } : { borderColor: v.color }}>
-                      {v.short_name}
-                    </button>
-                ))}
-              </div>
-            </div>
-          )}
         </div>
+
+        {/* Venue dropdown */}
+        {venueOpen && (
+          <div className={styles.venueDropdown}>
+            {selectedVenues.length > 0 && (
+              <button className={styles.clearAll} onClick={() => setSelectedVenues([])}>clear all</button>
+            )}
+            <div className={styles.venueGrid}>
+              {[...venues].sort((a, b) => a.name.replace(/^the /i, '').localeCompare(b.name.replace(/^the /i, ''))).map(v => (
+                <button key={v.id} onClick={() => toggleVenue(v.id)}
+                  className={`${styles.venueChip} ${selectedVenues.includes(v.id) ? styles.venueChipActive : ''}`}
+                  style={selectedVenues.includes(v.id) ? { background: v.color, borderColor: v.color, color: '#fff' } : { borderColor: v.color }}>
+                  {v.short_name}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Main content */}
         <main className={styles.main}>
