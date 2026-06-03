@@ -468,17 +468,17 @@ export default function CalendarApp({ events, venues }: { events: Event[], venue
                                     {evts.map(e => (
                                       <div
                                         key={e.id}
-                                        className={styles.calEventRow}
+                                        className={[
+                                          styles.calEventRow,
+                                          statuses[e.id] === 'watching' ? styles.calEventRowWatching : '',
+                                          statuses[e.id] === 'going' ? styles.calEventRowGoing : '',
+                                        ].join(' ')}
                                         onMouseEnter={ev => { setHoveredEvent(e); setTooltipPos({ x: ev.clientX, y: ev.clientY }) }}
                                         onMouseMove={ev => setTooltipPos({ x: ev.clientX, y: ev.clientY })}
                                         onMouseLeave={() => setHoveredEvent(null)}
                                       >
                                         <span
-                                          className={[
-                                            styles.calEventName,
-                                            statuses[e.id] === 'watching' ? styles.calEventNameWatching : '',
-                                            statuses[e.id] === 'going' ? styles.calEventNameGoing : '',
-                                          ].join(' ')}
+                                          className={styles.calEventName}
                                           style={{ borderLeftColor: e.venue?.color || '#666' }}
                                         >{isNew(e) && <span className={styles.newStar}>◆</span>}{e.artist}</span>
                                       </div>

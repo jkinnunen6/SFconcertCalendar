@@ -418,8 +418,8 @@
 
 
 /* Status tint on list cards — venue color is on the left border via inline style */
-.eventCardWatching { background: rgba(232,255,71,0.04) !important; }
-.eventCardGoing    { background: rgba(77,255,145,0.04) !important; }
+.eventCardWatching { background: rgba(232,255,71,0.09) !important; }
+.eventCardGoing    { background: rgba(77,255,145,0.09) !important; }
 
 /* Status badge in meta row */
 .statusLabelWatching {
@@ -471,9 +471,9 @@
 .calInlineWatching { background: rgba(232,255,71,0.04); }
 .calInlineGoing    { background: rgba(77,255,145,0.04); }
 
-/* Calendar cell event row — tint the name chip for status */
-.calEventNameWatching { background: rgba(232,255,71,0.12); border-radius: 2px; }
-.calEventNameGoing    { background: rgba(77,255,145,0.12); border-radius: 2px; }
+/* Calendar cell event row — tint the whole row for status */
+.calEventRowWatching { background: rgba(232,255,71,0.09); border-radius: 2px; }
+.calEventRowGoing    { background: rgba(77,255,145,0.09); border-radius: 2px; }
 
 .eventImg {
   width: 56px;
