@@ -329,7 +329,7 @@
 /* ── List view ─────────────────────────────────────────── */
 .listView { display: flex; flex-direction: column; gap: 0; }
 
-.dayGroup { border-bottom: 1px solid var(--border); scroll-margin-top: 70px; }
+.dayGroup { border-bottom: 1px solid var(--border); scroll-margin-top: 125px; }
 
 .dayHeader {
   display: flex;
@@ -738,7 +738,7 @@
 
 .calMonth {
   margin-bottom: 3rem;
-  scroll-margin-top: 70px;
+  scroll-margin-top: 125px;
 }
 
 .calHeader {
