@@ -76,6 +76,69 @@ function getFullMoonDates(): Set<string> {
 
 const FULL_MOON_DATES = getFullMoonDates()
 
+// Build a map of date string → traditional moon name
+function computeMoonNames(dates: Set<string>): Map<string, string> {
+  const sorted = Array.from(dates).sort()
+  const map = new Map<string, string>()
+
+  // Group by YYYY-MM to detect Blue Moons (2nd full moon in a calendar month)
+  const byMonth: Record<string, string[]> = {}
+  for (const d of sorted) {
+    const ym = d.slice(0, 7)
+    if (!byMonth[ym]) byMonth[ym] = []
+    byMonth[ym].push(d)
+  }
+
+  for (const d of sorted) {
+    const parts  = d.split('-')
+    const year   = Number(parts[0])
+    const month  = Number(parts[1])
+    const day    = Number(parts[2])
+    const ym     = d.slice(0, 7)
+
+    // Blue Moon — second full moon in the same calendar month
+    if (byMonth[ym].length >= 2 && byMonth[ym][1] === d) {
+      map.set(d, 'Blue Moon')
+      continue
+    }
+
+    // Harvest Moon — full moon closest to the autumnal equinox (~Sep 22)
+    if (month === 9 || month === 10) {
+      const equinoxMs  = new Date(year, 8, 22, 12, 0, 0).getTime()
+      const thisMoonMs = new Date(year, month - 1, day, 12, 0, 0).getTime()
+      const thisDiff   = Math.abs(thisMoonMs - equinoxMs)
+      // Approximate the neighbouring month's full moon by ±29.5 days
+      const otherMoonMs = month === 9
+        ? thisMoonMs + 29.53 * 86400000
+        : thisMoonMs - 29.53 * 86400000
+      const otherDiff = Math.abs(otherMoonMs - equinoxMs)
+
+      if (thisDiff <= otherDiff) { map.set(d, 'Harvest Moon'); continue }
+      if (month === 10)          { map.set(d, "Hunter's Moon"); continue }
+      // Sep but not the closest to equinox — fall through to Corn Moon
+    }
+
+    const NAMES: Record<number, string> = {
+       1: 'Wolf Moon',
+       2: 'Snow Moon',
+       3: 'Worm Moon',
+       4: 'Pink Moon',
+       5: 'Flower Moon',
+       6: 'Strawberry Moon',
+       7: 'Buck Moon',
+       8: 'Sturgeon Moon',
+       9: 'Corn Moon',
+      10: "Hunter's Moon",
+      11: 'Beaver Moon',
+      12: 'Cold Moon',
+    }
+    map.set(d, NAMES[month] ?? 'Full Moon')
+  }
+  return map
+}
+
+const MOON_NAMES_MAP = computeMoonNames(FULL_MOON_DATES)
+
 export default function CalendarApp({ events, venues }: { events: Event[], venues: Venue[] }) {
   const [view, setView] = useState<View>('grid')
 
@@ -212,6 +275,15 @@ export default function CalendarApp({ events, venues }: { events: Event[], venue
   }
 
   const monthRefs = useRef<Record<string, HTMLDivElement | null>>({})
+
+  // Moon name tooltip
+  const [moonLabel, setMoonLabel] = useState<{ name: string, x: number, y: number } | null>(null)
+  useEffect(() => {
+    if (!moonLabel) return
+    const dismiss = () => setMoonLabel(null)
+    window.addEventListener('click', dismiss)
+    return () => window.removeEventListener('click', dismiss)
+  }, [moonLabel])
 
   // Compute which months have events
   const activeMonths = useMemo(() => {
@@ -413,7 +485,12 @@ export default function CalendarApp({ events, venues }: { events: Event[], venue
                       </span>
                       <span className={styles.dayDate}>
                         {formatDateShort(day + 'T00:00:00')}
-                        {FULL_MOON_DATES.has(day) && <span className={styles.fullMoon} title="Full Moon"> 🌕</span>}
+                        {FULL_MOON_DATES.has(day) && (
+                          <span
+                            className={styles.fullMoon}
+                            onClick={ev => { ev.stopPropagation(); const n = MOON_NAMES_MAP.get(day); if (n) setMoonLabel({ name: n, x: ev.clientX, y: ev.clientY }) }}
+                          > 🌕</span>
+                        )}
                       </span>
                       <button
                         className={styles.dayJump}
@@ -486,7 +563,12 @@ export default function CalendarApp({ events, venues }: { events: Event[], venue
                               >
                                 <div className={styles.calDayRow}>
                                   <span className={styles.calDayNum}>{day}</span>
-                                  {FULL_MOON_DATES.has(dayStr) && <span className={styles.fullMoon} title="Full Moon">🌕</span>}
+                                  {FULL_MOON_DATES.has(dayStr) && (
+                                    <span
+                                      className={styles.fullMoon}
+                                      onClick={ev => { ev.stopPropagation(); const n = MOON_NAMES_MAP.get(dayStr); if (n) setMoonLabel({ name: n, x: ev.clientX, y: ev.clientY }) }}
+                                    >🌕</span>
+                                  )}
                                 </div>
                                 {evts.length > 0 && (
                                   <div className={styles.calEventList}>
@@ -585,6 +667,17 @@ export default function CalendarApp({ events, venues }: { events: Event[], venue
           className={styles.backToTop}
           onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
         >↑ TOP</button>
+      )}
+
+      {/* Moon name popup */}
+      {moonLabel && (
+        <div
+          className={styles.moonPopup}
+          style={{ top: moonLabel.y - 44, left: moonLabel.x }}
+          onClick={ev => ev.stopPropagation()}
+        >
+          🌕 {moonLabel.name}
+        </div>
       )}
 
       {/* Hover tooltip */}
