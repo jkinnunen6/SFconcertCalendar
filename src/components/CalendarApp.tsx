@@ -55,6 +55,27 @@ function isNew(event: { first_seen_at?: string | null, last_updated_at?: string 
   return ts ? new Date(ts) > cutoff : false
 }
 
+// Full moon dates in Pacific Time, computed from the known Jan 6 2000 18:14 UTC full moon
+// using the mean synodic period of 29.530588853 days. Covers ±2 years from now.
+function getFullMoonDates(): Set<string> {
+  const knownFullMoonMs = Date.UTC(2000, 0, 21, 4, 40, 0) // Jan 21 2000 04:40 UTC — confirmed full moon
+  const lunarCycleMs = 29.530588853 * 24 * 60 * 60 * 1000
+  const now = Date.now()
+  const startMs = now - 400 * 24 * 60 * 60 * 1000
+  const endMs   = now + 730 * 24 * 60 * 60 * 1000
+
+  const firstIdx = Math.ceil((startMs - knownFullMoonMs) / lunarCycleMs)
+  const dates = new Set<string>()
+  let t = knownFullMoonMs + firstIdx * lunarCycleMs
+  while (t <= endMs) {
+    dates.add(new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Los_Angeles' }).format(new Date(t)))
+    t += lunarCycleMs
+  }
+  return dates
+}
+
+const FULL_MOON_DATES = getFullMoonDates()
+
 export default function CalendarApp({ events, venues }: { events: Event[], venues: Venue[] }) {
   const [view, setView] = useState<View>('grid')
 
@@ -392,6 +413,7 @@ export default function CalendarApp({ events, venues }: { events: Event[], venue
                       </span>
                       <span className={styles.dayDate}>
                         {formatDateShort(day + 'T00:00:00')}
+                        {FULL_MOON_DATES.has(day) && <span className={styles.fullMoon} title="Full Moon"> 🌕</span>}
                       </span>
                       <button
                         className={styles.dayJump}
@@ -462,7 +484,10 @@ export default function CalendarApp({ events, venues }: { events: Event[], venue
                                 className={`${styles.calCell} ${styles.calCellDay} ${evts.length ? styles.calCellHasEvents : ''} ${isToday ? styles.calCellToday : ''} ${isSelected ? styles.calCellSelected : ''}`}
                                 onClick={() => { setSelectedDay(isSelected ? null : dayStr); setMobilePanelDay(isSelected ? null : dayStr) }}
                               >
-                                <span className={styles.calDayNum}>{day}</span>
+                                <div className={styles.calDayRow}>
+                                  <span className={styles.calDayNum}>{day}</span>
+                                  {FULL_MOON_DATES.has(dayStr) && <span className={styles.fullMoon} title="Full Moon">🌕</span>}
+                                </div>
                                 {evts.length > 0 && (
                                   <div className={styles.calEventList}>
                                     {evts.map(e => (
