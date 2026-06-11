@@ -6,6 +6,7 @@ import type { User } from '@supabase/supabase-js'
 import { createClient } from '@/lib/supabase-browser'
 import styles from './CalendarApp.module.css'
 import AuthButton from './AuthButton'
+import AddEventModal from './AddEventModal'
 
 type ShowStatus = 'watching' | 'going'
 
@@ -139,6 +140,50 @@ function computeMoonNames(dates: Set<string>): Map<string, string> {
 
 const MOON_NAMES_MAP = computeMoonNames(FULL_MOON_DATES)
 
+type UserEventRow = {
+  id: number
+  user_id: string
+  artist: string
+  venue_name: string
+  city: string
+  event_date: string
+  show_time: string | null
+  ticket_url: string | null
+  status: 'watching' | 'going'
+}
+
+function userEventToEvent(row: UserEventRow): Event {
+  const cityLabel = row.city && row.city !== 'Bay Area' ? row.city : null
+  return {
+    id: -row.id,
+    venue_id: 0,
+    external_id: `user-${row.id}`,
+    artist: row.artist,
+    subtitle: null,
+    support: null,
+    event_date: row.event_date,
+    ticket_url: row.ticket_url,
+    image_url: null,
+    show_time: row.show_time,
+    ticket_status: null,
+    first_seen_at: null,
+    last_updated_at: null,
+    venue: {
+      id: 0,
+      name: cityLabel ? `${row.venue_name} · ${cityLabel}` : row.venue_name,
+      short_name: cityLabel ? `${row.venue_name} · ${cityLabel}` : row.venue_name,
+      color: '#a78bfa',
+      address: '',
+      city: row.city,
+      url: '',
+      region: null,
+    },
+    userAdded: true,
+    userEventDbId: row.id,
+    userCity: row.city,
+  }
+}
+
 export default function CalendarApp({ events, venues }: { events: Event[], venues: Venue[] }) {
   const [view, setView] = useState<View>('grid')
 
@@ -166,16 +211,18 @@ export default function CalendarApp({ events, venues }: { events: Event[], venue
   const [user, setUser] = useState<User | null>(null)
   const [statuses, setStatuses] = useState<Record<number, ShowStatus>>({})
   const [myShowsOnly, setMyShowsOnly] = useState(false)
+  const [userEventsList, setUserEventsList] = useState<Event[]>([])
+  const [addEventOpen, setAddEventOpen] = useState(false)
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => {
       setUser(data.user)
-      if (data.user) loadStatuses()
+      if (data.user) { loadStatuses(); loadUserEvents() }
     })
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_e, session) => {
       setUser(session?.user ?? null)
-      if (session?.user) loadStatuses()
-      else { setStatuses({}); setMyShowsOnly(false) }
+      if (session?.user) { loadStatuses(); loadUserEvents() }
+      else { setStatuses({}); setMyShowsOnly(false); setUserEventsList([]) }
     })
     return () => subscription.unsubscribe()
   }, [])
@@ -189,8 +236,34 @@ export default function CalendarApp({ events, venues }: { events: Event[], venue
     }
   }
 
+  async function loadUserEvents() {
+    const { data } = await supabase.from('user_events').select('*').order('event_date')
+    if (data) {
+      const evts = (data as UserEventRow[]).map(userEventToEvent)
+      setUserEventsList(evts)
+      setStatuses(prev => {
+        const additions: Record<number, ShowStatus> = {}
+        data.forEach((row: UserEventRow) => { additions[-row.id] = row.status })
+        return { ...prev, ...additions }
+      })
+    }
+  }
+
+  async function deleteUserEvent(dbId: number) {
+    await supabase.from('user_events').delete().eq('id', dbId)
+    setUserEventsList(prev => prev.filter(e => e.userEventDbId !== dbId))
+    setStatuses(prev => { const n = { ...prev }; delete n[-dbId]; return n })
+  }
+
   async function toggleStatus(eventId: number, status: ShowStatus) {
     if (!user) return
+    const ue = userEventsList.find(e => e.id === eventId)
+    if (ue?.userAdded && ue.userEventDbId != null) {
+      if (statuses[eventId] === status) return
+      await supabase.from('user_events').update({ status }).eq('id', ue.userEventDbId)
+      setStatuses(prev => ({ ...prev, [eventId]: status }))
+      return
+    }
     if (statuses[eventId] === status) {
       await supabase.from('user_show_status').delete().eq('event_id', eventId)
       setStatuses(prev => { const n = { ...prev }; delete n[eventId]; return n })
@@ -203,14 +276,17 @@ export default function CalendarApp({ events, venues }: { events: Event[], venue
     }
   }
 
+  const allEvents = useMemo(() => [...events, ...userEventsList], [events, userEventsList])
+
   const filtered = useMemo(() => {
-    return events.filter(e => {
+    return allEvents.filter(e => {
       if (search && !e.artist.toLowerCase().includes(search.toLowerCase())) return false
-      if (selectedVenues.length > 0 && !selectedVenues.includes(e.venue_id)) return false
+      // User-added events bypass the venue filter — they always show
+      if (selectedVenues.length > 0 && !selectedVenues.includes(e.venue_id) && !e.userAdded) return false
       if (myShowsOnly && !statuses[e.id]) return false
       return true
     })
-  }, [events, search, selectedVenues, myShowsOnly, statuses])
+  }, [allEvents, search, selectedVenues, myShowsOnly, statuses])
 
   const grouped = useMemo(() => {
     const map: Record<string, Event[]> = {}
@@ -351,6 +427,11 @@ export default function CalendarApp({ events, venues }: { events: Event[], venue
               <button className={`${styles.viewBtn} ${view === 'list' ? styles.viewBtnActive : ''}`} onClick={() => setView('list')}>LIST</button>
               <button className={`${styles.viewBtn} ${view === 'grid' ? styles.viewBtnActive : ''}`} onClick={() => setView('grid')}>CAL</button>
             </div>
+            {user && (
+              <button className={styles.addEventBtn} onClick={() => setAddEventOpen(true)} title="Add a show">
+                + ADD
+              </button>
+            )}
             <AuthButton />
           </div>
           {/* Mobile search flyout */}
@@ -501,7 +582,13 @@ export default function CalendarApp({ events, venues }: { events: Event[], venue
                     </div>
                     <div className={styles.eventList}>
                       {dayEvts.map(e => (
-                        <EventCard key={e.id} event={e} status={statuses[e.id]} onToggleStatus={user ? (s) => toggleStatus(e.id, s) : undefined} />
+                        <EventCard
+                          key={e.id}
+                          event={e}
+                          status={statuses[e.id]}
+                          onToggleStatus={user ? (s) => toggleStatus(e.id, s) : undefined}
+                          onDelete={e.userAdded && e.userEventDbId != null ? () => deleteUserEvent(e.userEventDbId!) : undefined}
+                        />
                       ))}
                     </div>
                   </div>
@@ -631,6 +718,11 @@ export default function CalendarApp({ events, venues }: { events: Event[], venue
                                               >GOING</button>
                                             </div>
                                           )}
+                                          {e.userAdded && e.userEventDbId != null && (
+                                            <button className={styles.deleteBtn} onClick={() => deleteUserEvent(e.userEventDbId!)}>
+                                              REMOVE
+                                            </button>
+                                          )}
                                         </div>
                                         <div className={styles.eventBtns}>
                                           {e.ticket_url && (
@@ -667,6 +759,15 @@ export default function CalendarApp({ events, venues }: { events: Event[], venue
           className={styles.backToTop}
           onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
         >↑ TOP</button>
+      )}
+
+      {/* Add event modal */}
+      {addEventOpen && user && (
+        <AddEventModal
+          user={user}
+          onSuccess={loadUserEvents}
+          onClose={() => setAddEventOpen(false)}
+        />
       )}
 
       {/* Moon name popup */}
@@ -785,10 +886,11 @@ function AddToCalBtn({ event }: { event: Event }) {
   )
 }
 
-function EventCard({ event: e, status, onToggleStatus }: {
+function EventCard({ event: e, status, onToggleStatus, onDelete }: {
   event: Event
   status?: ShowStatus
   onToggleStatus?: (status: ShowStatus) => void
+  onDelete?: () => void
 }) {
   const [expanded, setExpanded] = useState(false)
   return (
@@ -799,7 +901,7 @@ function EventCard({ event: e, status, onToggleStatus }: {
         status === 'watching' ? styles.eventCardWatching : '',
         status === 'going' ? styles.eventCardGoing : '',
       ].join(' ')}
-      style={{ borderLeft: `3px solid ${e.venue?.color || '#333'}` }}
+      style={{ borderLeft: `3px ${e.userAdded ? 'dashed' : 'solid'} ${e.venue?.color || '#333'}` }}
       onClick={() => setExpanded(x => !x)}
     >
       {e.image_url && (
@@ -813,6 +915,7 @@ function EventCard({ event: e, status, onToggleStatus }: {
             className={styles.eventVenueDot}
             style={{ background: e.venue?.color || '#666' }}
           />
+          {e.userAdded && <span className={styles.userAddedMark} title="Your added show">✎ </span>}
           {e.venue?.short_name || e.venue?.name}
         </div>
         <h3 className={`${styles.eventArtist} ${expanded ? styles.eventArtistExpanded : ''}`}>
@@ -844,6 +947,12 @@ function EventCard({ event: e, status, onToggleStatus }: {
               onClick={() => onToggleStatus('going')}
             >GOING</button>
           </div>
+        )}
+        {expanded && onDelete && (
+          <button
+            className={styles.deleteBtn}
+            onClick={ev => { ev.stopPropagation(); onDelete() }}
+          >REMOVE SHOW</button>
         )}
       </div>
       <div className={styles.eventBtns} onClick={ev => ev.stopPropagation()}>

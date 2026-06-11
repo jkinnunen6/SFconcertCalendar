@@ -1,0 +1,167 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  z-index: 400;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.modal {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  width: 100%;
+  max-width: 420px;
+  padding: 1.5rem;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.25rem;
+}
+
+.title {
+  font-size: 0.7rem;
+  letter-spacing: 0.15em;
+  color: var(--text);
+}
+
+.close {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 1.4rem;
+  cursor: pointer;
+  line-height: 1;
+  padding: 0;
+}
+.close:hover { color: var(--text); }
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  font-size: 0.58rem;
+  letter-spacing: 0.12em;
+  color: var(--text-muted);
+}
+
+.req {
+  color: var(--accent);
+}
+
+.input {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  color: var(--text);
+  font-size: 0.85rem;
+  padding: 0.45rem 0.65rem;
+  outline: none;
+  width: 100%;
+  font-family: inherit;
+}
+.input:focus { border-color: var(--text-muted); }
+.input[type="date"] { color-scheme: dark; }
+
+.row {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.fieldGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.fieldLabel {
+  font-size: 0.58rem;
+  letter-spacing: 0.12em;
+  color: var(--text-muted);
+}
+
+.statusRow {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.statusBtn {
+  flex: 1;
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  font-size: 0.58rem;
+  letter-spacing: 0.1em;
+  padding: 0.5rem;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: all 0.15s;
+  font-family: inherit;
+}
+.statusBtn:hover { border-color: var(--text-muted); color: var(--text); }
+
+.statusWatching {
+  border-color: #e8ff47 !important;
+  color: #e8ff47 !important;
+  background: rgba(232, 255, 71, 0.08) !important;
+}
+
+.statusGoing {
+  border-color: #4dff91 !important;
+  color: #4dff91 !important;
+  background: rgba(77, 255, 145, 0.08) !important;
+}
+
+.error {
+  font-size: 0.7rem;
+  color: #ff6b6b;
+}
+
+.actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.25rem;
+}
+
+.cancel {
+  flex: 1;
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  font-size: 0.6rem;
+  letter-spacing: 0.1em;
+  padding: 0.65rem;
+  cursor: pointer;
+  border-radius: 4px;
+  font-family: inherit;
+}
+.cancel:hover { border-color: var(--text-muted); color: var(--text); }
+
+.save {
+  flex: 2;
+  background: var(--accent);
+  border: none;
+  color: #000;
+  font-size: 0.6rem;
+  letter-spacing: 0.1em;
+  padding: 0.65rem;
+  cursor: pointer;
+  border-radius: 4px;
+  font-weight: 600;
+  font-family: inherit;
+}
+.save:disabled { opacity: 0.5; cursor: wait; }
