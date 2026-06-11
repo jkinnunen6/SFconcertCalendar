@@ -20,6 +20,10 @@ export type Event = {
   first_seen_at: string | null
   last_updated_at: string | null
   venue: Venue
+  // User-added event fields (not present on scraped events)
+  userAdded?: boolean
+  userEventDbId?: number
+  userCity?: string
 }
 
 export type Venue = {
