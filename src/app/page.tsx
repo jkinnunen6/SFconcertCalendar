@@ -26,15 +26,26 @@ function getCutoffDate(): string {
 
 async function getEvents(): Promise<Event[]> {
   const today = getCutoffDate()
-  const { data, error } = await supabase
-    .from('events')
-    .select(`*, venue:venues(*)`)
-    .gte('event_date', today)
-    .order('event_date', { ascending: true })
-    .range(0, 4999)
+  const PAGE = 1000
+  const all: Event[] = []
+  let from = 0
 
-  if (error) { console.error(error); return [] }
-  return data as Event[]
+  while (true) {
+    const { data, error } = await supabase
+      .from('events')
+      .select(`*, venue:venues(*)`)
+      .gte('event_date', today)
+      .order('event_date', { ascending: true })
+      .range(from, from + PAGE - 1)
+
+    if (error) { console.error(error); break }
+    if (!data || data.length === 0) break
+    all.push(...(data as Event[]))
+    if (data.length < PAGE) break
+    from += PAGE
+  }
+
+  return all
 }
 
 async function getVenues(): Promise<Venue[]> {
