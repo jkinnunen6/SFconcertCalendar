@@ -31,7 +31,7 @@ async function getEvents(): Promise<Event[]> {
     .select(`*, venue:venues(*)`)
     .gte('event_date', today)
     .order('event_date', { ascending: true })
-    .limit(1000)
+    .range(0, 4999)
 
   if (error) { console.error(error); return [] }
   return data as Event[]
