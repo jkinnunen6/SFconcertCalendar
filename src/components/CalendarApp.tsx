@@ -217,23 +217,33 @@ export default function CalendarApp({ events, venues }: { events: Event[], venue
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => {
       setUser(data.user)
-      if (data.user) { loadStatuses(); loadUserEvents() }
+      if (data.user) { loadAllUserData() }
     })
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_e, session) => {
       setUser(session?.user ?? null)
-      if (session?.user) { loadStatuses(); loadUserEvents() }
+      if (session?.user) { loadAllUserData() }
       else { setStatuses({}); setMyShowsOnly(false); setUserEventsList([]) }
     })
     return () => subscription.unsubscribe()
   }, [])
 
-  async function loadStatuses() {
-    const { data } = await supabase.from('user_show_status').select('event_id,status')
-    if (data) {
-      const map: Record<number, ShowStatus> = {}
-      data.forEach(r => { map[r.event_id] = r.status })
-      setStatuses(map)
+  async function loadAllUserData() {
+    const [statusRes, userEventRes] = await Promise.all([
+      supabase.from('user_show_status').select('event_id,status'),
+      supabase.from('user_events').select('*').order('event_date'),
+    ])
+    const newStatuses: Record<number, ShowStatus> = {}
+    if (statusRes.data) {
+      statusRes.data.forEach((r: { event_id: number; status: ShowStatus }) => {
+        newStatuses[r.event_id] = r.status
+      })
     }
+    if (userEventRes.data) {
+      const evts = (userEventRes.data as UserEventRow[]).map(userEventToEvent)
+      setUserEventsList(evts)
+      userEventRes.data.forEach((row: UserEventRow) => { newStatuses[-row.id] = row.status })
+    }
+    setStatuses(newStatuses)
   }
 
   async function loadUserEvents() {
@@ -260,7 +270,8 @@ export default function CalendarApp({ events, venues }: { events: Event[], venue
     const ue = userEventsList.find(e => e.id === eventId)
     if (ue?.userAdded && ue.userEventDbId != null) {
       if (statuses[eventId] === status) return
-      await supabase.from('user_events').update({ status }).eq('id', ue.userEventDbId)
+      const { error } = await supabase.from('user_events').update({ status }).eq('id', ue.userEventDbId)
+      if (error) { console.error('Failed to update user event status:', error); return }
       setStatuses(prev => ({ ...prev, [eventId]: status }))
       return
     }
