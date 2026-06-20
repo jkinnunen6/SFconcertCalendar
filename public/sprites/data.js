@@ -12,7 +12,7 @@ const CONFIG = {
   USE_LOCAL_IMAGES: true,
 
   CDN_BASE: "https://fortnite.gg/img/x/sprites/icons/",
-  LOCAL_BASE: "./images/",
+  LOCAL_BASE: "/sprites/images/",
 
   SITE_LABEL: "Sprite Tracker — sprites-tracker.vercel.app",
 
