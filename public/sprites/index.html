@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sprite Tracker · Fortnite Ch. 7 S3</title>
+  <meta name="description" content="Fan-made collection tracker for Fortnite Chapter 7 Season 3 Sprites." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:ital,wght@0,600;0,700;1,700&family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+
+  <header>
+    <div class="header-inner">
+      <div class="brand">
+        <div class="glyph">👾</div>
+        <div>
+          <h1>Sprite Tracker</h1>
+          <div class="sub">Fortnite Ch. 7 · S3</div>
+        </div>
+      </div>
+
+      <div class="meters">
+        <div class="meter">
+          <div class="stat-label">
+            Collection
+            <span class="count" id="collCount"><b>0</b> / 0</span>
+          </div>
+          <div class="bar collection"><span id="collBar"></span></div>
+        </div>
+        <div class="meter">
+          <div class="stat-label">
+            Mastery
+            <span class="count" id="masCount"><b>0</b> / 0</span>
+          </div>
+          <div class="bar mastery"><span id="masBar"></span></div>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button class="btn primary" id="genCollection"><span class="ico">🖼</span> Collection</button>
+        <button class="btn" id="genWishlist"><span class="ico">❤️</span> Wishlist</button>
+        <button class="btn" id="shareBtn"><span class="ico">🔗</span> Share</button>
+        <button class="btn ghost" id="resetBtn"><span class="ico">↺</span> Reset</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Shared collection banner -->
+  <div class="shared-banner" id="sharedBanner">
+    <span class="ico">👁</span>
+    <span>You're viewing a <b>shared collection</b> — read-only.</span>
+    <button class="btn ghost" id="exitShared">Exit shared view</button>
+  </div>
+
+  <!-- Filter controls -->
+  <div class="controls">
+    <div class="controls-row">
+      <label class="search">
+        <span class="ico">🔍</span>
+        <input type="text" id="search" placeholder="Search sprites…" autocomplete="off" />
+      </label>
+
+      <div class="chips" id="themeChips">
+        <button class="chip" data-theme="all" aria-pressed="true">All</button>
+        <button class="chip" data-theme="base" aria-pressed="false" style="--chip-c:var(--accent)">Base</button>
+        <button class="chip" data-theme="gold" aria-pressed="false" style="--chip-c:var(--gold)">Gold</button>
+        <button class="chip" data-theme="gummy" aria-pressed="false" style="--chip-c:var(--gummy)">Gummy</button>
+        <button class="chip" data-theme="galaxy" aria-pressed="false" style="--chip-c:var(--galaxy)">Galaxy</button>
+      </div>
+    </div>
+
+    <div class="controls-row">
+      <div class="chips" id="statusChips">
+        <button class="chip" data-status="all" aria-pressed="true">All</button>
+        <button class="chip" data-status="owned" aria-pressed="false">Collected</button>
+        <button class="chip" data-status="missing" aria-pressed="false">Missing</button>
+      </div>
+
+      <select class="chip" id="raritySelect" aria-label="Filter by rarity">
+        <option value="all">All rarities</option>
+        <option value="rare">Rare</option>
+        <option value="epic">Epic</option>
+        <option value="legendary">Legendary</option>
+        <option value="mythic">Mythic</option>
+      </select>
+
+      <select class="chip" id="sortSelect" aria-label="Sort order">
+        <option value="type">Sort: Type</option>
+        <option value="rarity">Sort: Rarity</option>
+        <option value="drop">Sort: Drop rate</option>
+        <option value="name">Sort: Name</option>
+      </select>
+
+      <div class="toggles">
+        <label class="toggle">
+          <input type="checkbox" id="hideMastered" />
+          <span class="track"></span>
+          Hide mastered
+        </label>
+        <label class="toggle">
+          <input type="checkbox" id="groupBy" />
+          <span class="track"></span>
+          Group by theme
+        </label>
+        <label class="toggle">
+          <input type="checkbox" id="showUnreleased" checked />
+          <span class="track"></span>
+          Show unreleased
+        </label>
+      </div>
+    </div>
+
+    <div class="controls-row">
+      <div class="result-line" id="resultLine"></div>
+      <div class="datamined">⚠ Drop rates are <b>datamined community estimates</b> — not official.</div>
+    </div>
+  </div>
+
+  <!-- Main sprite grid -->
+  <div class="wrap">
+    <div id="grid"></div>
+  </div>
+
+  <!-- Detail modal -->
+  <div class="overlay" id="detailOverlay" role="dialog" aria-modal="true" aria-labelledby="detailTitle">
+    <div class="modal">
+      <div class="modal-head">
+        <h2 id="detailTitle"></h2>
+        <button class="x" data-close aria-label="Close">✕</button>
+      </div>
+      <div class="modal-body" id="detailBody"></div>
+    </div>
+  </div>
+
+  <!-- Image generation modal -->
+  <div class="overlay" id="genOverlay" role="dialog" aria-modal="true" aria-labelledby="genTitle">
+    <div class="modal wide">
+      <div class="modal-head">
+        <h2 id="genTitle">Generate image</h2>
+        <button class="x" data-close aria-label="Close">✕</button>
+      </div>
+      <div class="modal-body" id="genBody"></div>
+    </div>
+  </div>
+
+  <!-- Toast notification -->
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <footer>
+    Fan-made tracker · not affiliated with Epic Games.<br />
+    Sprite icons from <a href="https://fortnite.gg" target="_blank" rel="noopener">fortnite.gg</a> · All Fortnite artwork © Epic Games.<br />
+    Drop rates are datamined community estimates, not official stats.
+  </footer>
+
+  <script src="./data.js"></script>
+  <script src="./app.js"></script>
+</body>
+</html>
