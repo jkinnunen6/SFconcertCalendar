@@ -24,6 +24,7 @@ export type Event = {
   userAdded?: boolean
   userEventDbId?: number
   userCity?: string
+  userVenueName?: string
 }
 
 export type Venue = {
