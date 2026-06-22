@@ -181,6 +181,7 @@ function userEventToEvent(row: UserEventRow): Event {
     userAdded: true,
     userEventDbId: row.id,
     userCity: row.city,
+    userVenueName: row.venue_name,
   }
 }
 
@@ -213,6 +214,7 @@ export default function CalendarApp({ events, venues }: { events: Event[], venue
   const [myShowsOnly, setMyShowsOnly] = useState(false)
   const [userEventsList, setUserEventsList] = useState<Event[]>([])
   const [addEventOpen, setAddEventOpen] = useState(false)
+  const [editingEvent, setEditingEvent] = useState<Event | null>(null)
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => {
@@ -564,7 +566,7 @@ export default function CalendarApp({ events, venues }: { events: Event[], venue
               {Object.keys(grouped).length === 0 ? (
                 <div className={styles.empty}>No shows found</div>
               ) : (
-                Object.entries(grouped).map(([day, dayEvts]) => (
+                sortedDays.map(day => { const dayEvts = grouped[day]; return (
                   <div key={day} className={styles.dayGroup} ref={el => { dayRefs.current[day] = el }}>
                     <div className={styles.dayHeader}>
                       <button
@@ -599,11 +601,12 @@ export default function CalendarApp({ events, venues }: { events: Event[], venue
                           status={statuses[e.id]}
                           onToggleStatus={user ? (s) => toggleStatus(e.id, s) : undefined}
                           onDelete={e.userAdded && e.userEventDbId != null ? () => deleteUserEvent(e.userEventDbId!) : undefined}
+                          onEdit={e.userAdded ? () => setEditingEvent(e) : undefined}
                         />
                       ))}
                     </div>
                   </div>
-                ))
+                )})
               )}
             </div>
           ) : (
@@ -730,9 +733,10 @@ export default function CalendarApp({ events, venues }: { events: Event[], venue
                                             </div>
                                           )}
                                           {e.userAdded && e.userEventDbId != null && (
-                                            <button className={styles.deleteBtn} onClick={() => deleteUserEvent(e.userEventDbId!)}>
-                                              REMOVE
-                                            </button>
+                                            <>
+                                              <button className={styles.editBtn} onClick={() => setEditingEvent(e)}>EDIT</button>
+                                              <button className={styles.deleteBtn} onClick={() => deleteUserEvent(e.userEventDbId!)}>REMOVE</button>
+                                            </>
                                           )}
                                         </div>
                                         <div className={styles.eventBtns}>
@@ -772,12 +776,13 @@ export default function CalendarApp({ events, venues }: { events: Event[], venue
         >↑ TOP</button>
       )}
 
-      {/* Add event modal */}
-      {addEventOpen && user && (
+      {/* Add / edit event modal */}
+      {(addEventOpen || editingEvent) && user && (
         <AddEventModal
           user={user}
+          editEvent={editingEvent ?? undefined}
           onSuccess={loadUserEvents}
-          onClose={() => setAddEventOpen(false)}
+          onClose={() => { setAddEventOpen(false); setEditingEvent(null) }}
         />
       )}
 
@@ -897,11 +902,12 @@ function AddToCalBtn({ event }: { event: Event }) {
   )
 }
 
-function EventCard({ event: e, status, onToggleStatus, onDelete }: {
+function EventCard({ event: e, status, onToggleStatus, onDelete, onEdit }: {
   event: Event
   status?: ShowStatus
   onToggleStatus?: (status: ShowStatus) => void
   onDelete?: () => void
+  onEdit?: () => void
 }) {
   const [expanded, setExpanded] = useState(false)
   return (
@@ -959,11 +965,15 @@ function EventCard({ event: e, status, onToggleStatus, onDelete }: {
             >GOING</button>
           </div>
         )}
-        {expanded && onDelete && (
-          <button
-            className={styles.deleteBtn}
-            onClick={ev => { ev.stopPropagation(); onDelete() }}
-          >REMOVE SHOW</button>
+        {expanded && (onEdit || onDelete) && (
+          <div className={styles.userEventActions} onClick={ev => ev.stopPropagation()}>
+            {onEdit && (
+              <button className={styles.editBtn} onClick={onEdit}>EDIT</button>
+            )}
+            {onDelete && (
+              <button className={styles.deleteBtn} onClick={onDelete}>REMOVE</button>
+            )}
+          </div>
         )}
       </div>
       <div className={styles.eventBtns} onClick={ev => ev.stopPropagation()}>

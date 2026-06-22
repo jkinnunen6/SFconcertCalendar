@@ -3,24 +3,28 @@
 import { useState } from 'react'
 import { createClient } from '@/lib/supabase-browser'
 import type { User } from '@supabase/supabase-js'
+import type { Event } from '@/lib/supabase'
 import styles from './AddEventModal.module.css'
 
 type ShowStatus = 'watching' | 'going'
 
 type Props = {
   user: User
+  editEvent?: Event
   onSuccess: () => void
   onClose: () => void
 }
 
-export default function AddEventModal({ user, onSuccess, onClose }: Props) {
+export default function AddEventModal({ user, editEvent, onSuccess, onClose }: Props) {
   const supabase = createClient()
-  const [artist, setArtist] = useState('')
-  const [venue, setVenue] = useState('')
-  const [city, setCity] = useState('Bay Area')
-  const [date, setDate] = useState('')
-  const [time, setTime] = useState('')
-  const [ticketUrl, setTicketUrl] = useState('')
+  const isEditing = editEvent != null
+
+  const [artist, setArtist] = useState(editEvent?.artist ?? '')
+  const [venue, setVenue] = useState(editEvent?.userVenueName ?? '')
+  const [city, setCity] = useState(editEvent?.userCity ?? 'Bay Area')
+  const [date, setDate] = useState(editEvent?.event_date ?? '')
+  const [time, setTime] = useState(editEvent?.show_time ?? '')
+  const [ticketUrl, setTicketUrl] = useState(editEvent?.ticket_url ?? '')
   const [status, setStatus] = useState<ShowStatus>('going')
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
@@ -33,16 +37,30 @@ export default function AddEventModal({ user, onSuccess, onClose }: Props) {
     }
     setSaving(true)
     setError('')
-    const { error: err } = await supabase.from('user_events').insert({
-      user_id: user.id,
+
+    const fields = {
       artist: artist.trim(),
       venue_name: venue.trim(),
       city: city.trim() || 'Bay Area',
       event_date: date,
       show_time: time.trim() || null,
       ticket_url: ticketUrl.trim() || null,
-      status,
-    })
+    }
+
+    let err
+    if (isEditing && editEvent.userEventDbId != null) {
+      ;({ error: err } = await supabase
+        .from('user_events')
+        .update(fields)
+        .eq('id', editEvent.userEventDbId))
+    } else {
+      ;({ error: err } = await supabase.from('user_events').insert({
+        user_id: user.id,
+        ...fields,
+        status,
+      }))
+    }
+
     setSaving(false)
     if (err) { setError(err.message); return }
     onSuccess()
@@ -53,7 +71,7 @@ export default function AddEventModal({ user, onSuccess, onClose }: Props) {
     <div className={styles.overlay} onClick={onClose}>
       <div className={styles.modal} onClick={e => e.stopPropagation()}>
         <div className={styles.header}>
-          <span className={styles.title}>ADD SHOW</span>
+          <span className={styles.title}>{isEditing ? 'EDIT SHOW' : 'ADD SHOW'}</span>
           <button className={styles.close} onClick={onClose}>×</button>
         </div>
         <form onSubmit={handleSubmit} className={styles.form}>
@@ -99,7 +117,7 @@ export default function AddEventModal({ user, onSuccess, onClose }: Props) {
               TIME
               <input
                 className={styles.input}
-                value={time}
+                value={time ?? ''}
                 onChange={e => setTime(e.target.value)}
                 placeholder="8:00 PM"
               />
@@ -109,31 +127,33 @@ export default function AddEventModal({ user, onSuccess, onClose }: Props) {
             TICKET URL
             <input
               className={styles.input}
-              value={ticketUrl}
+              value={ticketUrl ?? ''}
               onChange={e => setTicketUrl(e.target.value)}
               placeholder="https://..."
             />
           </label>
-          <div className={styles.fieldGroup}>
-            <span className={styles.fieldLabel}>STATUS</span>
-            <div className={styles.statusRow}>
-              <button
-                type="button"
-                className={`${styles.statusBtn} ${status === 'watching' ? styles.statusWatching : ''}`}
-                onClick={() => setStatus('watching')}
-              >WATCHING</button>
-              <button
-                type="button"
-                className={`${styles.statusBtn} ${status === 'going' ? styles.statusGoing : ''}`}
-                onClick={() => setStatus('going')}
-              >GOING</button>
+          {!isEditing && (
+            <div className={styles.fieldGroup}>
+              <span className={styles.fieldLabel}>STATUS</span>
+              <div className={styles.statusRow}>
+                <button
+                  type="button"
+                  className={`${styles.statusBtn} ${status === 'watching' ? styles.statusWatching : ''}`}
+                  onClick={() => setStatus('watching')}
+                >WATCHING</button>
+                <button
+                  type="button"
+                  className={`${styles.statusBtn} ${status === 'going' ? styles.statusGoing : ''}`}
+                  onClick={() => setStatus('going')}
+                >GOING</button>
+              </div>
             </div>
-          </div>
+          )}
           {error && <div className={styles.error}>{error}</div>}
           <div className={styles.actions}>
             <button type="button" className={styles.cancel} onClick={onClose}>CANCEL</button>
             <button type="submit" className={styles.save} disabled={saving}>
-              {saving ? 'SAVING…' : 'SAVE SHOW'}
+              {saving ? 'SAVING…' : isEditing ? 'SAVE CHANGES' : 'SAVE SHOW'}
             </button>
           </div>
         </form>
