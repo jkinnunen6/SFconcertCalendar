@@ -1,6 +1,6 @@
 /* ============================================================================
    FORTNITE SPRITE TRACKER — DATA + CONFIG
-   Data: Fortnite Chapter 7 Season 3 ("Runners"). 41 sprites total.
+   Data: Fortnite Chapter 7 Season 3 ("Runners"). 61 sprites total.
    Drop rates are DATAMINED community estimates (via fortnite.gg). Epic Games
    has NOT published official spawn rates — the UI labels them accordingly.
    ============================================================================ */
@@ -152,6 +152,61 @@ const CREATURES = [
       gold: "T_Icon_BR_RedDemon_Gold_L.webp",
       gummy: "T_Icon_BR_RedDemon_Candy_L.webp",
       galaxy: "T_Icon_BR_RedDemon_Galaxy_L.webp",
+    },
+  },
+  {
+    key: "fishy", name: "Fishy", rarity: "rare",
+    ability: "Swim speed greatly increased. Taking damage also briefly increases movement speed.",
+    rates: { base: null, gold: null, gummy: null, galaxy: null },
+    icons: {
+      base: "T_Icon_BR_Creature_Sprite_Fishy_ui_L.webp",
+      gold: "T_Icon_BR_Creature_Sprite_Fishy_Gold_ui_L.webp",
+      gummy: "T_Icon_BR_Creature_Sprite_Fishy_Candy_ui_L.webp",
+      galaxy: "T_Icon_BR_Creature_Sprite_Fishy_Galaxy_ui_L.webp",
+    },
+  },
+  {
+    key: "striker", name: "Striker", rarity: "epic",
+    ability: "Gain the Overdrive effect when you Mantle, Hurdle, or Wall Scramble. Duration increases at each Level.",
+    rates: { base: null, gold: null, gummy: null, galaxy: null },
+    icons: {
+      base: "T_Icon_BR_Creature_Sprite_Soccer_ui_L.webp",
+      gold: "T_Icon_BR_Creature_Sprite_Soccer_Gold_L.webp",
+      gummy: "T_Icon_BR_Creature_Sprite_Soccer_Candy_L.webp",
+      galaxy: "T_Icon_BR_Creature_Sprite_Soccer_Galaxy_L.webp",
+    },
+  },
+  {
+    key: "aura", name: "Aura", rarity: "epic",
+    ability: "Gain a Shock Rock charge when you deal enough damage to enemies.",
+    rates: { base: null, gold: null, gummy: null, galaxy: null },
+    icons: {
+      base: "T_Icon_BR_Creature_Sprite_Drifter_ui_L.webp",
+      gold: "T_Icon_BR_Creature_Sprite_Drifter_Gold_ui_L.webp",
+      gummy: "T_Icon_BR_Creature_Sprite_Drifter_Candy_ui_L.webp",
+      galaxy: "T_Icon_BR_Creature_Sprite_Drifter_Galaxy_ui_L.webp",
+    },
+  },
+  {
+    key: "boss", name: "Boss", rarity: "legendary",
+    ability: "Grants an increase to your max HP and Shield.",
+    rates: { base: null, gold: null, gummy: null, galaxy: null },
+    icons: {
+      base: "T_Icon_BR_Creature_Sprite_Boss_ui_L.webp",
+      gold: "T_Icon_BR_Creature_Sprite_Boss_Gold_ui_L.webp",
+      gummy: "T_Icon_BR_Creature_Sprite_Boss_Candy_ui_L.webp",
+      galaxy: "T_Icon_BR_Creature_Sprite_Boss_Galaxy_ui_L.webp",
+    },
+  },
+  {
+    key: "grim", name: "Grim", rarity: "mythic",
+    ability: "Players who attack you are marked for a duration.",
+    rates: { base: null, gold: null, gummy: null, galaxy: null },
+    icons: {
+      base: "T_Icon_BR_GrimReaper_Default_L.webp",
+      gold: "T_Icon_BR_GrimReaper_Gold_L.webp",
+      gummy: "T_Icon_BR_GrimReaper_Candy_L.webp",
+      galaxy: "T_Icon_BR_GrimReaper_Galaxy_L.webp",
     },
   },
   {
