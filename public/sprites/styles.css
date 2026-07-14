@@ -421,3 +421,138 @@ footer a:hover { text-decoration: underline; }
   .bar > span { transition: none; }
   * { scroll-behavior: auto; }
 }
+
+/* ---- Creature row layout ----------------------------------------------- */
+.creature-rows { display: flex; flex-direction: column; }
+
+.creature-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--line);
+}
+.creature-row:last-child { border-bottom: none; }
+
+.row-head {
+  flex: 0 0 100px;
+  text-align: right;
+  padding-right: 6px;
+  border-right: 2px solid var(--line);
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.row-name {
+  font-family: "Chakra Petch", sans-serif;
+  font-weight: 700;
+  font-size: 12.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  line-height: 1.2;
+}
+.row-rar {
+  font-size: 9.5px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-top: 2px;
+}
+
+.row-cards {
+  display: flex;
+  gap: 7px;
+  overflow-x: auto;
+  padding-bottom: 2px;
+  flex-wrap: nowrap;
+}
+.row-cards::-webkit-scrollbar { height: 3px; }
+.row-cards::-webkit-scrollbar-track { background: transparent; }
+.row-cards::-webkit-scrollbar-thumb { background: var(--line); border-radius: 99px; }
+
+/* ---- Mini cards --------------------------------------------------------- */
+.mini-card {
+  position: relative;
+  flex: 0 0 70px;
+  height: 90px;
+  border-radius: 10px;
+  border: 1.5px solid var(--line);
+  background: var(--panel);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 8px 4px 5px;
+  overflow: hidden;
+  transition: border-color 0.15s, box-shadow 0.15s, opacity 0.2s;
+}
+.mini-card:focus-visible { outline: 2px solid var(--c); outline-offset: 2px; }
+.mini-card:not(.owned):not(.locked) { opacity: 0.58; }
+.mini-card:not(.owned):not(.locked) .mini-img img { filter: grayscale(0.85) brightness(0.65); }
+.mini-card:not(.owned):not(.locked):hover { opacity: 0.9; border-color: color-mix(in srgb, var(--c) 50%, transparent); }
+.mini-card.owned { border-color: color-mix(in srgb, var(--c) 55%, transparent); box-shadow: 0 0 12px color-mix(in srgb, var(--c) 22%, transparent); }
+.mini-card.mastered { border-color: rgba(255, 200, 60, 0.65); box-shadow: 0 0 14px rgba(255, 190, 60, 0.25); }
+.mini-card.mastered::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(115deg, transparent 28%, rgba(255,255,255,0.35) 42%, rgba(120,255,230,0.30) 48%, rgba(255,120,200,0.30) 54%, transparent 68%);
+  background-size: 260% 260%; mix-blend-mode: overlay;
+  animation: foil 3.4s linear infinite;
+}
+.mini-card.locked { opacity: 0.42; cursor: not-allowed; }
+.mini-card.locked:hover { opacity: 0.58; border-color: var(--line); box-shadow: none; }
+.mini-card.locked .mini-img img { filter: grayscale(0.9) brightness(0.5); }
+
+.mini-img {
+  position: relative;
+  width: 52px;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.mini-img img { max-width: 100%; max-height: 100%; object-fit: contain; }
+.mini-img .lock-overlay { font-size: 18px !important; }
+
+.mini-tag {
+  margin-top: 5px;
+  font-family: "Chakra Petch", sans-serif;
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  color: var(--c);
+  text-align: center;
+  line-height: 1.2;
+  max-width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  padding: 0 2px;
+}
+.mini-card.locked .mini-tag { color: var(--muted); }
+
+.mini-master-btn {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  font-size: 9px;
+  color: var(--muted);
+  background: rgba(0,0,0,0.55);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 1px 3px;
+  cursor: pointer;
+  line-height: 1;
+  transition: color 0.15s, background 0.15s, border-color 0.15s;
+  z-index: 1;
+}
+.mini-master-btn:hover { color: var(--gold); border-color: rgba(255,200,60,0.4); background: rgba(0,0,0,0.7); }
+.mini-master-btn.on { color: #06060e; background: linear-gradient(90deg, var(--gold), #fff1a8); border-color: transparent; }
+
+@media (max-width: 720px) {
+  .row-head { flex: 0 0 76px; }
+  .mini-card { flex: 0 0 62px; height: 82px; }
+  .mini-img { width: 44px; height: 44px; }
+  .mini-tag { font-size: 7.5px; }
+}

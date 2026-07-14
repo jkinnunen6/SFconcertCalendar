@@ -91,6 +91,51 @@ function visibleSprites() {
 // ---- Rendering -----------------------------------------------------------
 const $ = (sel) => document.querySelector(sel);
 
+// Creature display order for the row layout
+const CREATURE_DISPLAY_ORDER = [
+  "water","earth","fire","duck","ghost","dream",
+  "demon","punk","king","burntpeanut","zeropoint",
+  "fishy","striker","aura","boss","grim",
+  "air","seven","wick",
+];
+
+function miniCardHTML(s) {
+  const locked = isLocked(s);
+  const status = statusOf(s.id);
+  const owned = status >= 1 && !locked;
+  const mastered = status === 2 && !locked;
+  const tag = s.theme === "base" ? RARITY[s.rarity].label : THEMES[s.theme].label;
+  const masterBtn = owned
+    ? `<button class="mini-master-btn ${mastered ? "on" : ""}" data-master title="${mastered ? "Mastered" : "Mark mastered"}">♛</button>`
+    : "";
+  return `
+    <div class="mini-card ${owned ? "owned" : ""} ${mastered ? "mastered" : ""} ${locked ? "locked" : ""}"
+         data-id="${s.id}" style="--c:${s.color}" tabindex="0" role="button"
+         aria-pressed="${owned}"
+         aria-label="${s.name}${locked ? ", unreleased" : owned ? ", collected" : ", not collected"}">
+      ${masterBtn}
+      <div class="mini-img">
+        <img src="${iconURL(s)}" alt="${s.name}" loading="lazy"
+             onerror="this.onerror=null;this.src='${CONFIG.CDN_BASE + s.icon}'" />
+        ${locked ? '<div class="lock-overlay" style="font-size:18px">🔒</div>' : ""}
+      </div>
+      <div class="mini-tag">${tag}</div>
+    </div>`;
+}
+
+function creatureRowHTML(creature, variants) {
+  const rep = variants.find((s) => s.theme === "base") || variants[0];
+  const rarityColor = RARITY[rep.rarity].color;
+  return `
+    <div class="creature-row">
+      <div class="row-head">
+        <div class="row-name" style="color:${rarityColor}">${rep.creatureName}</div>
+        <div class="row-rar">${RARITY[rep.rarity].label}</div>
+      </div>
+      <div class="row-cards">${variants.map(miniCardHTML).join("")}</div>
+    </div>`;
+}
+
 function fmtRate(r) {
   if (r === null || r === undefined) return "NEW";
   if (r === 0) return "—";
@@ -151,7 +196,17 @@ function renderGrid() {
     }
     grid.innerHTML = html;
   } else {
-    grid.innerHTML = `<div class="grid">${list.map(cardHTML).join("")}</div>`;
+    // Default: one row per creature with variants inline
+    const byCreature = {};
+    for (const s of list) {
+      (byCreature[s.creature] = byCreature[s.creature] || []).push(s);
+    }
+    let html = '<div class="creature-rows">';
+    for (const key of CREATURE_DISPLAY_ORDER) {
+      if (byCreature[key]) html += creatureRowHTML(key, byCreature[key]);
+    }
+    html += "</div>";
+    grid.innerHTML = html;
   }
   renderResultLine(list);
 }
@@ -174,7 +229,7 @@ function renderMeters() {
 
 // ---- Card interactions ---------------------------------------------------
 $("#grid").addEventListener("click", (e) => {
-  const card = e.target.closest(".card");
+  const card = e.target.closest(".card, .mini-card");
   if (!card) return;
   const id = card.dataset.id;
   const sprite = spriteById(id);
@@ -187,7 +242,7 @@ $("#grid").addEventListener("click", (e) => {
 
 $("#grid").addEventListener("keydown", (e) => {
   if (e.key !== "Enter" && e.key !== " ") return;
-  const card = e.target.closest(".card");
+  const card = e.target.closest(".card, .mini-card");
   if (!card || sharedMode) return;
   const sprite = spriteById(card.dataset.id);
   if (isLocked(sprite)) return;
