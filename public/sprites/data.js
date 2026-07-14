@@ -21,10 +21,11 @@ const CONFIG = {
 
 // Theme presentation -------------------------------------------------------
 const THEMES = {
-  base:   { label: "Base",   color: null /* uses rarity color */ },
-  gold:   { label: "Gold",   color: "#ffc23b" },
-  gummy:  { label: "Gummy",  color: "#ff5fa8" },
-  galaxy: { label: "Galaxy", color: "#9b7bff" },
+  base:     { label: "Base",     color: null /* uses rarity color */ },
+  gold:     { label: "Gold",     color: "#ffc23b" },
+  gummy:    { label: "Gummy",    color: "#ff5fa8" },
+  galaxy:   { label: "Galaxy",   color: "#9b7bff" },
+  holofoil: { label: "Holofoil", color: "#a8f0ff" },
 };
 
 const RARITY = {
@@ -35,9 +36,10 @@ const RARITY = {
 };
 
 const VARIANT_BONUS = {
-  gold:   "Bonus XP from eliminations.",
-  gummy:  "10% more Sprite Dust when extracted.",
-  galaxy: "20% more ammo when looting.",
+  gold:     "Bonus XP from eliminations.",
+  gummy:    "10% more Sprite Dust when extracted.",
+  galaxy:   "20% more ammo when looting.",
+  holofoil: "Squad-wide rare-find bonus.",
 };
 
 // Base creatures. Each expands into its theme variants below.
@@ -47,12 +49,13 @@ const CREATURES = [
   {
     key: "water", name: "Water", rarity: "rare",
     ability: "Replenishes shields for you and nearby squadmates while in water.",
-    rates: { base: 13.92, gold: 6, gummy: 0.08, galaxy: null },
+    rates: { base: 13.92, gold: 6, gummy: 0.08, galaxy: null, holofoil: null },
     icons: {
       base: "T_Icon_BR_Creature_Sprite_Water_Unvault_Ch7S3_ui_L.webp",
       gold: "T_Icon_BR_Creature_Sprite_Water_Gold_ui_L.webp",
       gummy: "T_Icon_BR_Creature_Sprite_Water_Candy_ui_L.webp",
       galaxy: "T_Icon_BR_Creature_Sprite_Water_Galaxy_ui_L.webp",
+      holofoil: "water_holofoil.webp",
     },
   },
   {
@@ -69,12 +72,13 @@ const CREATURES = [
   {
     key: "fire", name: "Fire", rarity: "rare",
     ability: "Creates a fiery burst when you deal enough damage to an enemy.",
-    rates: { base: 13.92, gold: 6, gummy: 0.08, galaxy: null },
+    rates: { base: 13.92, gold: 6, gummy: 0.08, galaxy: null, holofoil: null },
     icons: {
       base: "T_Icon_BR_Creature_Sprite_Fire_Unvault_Ch7S3_ui_L.webp",
       gold: "T_Icon_BR_Creature_Sprite_Fire_Gold_ui_L.webp",
       gummy: "T_Icon_BR_Creature_Sprite_Fire_Candy_ui_L.webp",
       galaxy: "T_Icon_BR_Creature_Sprite_Fire_Galaxy_ui_L.webp",
+      holofoil: "fire_holofoil.webp",
     },
   },
   {
@@ -91,12 +95,13 @@ const CREATURES = [
   {
     key: "ghost", name: "Ghost", rarity: "epic",
     ability: "Grants a temporary invisibility cloak upon reloading.",
-    rates: { base: 5.22, gold: 2.25, gummy: 0.03, galaxy: null },
+    rates: { base: 5.22, gold: 2.25, gummy: 0.03, galaxy: null, holofoil: null },
     icons: {
       base: "T_Icon_BR_Creature_Sprite_Ghost_Unvault_L.webp",
       gold: "T_Icon_BR_Creature_Sprite_Ghost_Gold_L.webp",
       gummy: "T_Icon_BR_Creature_Sprite_Ghost_Candy_L.webp",
       galaxy: "T_Icon_BR_Creature_Sprite_Ghost_Galaxy_L.webp",
+      holofoil: "ghost_holofoil.webp",
     },
   },
   {
@@ -124,12 +129,13 @@ const CREATURES = [
   {
     key: "king", name: "King", rarity: "epic",
     ability: "Increases your pickaxe damage.",
-    rates: { base: 5.22, gold: 2.25, gummy: 0.03, galaxy: null },
+    rates: { base: 5.22, gold: 2.25, gummy: 0.03, galaxy: null, holofoil: null },
     icons: {
       base: "T_Icon_BR_Creature_Sprite_King_ui_L.webp",
       gold: "T_Icon_BR_Creature_Sprite_King_Gold_ui_L.webp",
       gummy: "T_Icon_BR_Creature_Sprite_King_Candy_ui_L.webp",
       galaxy: "T_Icon_BR_Creature_Sprite_King_Galaxy_ui_L.webp",
+      holofoil: "king_holofoil.webp",
     },
   },
   {
@@ -168,12 +174,13 @@ const CREATURES = [
   {
     key: "striker", name: "Striker", rarity: "epic",
     ability: "Gain the Overdrive effect when you Mantle, Hurdle, or Wall Scramble. Duration increases at each Level.",
-    rates: { base: null, gold: null, gummy: null, galaxy: null },
+    rates: { base: null, gold: null, gummy: null, galaxy: null, holofoil: null },
     icons: {
       base: "T_Icon_BR_Creature_Sprite_Soccer_ui_L.webp",
       gold: "T_Icon_BR_Creature_Sprite_Soccer_Gold_L.webp",
       gummy: "T_Icon_BR_Creature_Sprite_Soccer_Candy_L.webp",
       galaxy: "T_Icon_BR_Creature_Sprite_Soccer_Galaxy_L.webp",
+      holofoil: "striker_holofoil.webp",
     },
   },
   {
@@ -219,14 +226,14 @@ const CREATURES = [
 ];
 
 // Expand creatures -> flat sprite list (stable order = encode/decode order) ---
-const THEME_ORDER = ["base", "gold", "gummy", "galaxy"];
+const THEME_ORDER = ["base", "gold", "gummy", "galaxy", "holofoil"];
 // Themes currently live in-game. Add new ones here as Epic releases them.
-const RELEASED_THEMES = new Set(["base", "gold", "gummy", "galaxy"]);
+const RELEASED_THEMES = new Set(["base", "gold", "gummy", "galaxy", "holofoil"]);
 
 const SPRITES = (() => {
   const out = [];
   for (const c of CREATURES) {
-    const themes = c.baseOnly ? ["base"] : THEME_ORDER;
+    const themes = c.baseOnly ? ["base"] : THEME_ORDER.filter(t => c.icons[t] !== undefined);
     for (const theme of themes) {
       const isBase = theme === "base";
       const label = THEMES[theme].label;
