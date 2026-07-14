@@ -229,10 +229,15 @@ export default function CalendarApp({ events, venues }: { events: Event[], venue
     return () => subscription.unsubscribe()
   }, [])
 
+  function getToday() {
+    return new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Los_Angeles' }).format(new Date())
+  }
+
   async function loadAllUserData() {
+    const today = getToday()
     const [statusRes, userEventRes] = await Promise.all([
       supabase.from('user_show_status').select('event_id,status'),
-      supabase.from('user_events').select('*').order('event_date'),
+      supabase.from('user_events').select('*').gte('event_date', today).order('event_date'),
     ])
     const newStatuses: Record<number, ShowStatus> = {}
     if (statusRes.data) {
@@ -249,7 +254,7 @@ export default function CalendarApp({ events, venues }: { events: Event[], venue
   }
 
   async function loadUserEvents() {
-    const { data } = await supabase.from('user_events').select('*').order('event_date')
+    const { data } = await supabase.from('user_events').select('*').gte('event_date', getToday()).order('event_date')
     if (data) {
       const evts = (data as UserEventRow[]).map(userEventToEvent)
       setUserEventsList(evts)
