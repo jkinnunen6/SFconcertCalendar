@@ -140,13 +140,12 @@ function renderGrid() {
     return;
   }
   if (filters.groupBy) {
-    const order = ["base", "gold", "gummy", "galaxy"];
     let html = "";
-    for (const theme of order) {
+    for (const theme of THEME_ORDER) {
       const group = list.filter((s) => s.theme === theme);
       if (!group.length) continue;
       const color = THEMES[theme].color || "var(--accent)";
-      const tag = theme === "galaxy" ? " · Unreleased" : "";
+      const tag = !RELEASED_THEMES.has(theme) ? " · Unreleased" : "";
       html += `<div class="group-title" style="--c:${color}"><span class="swatch"></span>${THEMES[theme].label}${tag}</div>`;
       html += `<div class="grid">${group.map(cardHTML).join("")}</div>`;
     }
@@ -181,7 +180,7 @@ $("#grid").addEventListener("click", (e) => {
   const sprite = spriteById(id);
   if (e.target.closest("[data-info]")) { openDetail(sprite); return; }
   if (sharedMode) return;
-  if (isLocked(sprite)) { toast("Galaxy sprites aren't in the game yet"); return; }
+  if (isLocked(sprite)) { toast("This sprite isn't in the game yet"); return; }
   if (e.target.closest("[data-master]")) { setStatus(id, isMastered(id) ? 1 : 2); return; }
   setStatus(id, isOwned(id) ? 0 : 1);
 });
@@ -204,7 +203,7 @@ function openDetail(s) {
 
   let controls = "", statusNote = "";
   if (locked) {
-    statusNote = '<div class="ability" style="color:var(--galaxy)">🔒 Not in the game yet — Galaxy variants are unreleased.</div>';
+    statusNote = '<div class="ability" style="color:var(--muted)">🔒 Not in the game yet — this variant is unreleased.</div>';
   } else {
     const ownBtn = status >= 1
       ? `<button class="btn ghost" data-detail-act="unown">Remove from collection</button>`
