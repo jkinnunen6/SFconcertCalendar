@@ -96,7 +96,7 @@ const CREATURE_DISPLAY_ORDER = [
   "water","earth","fire","duck","ghost","dream",
   "demon","punk","king","burntpeanut","zeropoint",
   "fishy","striker","aura","boss","grim",
-  "air","seven","wick",
+  "air","seven","wick","batman","pollo","vini",
 ];
 
 function miniCardHTML(s) {
