@@ -749,7 +749,6 @@ renderGrid();
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
   if (!SR) return;
 
-  // Theme word → internal theme key
   const THEME_ALIASES = {
     base: "base", basic: "base",
     gold: "gold", golden: "gold",
@@ -760,7 +759,7 @@ renderGrid();
     gem: "gem",
   };
 
-  // Build creature name → key map; sort longest first so "zero point" beats "zero"
+  // Creature name → key; longest first so "zero point" beats "zero"
   const creatureIndex = [];
   const seen = new Set();
   for (const s of SPRITES) {
@@ -771,22 +770,16 @@ renderGrid();
   creatureIndex.sort((a, b) => b.name.length - a.name.length);
 
   function parseVoice(text) {
-    const t = text.toLowerCase().replace(/[^a-z0-9 ]/g, " ").replace(/\s+/g, " ").trim();
-
-    // Find creature name first (longest match wins)
+    const t = text.toLowerCase().replace(/\b7\b/g, "seven").replace(/[^a-z0-9 ]/g, " ").replace(/\s+/g, " ").trim();
     let creatureKey = null, remaining = t;
     for (const { name, key } of creatureIndex) {
       if (t.includes(name)) { creatureKey = key; remaining = t.replace(name, " ").trim(); break; }
     }
     if (!creatureKey) return null;
-
-    // Find theme in whatever words are left
     let themeKey = "base";
     for (const word of remaining.split(" ")) {
       if (THEME_ALIASES[word]) { themeKey = THEME_ALIASES[word]; break; }
     }
-
-    // Return matched sprite, or fall back to base variant
     return SPRITES.find(s => s.id === `${themeKey}-${creatureKey}`)
         || SPRITES.find(s => s.creature === creatureKey && s.theme === "base");
   }
@@ -799,6 +792,13 @@ renderGrid();
     setTimeout(() => card.classList.remove("voice-highlight"), 1600);
   }
 
+  function detailSprite() {
+    const overlay = $("#detailOverlay");
+    if (!overlay.classList.contains("open")) return null;
+    const title = $("#detailTitle").textContent;
+    return SPRITES.find(s => s.name === title) || null;
+  }
+
   const btn = $("#voiceBtn");
   btn.style.display = "";
 
@@ -807,13 +807,57 @@ renderGrid();
   rec.interimResults = false;
   rec.maxAlternatives = 3;
 
-  let listening = false;
-  rec.onstart = () => { listening = true;  btn.classList.add("listening"); toast("Listening…"); };
-  rec.onend   = () => { listening = false; btn.classList.remove("listening"); };
-  rec.onerror = (e) => { toast("Mic error: " + e.error); };
+  let active = false; // true = voice mode is on (button toggled)
+
+  rec.onstart = () => btn.classList.add("listening");
+
+  // Restart automatically on end so voice stays on
+  rec.onend = () => {
+    if (active) {
+      try { rec.start(); } catch (_) {}
+    } else {
+      btn.classList.remove("listening");
+    }
+  };
+
+  rec.onerror = (e) => {
+    if (e.error === "no-speech") return; // silence — just restart
+    if (e.error === "aborted")  return;
+    toast("Mic error: " + e.error);
+  };
 
   rec.onresult = (e) => {
-    const alts = [...e.results[0]].map(a => a.transcript);
+    const result = e.results[e.resultIndex];
+    if (!result.isFinal) return;
+    const alts = [...result].map(a => a.transcript.trim());
+    const spoken = alts[0].toLowerCase();
+
+    // --- Modal commands (when detail flyout is open) ---
+    const openSprite = detailSprite();
+    if (openSprite) {
+      if (/\b(exit|close|back|dismiss|cancel|done)\b/.test(spoken)) {
+        closeOverlay("#detailOverlay");
+        toast("Closed");
+        return;
+      }
+      if (/\b(add|collect|got it|i got (it|one)|owned)\b/.test(spoken)) {
+        if (!isOwned(openSprite.id)) { setStatus(openSprite.id, 1); openDetail(openSprite); }
+        toast("Added to collection");
+        return;
+      }
+      if (/\b(master|mastered|mastery|mark master)\b/.test(spoken)) {
+        setStatus(openSprite.id, 2); openDetail(openSprite);
+        toast("Marked as mastered");
+        return;
+      }
+      if (/\b(remove|un-?collect|delete|not collected)\b/.test(spoken)) {
+        setStatus(openSprite.id, 0); openDetail(openSprite);
+        toast("Removed from collection");
+        return;
+      }
+    }
+
+    // --- Sprite search ---
     let sprite = null;
     for (const alt of alts) { sprite = parseVoice(alt); if (sprite) break; }
     if (!sprite) { toast(`Couldn't find "${alts[0]}"`); return; }
@@ -821,16 +865,22 @@ renderGrid();
     openDetail(sprite);
   };
 
-  function startListening() {
-    if (listening) { rec.stop(); return; }
-    try { rec.start(); } catch (_) {}
+  function toggleVoice() {
+    if (active) {
+      active = false;
+      rec.stop();
+      toast("Voice off");
+    } else {
+      active = true;
+      toast("Voice on — say a sprite name");
+      try { rec.start(); } catch (_) {}
+    }
   }
 
-  btn.addEventListener("click", startListening);
+  btn.addEventListener("click", toggleVoice);
 
-  // Press V (when not typing) to trigger voice
   document.addEventListener("keydown", (e) => {
     if (e.key === "v" && !e.ctrlKey && !e.metaKey && document.activeElement.tagName !== "INPUT")
-      startListening();
+      toggleVoice();
   });
 })();
