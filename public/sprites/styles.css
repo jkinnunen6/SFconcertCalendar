@@ -383,12 +383,12 @@ select.chip { color: var(--ink); padding-right: 26px; text-transform: none; lett
 
 /* Thumbnail glow by status */
 .detail[data-status="collected"] .big-thumb {
-  border-color: rgba(34,224,192,0.55);
-  box-shadow: 0 0 22px rgba(34,224,192,0.22);
+  border: 3px solid var(--accent);
+  box-shadow: 0 0 0 1px rgba(34,224,192,0.25), 0 0 28px rgba(34,224,192,0.35);
 }
 .detail[data-status="mastered"] .big-thumb {
-  border-color: rgba(255,194,59,0.65);
-  box-shadow: 0 0 22px rgba(255,194,59,0.25);
+  border: 3px solid var(--gold);
+  box-shadow: 0 0 0 1px rgba(255,194,59,0.25), 0 0 28px rgba(255,194,59,0.40);
 }
 
 .gen-preview { text-align: center; }
