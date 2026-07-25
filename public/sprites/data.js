@@ -27,7 +27,7 @@ const THEMES = {
   galaxy:   { label: "Galaxy",   color: "#9b7bff" },
   holofoil: { label: "Holofoil", color: "#a8f0ff" },
   gem:      { label: "Gem",      color: "#4dffc3" },
-  rift:     { label: "Rift",     color: "#ff6bff" },
+  rift:     { label: "Cube",     color: "#ff6bff" },
 };
 
 const RARITY = {
