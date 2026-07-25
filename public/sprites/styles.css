@@ -571,3 +571,25 @@ footer a:hover { text-decoration: underline; }
   .mini-img { width: 44px; height: 44px; }
   .mini-tag { font-size: 7.5px; }
 }
+
+/* ---- Voice search -------------------------------------------------------- */
+@keyframes voice-pulse {
+  0%   { box-shadow: 0 0 0 0   rgba(255, 60, 80, 0.7); }
+  70%  { box-shadow: 0 0 0 10px rgba(255, 60, 80, 0);  }
+  100% { box-shadow: 0 0 0 0   rgba(255, 60, 80, 0);   }
+}
+@keyframes card-ping {
+  0%   { box-shadow: 0 0 0 0   color-mix(in srgb, var(--c) 80%, transparent); }
+  60%  { box-shadow: 0 0 0 8px color-mix(in srgb, var(--c) 0%,  transparent); }
+  100% { box-shadow: 0 0 0 0   color-mix(in srgb, var(--c) 0%,  transparent); }
+}
+#voiceBtn.listening {
+  background: rgba(255, 40, 60, 0.18);
+  border-color: rgba(255, 40, 60, 0.6);
+  color: #ff4455;
+  animation: voice-pulse 1s ease-out infinite;
+}
+.voice-highlight {
+  animation: card-ping 1.6s ease-out forwards !important;
+  border-color: var(--c) !important;
+}

@@ -743,3 +743,94 @@ load();
 checkSharedLink();
 renderMeters();
 renderGrid();
+
+// ---- Voice search --------------------------------------------------------
+(function initVoice() {
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR) return;
+
+  // Theme word → internal theme key
+  const THEME_ALIASES = {
+    base: "base", basic: "base",
+    gold: "gold", golden: "gold",
+    gummy: "gummy", candy: "gummy",
+    galaxy: "galaxy",
+    holofoil: "holofoil", holo: "holofoil",
+    cube: "rift", rift: "rift",
+    gem: "gem",
+  };
+
+  // Build creature name → key map; sort longest first so "zero point" beats "zero"
+  const creatureIndex = [];
+  const seen = new Set();
+  for (const s of SPRITES) {
+    if (seen.has(s.creature)) continue;
+    seen.add(s.creature);
+    creatureIndex.push({ name: s.creatureName.toLowerCase(), key: s.creature });
+  }
+  creatureIndex.sort((a, b) => b.name.length - a.name.length);
+
+  function parseVoice(text) {
+    const t = text.toLowerCase().replace(/[^a-z0-9 ]/g, " ").replace(/\s+/g, " ").trim();
+
+    // Find creature name first (longest match wins)
+    let creatureKey = null, remaining = t;
+    for (const { name, key } of creatureIndex) {
+      if (t.includes(name)) { creatureKey = key; remaining = t.replace(name, " ").trim(); break; }
+    }
+    if (!creatureKey) return null;
+
+    // Find theme in whatever words are left
+    let themeKey = "base";
+    for (const word of remaining.split(" ")) {
+      if (THEME_ALIASES[word]) { themeKey = THEME_ALIASES[word]; break; }
+    }
+
+    // Return matched sprite, or fall back to base variant
+    return SPRITES.find(s => s.id === `${themeKey}-${creatureKey}`)
+        || SPRITES.find(s => s.creature === creatureKey && s.theme === "base");
+  }
+
+  function highlightCard(id) {
+    const card = document.querySelector(`[data-id="${id}"]`);
+    if (!card) return;
+    card.scrollIntoView({ behavior: "smooth", block: "center" });
+    card.classList.add("voice-highlight");
+    setTimeout(() => card.classList.remove("voice-highlight"), 1600);
+  }
+
+  const btn = $("#voiceBtn");
+  btn.style.display = "";
+
+  const rec = new SR();
+  rec.lang = "en-US";
+  rec.interimResults = false;
+  rec.maxAlternatives = 3;
+
+  let listening = false;
+  rec.onstart = () => { listening = true;  btn.classList.add("listening"); toast("Listening…"); };
+  rec.onend   = () => { listening = false; btn.classList.remove("listening"); };
+  rec.onerror = (e) => { toast("Mic error: " + e.error); };
+
+  rec.onresult = (e) => {
+    const alts = [...e.results[0]].map(a => a.transcript);
+    let sprite = null;
+    for (const alt of alts) { sprite = parseVoice(alt); if (sprite) break; }
+    if (!sprite) { toast(`Couldn't find "${alts[0]}"`); return; }
+    highlightCard(sprite.id);
+    openDetail(sprite);
+  };
+
+  function startListening() {
+    if (listening) { rec.stop(); return; }
+    try { rec.start(); } catch (_) {}
+  }
+
+  btn.addEventListener("click", startListening);
+
+  // Press V (when not typing) to trigger voice
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "v" && !e.ctrlKey && !e.metaKey && document.activeElement.tagName !== "INPUT")
+      startListening();
+  });
+})();
