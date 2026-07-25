@@ -301,7 +301,7 @@ const CREATURES = [
 ];
 
 // Expand creatures -> flat sprite list (stable order = encode/decode order) ---
-const THEME_ORDER = ["base", "gold", "gummy", "galaxy", "holofoil", "gem", "rift"];
+const THEME_ORDER = ["base", "gold", "gummy", "galaxy", "holofoil", "rift", "gem"];
 // Themes currently live in-game. Add new ones here as Epic releases them.
 const RELEASED_THEMES = new Set(["base", "gold", "gummy", "galaxy", "holofoil", "gem", "rift"]);
 
