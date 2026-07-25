@@ -256,9 +256,11 @@ function openDetail(s) {
   const status = statusOf(s.id);
   const relPill = s.released ? '<span class="pill soft">Released</span>' : '<span class="pill soft">Unreleased</span>';
 
-  let controls = "", statusNote = "";
+  const statusKey = locked ? "locked" : status === 2 ? "mastered" : status === 1 ? "collected" : "none";
+
+  let controls = "", statusBadge = "";
   if (locked) {
-    statusNote = '<div class="ability" style="color:var(--muted)">🔒 Not in the game yet — this variant is unreleased.</div>';
+    statusBadge = '<div class="detail-status detail-status--locked">🔒 Not yet released</div>';
   } else {
     const ownBtn = status >= 1
       ? `<button class="btn ghost" data-detail-act="unown">Remove from collection</button>`
@@ -267,13 +269,14 @@ function openDetail(s) {
       ? `<button class="btn" data-detail-act="unmaster">Unmark mastered</button>`
       : `<button class="btn primary" data-detail-act="master">Mark mastered</button>`;
     controls = `<div class="gen-actions" style="justify-content:flex-start;margin-top:16px;">${ownBtn} ${masterBtn}</div>`;
-    const label = status === 0 ? "Not collected" : status === 2 ? "Mastered" : "Collected";
-    statusNote = `<div class="ability" style="color:var(--muted)">Status: ${label}</div>`;
+    if (status === 2)      statusBadge = '<div class="detail-status detail-status--mastered">♛ Mastered</div>';
+    else if (status === 1) statusBadge = '<div class="detail-status detail-status--collected">✓ In your collection</div>';
+    else                   statusBadge = '<div class="detail-status detail-status--none">○ Not collected</div>';
   }
 
   $("#detailTitle").textContent = s.name;
   $("#detailBody").innerHTML = `
-    <div class="detail" style="--c:${s.color}">
+    <div class="detail" data-status="${statusKey}" style="--c:${s.color}">
       <div class="big-thumb"><img src="${iconURL(s)}" alt="${s.name}"
            onerror="this.onerror=null;this.src='${CONFIG.CDN_BASE + s.icon}'"></div>
       <div>
@@ -285,7 +288,7 @@ function openDetail(s) {
           ${relPill}
         </div>
         <div class="ability"><b>Ability.</b> ${s.ability}</div>
-        ${sharedMode ? "" : statusNote}
+        ${sharedMode ? "" : statusBadge}
         ${sharedMode ? "" : controls}
       </div>
     </div>`;
@@ -770,7 +773,7 @@ renderGrid();
   creatureIndex.sort((a, b) => b.name.length - a.name.length);
 
   function parseVoice(text) {
-    const t = text.toLowerCase().replace(/\b7\b/g, "seven").replace(/[^a-z0-9 ]/g, " ").replace(/\s+/g, " ").trim();
+    const t = text.toLowerCase().replace(/\b7\b/g, "seven").replace(/\b0\b/g, "zero point").replace(/[^a-z0-9 ]/g, " ").replace(/\s+/g, " ").trim();
     let creatureKey = null, remaining = t;
     for (const { name, key } of creatureIndex) {
       if (t.includes(name)) { creatureKey = key; remaining = t.replace(name, " ").trim(); break; }

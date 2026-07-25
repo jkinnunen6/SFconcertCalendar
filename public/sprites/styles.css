@@ -368,6 +368,29 @@ select.chip { color: var(--ink); padding-right: 26px; text-transform: none; lett
 .detail .ability { margin-top: 14px; color: #cbd0f0; font-size: 13.5px; line-height: 1.5; }
 .detail .ability b { color: var(--ink); }
 
+/* Collection status badge in detail modal */
+.detail-status {
+  display: inline-flex; align-items: center; gap: 6px;
+  margin-top: 12px; padding: 5px 11px;
+  border-radius: 8px; font-size: 12px; font-weight: 700;
+  font-family: "Chakra Petch", sans-serif; letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+.detail-status--none     { background: rgba(255,255,255,0.06); color: var(--muted); border: 1px solid var(--line); }
+.detail-status--collected { background: rgba(34,224,192,0.12); color: var(--accent); border: 1px solid rgba(34,224,192,0.35); }
+.detail-status--mastered  { background: rgba(255,194,59,0.12); color: var(--gold);   border: 1px solid rgba(255,194,59,0.40); }
+.detail-status--locked    { background: rgba(255,255,255,0.06); color: var(--muted); border: 1px solid var(--line); }
+
+/* Thumbnail glow by status */
+.detail[data-status="collected"] .big-thumb {
+  border-color: rgba(34,224,192,0.55);
+  box-shadow: 0 0 22px rgba(34,224,192,0.22);
+}
+.detail[data-status="mastered"] .big-thumb {
+  border-color: rgba(255,194,59,0.65);
+  box-shadow: 0 0 22px rgba(255,194,59,0.25);
+}
+
 .gen-preview { text-align: center; }
 .gen-preview img { max-width: 100%; border-radius: 12px; border: 1px solid var(--line); }
 .gen-preview .hint { color: var(--muted); font-size: 12.5px; margin: 14px 0; line-height: 1.5; }
