@@ -1,5 +1,6 @@
 'use client'
 
+import { SearchMoonPhase } from 'astronomy-engine'
 import { useState, useMemo, useRef, useEffect, useCallback } from 'react'
 import type { Event, Venue } from '@/lib/supabase'
 import type { User } from '@supabase/supabase-js'
@@ -56,26 +57,28 @@ function isNew(event: { first_seen_at?: string | null, last_updated_at?: string 
   return ts ? new Date(ts) > cutoff : false
 }
 
-// Full moon dates in Pacific Time, computed from the known Jan 6 2000 18:14 UTC full moon
-// using the mean synodic period of 29.530588853 days. Covers ±2 years from now.
-function getFullMoonDates(): Set<string> {
-  const knownFullMoonMs = Date.UTC(2000, 0, 21, 4, 40, 0) // Jan 21 2000 04:40 UTC — confirmed full moon
-  const lunarCycleMs = 29.530588853 * 24 * 60 * 60 * 1000
-  const now = Date.now()
-  const startMs = now - 400 * 24 * 60 * 60 * 1000
-  const endMs   = now + 730 * 24 * 60 * 60 * 1000
-
-  const firstIdx = Math.ceil((startMs - knownFullMoonMs) / lunarCycleMs)
+function buildFullMoonMaps() {
+  const dateFmt = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Los_Angeles' })
+  const timeFmt = new Intl.DateTimeFormat('en-US', {
+    timeZone: 'America/Los_Angeles',
+    hour: 'numeric', minute: '2-digit', hour12: true,
+  })
   const dates = new Set<string>()
-  let t = knownFullMoonMs + firstIdx * lunarCycleMs
-  while (t <= endMs) {
-    dates.add(new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Los_Angeles' }).format(new Date(t)))
-    t += lunarCycleMs
+  const times = new Map<string, string>()
+  let t = new Date(Date.now() - 400 * 86400000)
+  const end = Date.now() + 730 * 86400000
+  while (t.getTime() <= end) {
+    const moon = SearchMoonPhase(180, t, 35) // 180° = full moon
+    if (!moon) break
+    const dateStr = dateFmt.format(moon.date)
+    dates.add(dateStr)
+    times.set(dateStr, timeFmt.format(moon.date))
+    t = new Date(moon.date.getTime() + 86400000)
   }
-  return dates
+  return { dates, times }
 }
 
-const FULL_MOON_DATES = getFullMoonDates()
+const { dates: FULL_MOON_DATES, times: MOON_TIMES_MAP } = buildFullMoonMaps()
 
 // Build a map of date string → traditional moon name
 function computeMoonNames(dates: Set<string>): Map<string, string> {
@@ -371,7 +374,7 @@ export default function CalendarApp({ events, venues }: { events: Event[], venue
   const monthRefs = useRef<Record<string, HTMLDivElement | null>>({})
 
   // Moon name tooltip
-  const [moonLabel, setMoonLabel] = useState<{ name: string, x: number, y: number } | null>(null)
+  const [moonLabel, setMoonLabel] = useState<{ name: string, time: string, x: number, y: number } | null>(null)
   useEffect(() => {
     if (!moonLabel) return
     const dismiss = () => setMoonLabel(null)
@@ -587,7 +590,7 @@ export default function CalendarApp({ events, venues }: { events: Event[], venue
                         {FULL_MOON_DATES.has(day) && (
                           <span
                             className={styles.fullMoon}
-                            onClick={ev => { ev.stopPropagation(); const n = MOON_NAMES_MAP.get(day); if (n) setMoonLabel({ name: n, x: ev.clientX, y: ev.clientY }) }}
+                            onClick={ev => { ev.stopPropagation(); const n = MOON_NAMES_MAP.get(day); const t = MOON_TIMES_MAP.get(day); if (n && t) setMoonLabel({ name: n, time: t, x: ev.clientX, y: ev.clientY }) }}
                           > 🌕</span>
                         )}
                       </span>
@@ -672,7 +675,7 @@ export default function CalendarApp({ events, venues }: { events: Event[], venue
                                   {FULL_MOON_DATES.has(dayStr) && (
                                     <span
                                       className={styles.fullMoon}
-                                      onClick={ev => { ev.stopPropagation(); const n = MOON_NAMES_MAP.get(dayStr); if (n) setMoonLabel({ name: n, x: ev.clientX, y: ev.clientY }) }}
+                                      onClick={ev => { ev.stopPropagation(); const n = MOON_NAMES_MAP.get(dayStr); const t = MOON_TIMES_MAP.get(dayStr); if (n && t) setMoonLabel({ name: n, time: t, x: ev.clientX, y: ev.clientY }) }}
                                     >🌕</span>
                                   )}
                                 </div>
@@ -798,7 +801,7 @@ export default function CalendarApp({ events, venues }: { events: Event[], venue
           style={{ top: moonLabel.y - 44, left: moonLabel.x }}
           onClick={ev => ev.stopPropagation()}
         >
-          🌕 {moonLabel.name}
+          🌕 {moonLabel.name} · {moonLabel.time} PT
         </div>
       )}
 
