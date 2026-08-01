@@ -28,6 +28,7 @@ const THEMES = {
   holofoil: { label: "Holofoil", color: "#a8f0ff" },
   gem:      { label: "Gem",      color: "#4dffc3" },
   rift:     { label: "Cube",     color: "#ff6bff" },
+  quack:    { label: "Quack",    color: "#ffde59" },
 };
 
 const RARITY = {
@@ -51,7 +52,7 @@ const CREATURES = [
   {
     key: "water", name: "Water", rarity: "rare",
     ability: "Replenishes shields for you and nearby squadmates while in water.",
-    rates: { base: 13.92, gold: 6, gummy: 0.08, galaxy: null, holofoil: null, gem: null },
+    rates: { base: 13.92, gold: 6, gummy: 0.08, galaxy: null, holofoil: null, gem: null, quack: null },
     icons: {
       base: "T_Icon_BR_Creature_Sprite_Water_Unvault_Ch7S3_ui_L.webp",
       gold: "T_Icon_BR_Creature_Sprite_Water_Gold_ui_L.webp",
@@ -59,12 +60,13 @@ const CREATURES = [
       galaxy: "T_Icon_BR_Creature_Sprite_Water_Galaxy_ui_L.webp",
       holofoil: "water_holofoil.webp",
       gem: "water_gem.png",
+      quack: "water_quack.png",
     },
   },
   {
     key: "earth", name: "Earth", rarity: "rare",
     ability: "Has a chance to grant additional rare items when opening chests.",
-    rates: { base: 13.92, gold: 6, gummy: 0.08, galaxy: null, gem: null, rift: null },
+    rates: { base: 13.92, gold: 6, gummy: 0.08, galaxy: null, gem: null, rift: null, quack: null },
     icons: {
       base: "T_Icon_BR_Creature_Sprite_Earth_Ch7S3_UI_L.webp",
       gold: "T_Icon_BR_Creature_Sprite_Earth_Gold_ui_L.webp",
@@ -72,12 +74,13 @@ const CREATURES = [
       galaxy: "T_Icon_BR_Creature_Sprite_Earth_Galaxy_ui_L.webp",
       gem: "earth_gem.png",
       rift: "earth_rift.png",
+      quack: "earth_quack.png",
     },
   },
   {
     key: "fire", name: "Fire", rarity: "rare",
     ability: "Creates a fiery burst when you deal enough damage to an enemy.",
-    rates: { base: 13.92, gold: 6, gummy: 0.08, galaxy: null, holofoil: null, rift: null },
+    rates: { base: 13.92, gold: 6, gummy: 0.08, galaxy: null, holofoil: null, rift: null, quack: null },
     icons: {
       base: "T_Icon_BR_Creature_Sprite_Fire_Unvault_Ch7S3_ui_L.webp",
       gold: "T_Icon_BR_Creature_Sprite_Fire_Gold_ui_L.webp",
@@ -85,6 +88,7 @@ const CREATURES = [
       galaxy: "T_Icon_BR_Creature_Sprite_Fire_Galaxy_ui_L.webp",
       holofoil: "fire_holofoil.webp",
       rift: "fire_rift.png",
+      quack: "fire_quack.png",
     },
   },
   {
@@ -151,7 +155,7 @@ const CREATURES = [
   {
     key: "zeropoint", name: "Zero Point", rarity: "mythic",
     ability: "Spawns a Shield Bubble Jr. when you use a healing item on yourself.",
-    rates: { base: 1.044, gold: 0.45, gummy: 0.006, galaxy: null, gem: null, holofoil: null },
+    rates: { base: 1.044, gold: 0.45, gummy: 0.006, galaxy: null, gem: null, holofoil: null, rift: null, quack: null },
     icons: {
       base: "T_Icon_BR_Creature_Sprite_ZeroPoint_ui_L.webp",
       gold: "T_Icon_BR_Creature_Sprite_ZeroPoint_Gold_ui_L.webp",
@@ -159,6 +163,8 @@ const CREATURES = [
       galaxy: "T_Icon_BR_Creature_Sprite_ZeroPoint_Galaxy_ui_L.webp",
       gem: "zeropoint_gem.png",
       holofoil: "zeropoint_holofoil.png",
+      rift: "zeropoint_rift.png",
+      quack: "zeropoint_quack.png",
     },
   },
   {
@@ -224,13 +230,15 @@ const CREATURES = [
   {
     key: "grim", name: "Grim", rarity: "mythic",
     ability: "Players who attack you are marked for a duration.",
-    rates: { base: null, gold: null, gummy: null, galaxy: null, rift: null },
+    rates: { base: null, gold: null, gummy: null, galaxy: null, holofoil: null, rift: null, gem: null },
     icons: {
       base: "T_Icon_BR_GrimReaper_Default_L.webp",
       gold: "T_Icon_BR_GrimReaper_Gold_L.webp",
       gummy: "T_Icon_BR_GrimReaper_Candy_L.webp",
       galaxy: "T_Icon_BR_GrimReaper_Galaxy_L.webp",
+      holofoil: "grim_holofoil.png",
       rift: "grim_rift.png",
+      gem: "grim_gem.png",
     },
   },
   {
@@ -298,12 +306,43 @@ const CREATURES = [
     icons: { base: "vini_basic.png" },
     baseOnly: true,
   },
+  {
+    key: "llama", name: "Llama", rarity: "legendary",
+    ability: "Ability not yet revealed.",
+    rates: { base: null, gold: null, gummy: null, galaxy: null, gem: null },
+    icons: {
+      base: "llama_basic.png",
+      gold: "llama_gold.png",
+      gummy: "llama_candy.png",
+      galaxy: "llama_galaxy.png",
+      gem: "llama_gem.png",
+    },
+  },
+  {
+    key: "peely", name: "Peely", rarity: "legendary",
+    ability: "Ability not yet revealed.",
+    rates: { base: null, gold: null, gummy: null, galaxy: null, holofoil: null },
+    icons: {
+      base: "peely_basic.png",
+      gold: "peely_gold.png",
+      gummy: "peely_candy.png",
+      galaxy: "peely_galaxy.png",
+      holofoil: "peely_holofoil.png",
+    },
+  },
+  {
+    key: "ironmouse", name: "Ironmouse", rarity: "mythic",
+    ability: "Ability not yet revealed.",
+    rates: { base: null },
+    icons: { base: "ironmouse_basic.png" },
+    baseOnly: true,
+  },
 ];
 
 // Expand creatures -> flat sprite list (stable order = encode/decode order) ---
-const THEME_ORDER = ["base", "gold", "gummy", "galaxy", "holofoil", "rift", "gem"];
+const THEME_ORDER = ["base", "gold", "gummy", "galaxy", "holofoil", "rift", "gem", "quack"];
 // Themes currently live in-game. Add new ones here as Epic releases them.
-const RELEASED_THEMES = new Set(["base", "gold", "gummy", "galaxy", "holofoil", "gem", "rift"]);
+const RELEASED_THEMES = new Set(["base", "gold", "gummy", "galaxy", "holofoil", "gem", "rift", "quack"]);
 
 const SPRITES = (() => {
   const out = [];

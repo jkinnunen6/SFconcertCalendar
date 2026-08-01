@@ -96,7 +96,7 @@ const CREATURE_DISPLAY_ORDER = [
   "water","earth","fire","duck","ghost","dream",
   "demon","punk","king","burntpeanut","zeropoint",
   "fishy","striker","aura","boss","grim",
-  "air","seven","wick","batman","pollo","vini",
+  "air","seven","wick","batman","pollo","vini","llama","peely","ironmouse",
 ];
 
 function miniCardHTML(s) {
@@ -760,6 +760,7 @@ renderGrid();
     holofoil: "holofoil", holo: "holofoil",
     cube: "rift", rift: "rift",
     gem: "gem",
+    quack: "quack",
   };
 
   // Creature name → key; longest first so "zero point" beats "zero"
