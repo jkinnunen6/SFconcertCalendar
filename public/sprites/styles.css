@@ -133,6 +133,107 @@ header {
 .btn.ghost { background: transparent; }
 .btn .ico { font-size: 14px; line-height: 1; }
 
+/* ----- Season tabs ------------------------------------------------------ */
+.season-bar {
+  max-width: 1280px;
+  margin: 16px auto 0;
+  padding: 0 20px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.season-tab {
+  appearance: none;
+  border: 1.5px solid var(--line);
+  border-radius: 14px;
+  background: var(--panel);
+  cursor: pointer;
+  padding: 16px 20px;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+  font-family: "Chakra Petch", "Inter", sans-serif;
+}
+
+.season-tab:hover:not(.active) {
+  border-color: rgba(255,255,255,0.18);
+  background: var(--panel-2);
+}
+
+.season-tab.active {
+  border-color: var(--accent);
+  background: rgba(34,224,192,0.06);
+  box-shadow: 0 0 22px rgba(34,224,192,0.10);
+}
+
+.season-tab[data-season="1"].active {
+  border-color: var(--gold);
+  background: rgba(255,194,59,0.06);
+  box-shadow: 0 0 22px rgba(255,194,59,0.10);
+}
+
+.stab-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.stab-badge {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 5px;
+  letter-spacing: 0.5px;
+  background: rgba(34,224,192,0.16);
+  color: var(--accent);
+}
+
+.season-tab[data-season="1"] .stab-badge {
+  background: rgba(255,194,59,0.16);
+  color: var(--gold);
+}
+
+.stab-label {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+
+.stab-stats {
+  display: flex;
+  gap: 18px;
+  flex-wrap: wrap;
+}
+
+.stab-metric { display: flex; flex-direction: column; gap: 2px; }
+
+.stab-metric-label {
+  font-size: 9px;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: var(--muted);
+  font-family: "Chakra Petch", sans-serif;
+}
+
+.stab-metric-val {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.stab-metric-val b { color: var(--accent); }
+.season-tab[data-season="1"] .stab-metric-val b { color: var(--gold); }
+
+@media (max-width: 480px) {
+  .season-bar { grid-template-columns: 1fr; }
+  .season-tab { flex-direction: row; align-items: center; justify-content: space-between; }
+}
+
 /* ----- Controls bar ----------------------------------------------------- */
 .controls {
   max-width: 1280px; margin: 18px auto 6px; padding: 0 20px;

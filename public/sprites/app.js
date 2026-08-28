@@ -17,6 +17,16 @@ const filters = {
   hideMastered: false, groupBy: false, showUnreleased: true, // Galaxy shown by default
 };
 
+let activeSeason = 2;
+
+const S2_CREATURE_KEYS = new Set([
+  "bush","jonesy","adventure","8bit","stormking",
+  "killswitch","sonic","tails","shadow","jackrabbit",
+  "klombo","crown","xray","pond","honey","dumpster","bullet",
+]);
+
+function spriteSeasonOf(s) { return S2_CREATURE_KEYS.has(s.creature) ? 2 : 1; }
+
 function activeLevels() { return sharedMode ? sharedLevels : state.levels; }
 function statusOf(id) { return activeLevels()[id] || 0; }
 function isOwned(id) { return statusOf(id) >= 1; }
@@ -70,7 +80,7 @@ function trackableSprites() { return SPRITES.filter((s) => s.released || filters
 
 // ---- Filtering + sorting -------------------------------------------------
 function visibleSprites() {
-  let list = trackableSprites();
+  let list = trackableSprites().filter((s) => spriteSeasonOf(s) === activeSeason);
   if (filters.theme !== "all") list = list.filter((s) => s.theme === filters.theme);
   if (filters.rarity !== "all") list = list.filter((s) => s.rarity === filters.rarity);
   if (filters.status === "owned") list = list.filter((s) => isOwned(s.id));
@@ -224,10 +234,27 @@ function renderResultLine(list) {
 }
 
 function renderMeters() {
-  const set = releasedSprites(); // Galaxy never counts (unobtainable)
+  const all = releasedSprites();
+  const s1 = all.filter((s) => spriteSeasonOf(s) === 1);
+  const s2 = all.filter((s) => spriteSeasonOf(s) === 2);
+
+  const s1col = s1.filter((s) => isOwned(s.id)).length;
+  const s1mas = s1.filter((s) => isMastered(s.id)).length;
+  const s2col = s2.filter((s) => isOwned(s.id)).length;
+  const s2mas = s2.filter((s) => isMastered(s.id)).length;
+
+  const s1ColEl = $("#s1TabCol"), s1MasEl = $("#s1TabMas");
+  const s2ColEl = $("#s2TabCol"), s2MasEl = $("#s2TabMas");
+  if (s1ColEl) s1ColEl.innerHTML = `<b>${s1col}</b> / ${s1.length}`;
+  if (s1MasEl) s1MasEl.innerHTML = `<b>${s1mas}</b> / ${s1.length}`;
+  if (s2ColEl) s2ColEl.innerHTML = `<b>${s2col}</b> / ${s2.length}`;
+  if (s2MasEl) s2MasEl.innerHTML = `<b>${s2mas}</b> / ${s2.length}`;
+
+  // Header meters reflect the active season
+  const set = activeSeason === 2 ? s2 : s1;
   const total = set.length;
-  const owned = set.filter((s) => isOwned(s.id)).length;
-  const mastered = set.filter((s) => isMastered(s.id)).length;
+  const owned = activeSeason === 2 ? s2col : s1col;
+  const mastered = activeSeason === 2 ? s2mas : s1mas;
   $("#collCount").innerHTML = `<b>${owned}</b> / ${total}`;
   $("#masCount").innerHTML = `<b>${mastered}</b> / ${total}`;
   $("#collBar").style.width = total ? (owned / total) * 100 + "%" : "0%";
@@ -748,9 +775,30 @@ function hexA(hex, a) {
 $("#genCollection").addEventListener("click", () => generateImage("collection"));
 $("#genWishlist").addEventListener("click", () => generateImage("wishlist"));
 
+// ---- Season tabs ---------------------------------------------------------
+function initSeasonTabs() {
+  document.querySelectorAll(".season-tab").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll(".season-tab").forEach((b) => b.classList.remove("active"));
+      btn.classList.add("active");
+      activeSeason = parseInt(btn.dataset.season, 10);
+      // Reset theme + status filters so cross-season chips don't carry over
+      filters.theme = "all";
+      filters.status = "all";
+      document.querySelectorAll("#themeChips .chip").forEach((c) =>
+        c.setAttribute("aria-pressed", c.dataset.theme === "all" ? "true" : "false"));
+      document.querySelectorAll("#statusChips .chip").forEach((c) =>
+        c.setAttribute("aria-pressed", c.dataset.status === "all" ? "true" : "false"));
+      renderMeters();
+      renderGrid();
+    });
+  });
+}
+
 // ---- Boot ----------------------------------------------------------------
 load();
 checkSharedLink();
+initSeasonTabs();
 renderMeters();
 renderGrid();
 
