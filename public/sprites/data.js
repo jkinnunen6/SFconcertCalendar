@@ -29,6 +29,7 @@ const THEMES = {
   gem:      { label: "Gem",      color: "#4dffc3" },
   rift:     { label: "Cube",     color: "#ff6bff" },
   quack:    { label: "Quack",    color: "#ffde59" },
+  cheat:    { label: "Cheat",    color: "#39ff14" },
 };
 
 const RARITY = {
@@ -80,7 +81,7 @@ const CREATURES = [
   {
     key: "fire", name: "Fire", rarity: "rare",
     ability: "Creates a fiery burst when you deal enough damage to an enemy.",
-    rates: { base: 13.92, gold: 6, gummy: 0.08, galaxy: null, holofoil: null, rift: null, quack: null },
+    rates: { base: 13.92, gold: 6, gummy: 0.08, galaxy: null, holofoil: null, rift: null, gem: null, quack: null },
     icons: {
       base: "T_Icon_BR_Creature_Sprite_Fire_Unvault_Ch7S3_ui_L.webp",
       gold: "T_Icon_BR_Creature_Sprite_Fire_Gold_ui_L.webp",
@@ -88,68 +89,75 @@ const CREATURES = [
       galaxy: "T_Icon_BR_Creature_Sprite_Fire_Galaxy_ui_L.webp",
       holofoil: "fire_holofoil.webp",
       rift: "fire_rift.png",
+      gem: "fire_gem.png",
       quack: "fire_quack.png",
     },
   },
   {
     key: "duck", name: "Duck", rarity: "epic",
     ability: "Replenishes shields when you emote or use Jam Tracks.",
-    rates: { base: 5.22, gold: 2.25, gummy: 0.03, galaxy: null, gem: null },
+    rates: { base: 5.22, gold: 2.25, gummy: 0.03, galaxy: null, rift: null, gem: null },
     icons: {
       base: "T_Icon_BR_Duck_Default_L.webp",
       gold: "T_Icon_BR_Duck_Gold_L.webp",
       gummy: "T_Icon_BR_Duck_Candy_L.webp",
       galaxy: "T_Icon_BR_Duck_Galaxy_L.webp",
+      rift: "duck_rift.png",
       gem: "duck_gem.png",
     },
   },
   {
     key: "ghost", name: "Ghost", rarity: "epic",
     ability: "Grants a temporary invisibility cloak upon reloading.",
-    rates: { base: 5.22, gold: 2.25, gummy: 0.03, galaxy: null, holofoil: null },
+    rates: { base: 5.22, gold: 2.25, gummy: 0.03, galaxy: null, holofoil: null, gem: null },
     icons: {
       base: "T_Icon_BR_Creature_Sprite_Ghost_Unvault_L.webp",
       gold: "T_Icon_BR_Creature_Sprite_Ghost_Gold_L.webp",
       gummy: "T_Icon_BR_Creature_Sprite_Ghost_Candy_L.webp",
       galaxy: "T_Icon_BR_Creature_Sprite_Ghost_Galaxy_L.webp",
       holofoil: "ghost_holofoil.webp",
+      gem: "ghost_gem.png",
     },
   },
   {
     key: "dream", name: "Dream", rarity: "legendary",
     ability: "Grants a random item each level, and explodes with Legendary loot at max level.",
-    rates: { base: 2.436, gold: 1.05, gummy: 0.014, galaxy: null, rift: null },
+    rates: { base: 2.436, gold: 1.05, gummy: 0.014, galaxy: null, rift: null, gem: null },
     icons: {
       base: "T_Icon_BR_Creature_Sprite_Sleepy_ui_L.webp",
       gold: "T_Icon_BR_Creature_Sprite_Sleepy_Gold_ui_L.webp",
       gummy: "T_Icon_BR_Creature_Sprite_Sleepy_Candy_ui_L.webp",
       galaxy: "T_Icon_BR_Creature_Sprite_Sleepy_Galaxy_ui_L.webp",
       rift: "dream_rift.png",
+      gem: "dream_gem.png",
     },
   },
   {
     key: "punk", name: "Punk", rarity: "legendary",
     ability: "Unpredictable effects — can grant infinite ammo for all weapons at max level.",
-    rates: { base: 2.436, gold: 1.05, gummy: 0.014, galaxy: null, gem: null, rift: null },
+    rates: { base: 2.436, gold: 1.05, gummy: 0.014, galaxy: null, holofoil: null, rift: null, gem: null },
     icons: {
       base: "T_Icon_BR_Creature_Sprite_Punk_ui_L.webp",
       gold: "T_Icon_BR_Creature_Sprite_Punk_Gold_ui_L.webp",
       gummy: "T_Icon_BR_Creature_Sprite_Punk_Candy_ui_L.webp",
       galaxy: "T_Icon_BR_Creature_Sprite_Punk_Galaxy_ui_L.webp",
-      gem: "punk_gem.png",
+      holofoil: "punk_holofoil.png",
       rift: "punk_rift.png",
+      gem: "punk_gem.png",
     },
   },
   {
     key: "king", name: "King", rarity: "epic",
     ability: "Increases your pickaxe damage.",
-    rates: { base: 5.22, gold: 2.25, gummy: 0.03, galaxy: null, holofoil: null },
+    rates: { base: 5.22, gold: 2.25, gummy: 0.03, galaxy: null, holofoil: null, rift: null, gem: null },
     icons: {
       base: "T_Icon_BR_Creature_Sprite_King_ui_L.webp",
       gold: "T_Icon_BR_Creature_Sprite_King_Gold_ui_L.webp",
       gummy: "T_Icon_BR_Creature_Sprite_King_Candy_ui_L.webp",
       galaxy: "T_Icon_BR_Creature_Sprite_King_Galaxy_ui_L.webp",
       holofoil: "king_holofoil.webp",
+      rift: "king_rift.png",
+      gem: "king_gem.png",
     },
   },
   {
@@ -170,12 +178,14 @@ const CREATURES = [
   {
     key: "demon", name: "Demon", rarity: "epic",
     ability: "Restores health and shields when you eliminate an opponent.",
-    rates: { base: 5.22, gold: 2.25, gummy: 0.03, galaxy: null, gem: null },
+    rates: { base: 5.22, gold: 2.25, gummy: 0.03, galaxy: null, holofoil: null, rift: null, gem: null },
     icons: {
       base: "T_Icon_BR_RedDemon_Default_L.webp",
       gold: "T_Icon_BR_RedDemon_Gold_L.webp",
       gummy: "T_Icon_BR_RedDemon_Candy_L.webp",
       galaxy: "T_Icon_BR_RedDemon_Galaxy_L.webp",
+      holofoil: "demon_holofoil.png",
+      rift: "demon_rift.png",
       gem: "demon_gem.png",
     },
   },
@@ -218,13 +228,14 @@ const CREATURES = [
   {
     key: "boss", name: "Boss", rarity: "legendary",
     ability: "Grants an increase to your max HP and Shield.",
-    rates: { base: null, gold: null, gummy: null, galaxy: null, rift: null },
+    rates: { base: null, gold: null, gummy: null, galaxy: null, rift: null, gem: null },
     icons: {
       base: "T_Icon_BR_Creature_Sprite_Boss_ui_L.webp",
       gold: "T_Icon_BR_Creature_Sprite_Boss_Gold_ui_L.webp",
       gummy: "T_Icon_BR_Creature_Sprite_Boss_Candy_ui_L.webp",
       galaxy: "T_Icon_BR_Creature_Sprite_Boss_Galaxy_ui_L.webp",
       rift: "boss_rift.png",
+      gem: "boss_gem.png",
     },
   },
   {
@@ -337,12 +348,120 @@ const CREATURES = [
     icons: { base: "ironmouse_basic.png" },
     baseOnly: true,
   },
+  // ── Season 2 ("Override") ──────────────────────────────────────────────────
+  {
+    key: "bush", name: "Bush", rarity: "rare",
+    ability: "Ability not yet revealed.",
+    rates: { base: null, gold: null, cheat: null },
+    icons: { base: "bush_basic.png", gold: "bush_gold.png", cheat: "bush_cheat.png" },
+  },
+  {
+    key: "jonesy", name: "Jonesy", rarity: "rare",
+    ability: "Ability not yet revealed.",
+    rates: { base: null, gold: null, cheat: null },
+    icons: { base: "jonesy_basic.png", gold: "jonesy_gold.png", cheat: "jonesy_cheat.png" },
+  },
+  {
+    key: "adventure", name: "Adventure", rarity: "rare",
+    ability: "Ability not yet revealed.",
+    rates: { base: null, gold: null, cheat: null },
+    icons: { base: "adventure_basic.png", gold: "adventure_gold.png", cheat: "adventure_cheat.png" },
+  },
+  {
+    key: "8bit", name: "8-Bit", rarity: "rare",
+    ability: "Ability not yet revealed.",
+    rates: { base: null, gold: null, cheat: null },
+    icons: { base: "8bit_basic.png", gold: "8bit_gold.png", cheat: "8bit_cheat.png" },
+  },
+  {
+    key: "stormking", name: "Storm Scout", rarity: "rare",
+    ability: "Ability not yet revealed.",
+    rates: { base: null, gold: null, cheat: null },
+    icons: { base: "stormking_basic.png", gold: "stormking_gold.png", cheat: "stormking_cheat.png" },
+  },
+  {
+    key: "killswitch", name: "Killswitch", rarity: "epic",
+    ability: "Ability not yet revealed.",
+    rates: { base: null, gold: null, cheat: null },
+    icons: { base: "killswitch_basic.png", gold: "killswitch_gold.png", cheat: "killswitch_cheat.png" },
+  },
+  {
+    key: "sonic", name: "Sonic", rarity: "epic",
+    ability: "Ability not yet revealed.",
+    rates: { base: null, gold: null, cheat: null },
+    icons: { base: "sonic_basic.png", gold: "sonic_gold.png", cheat: "sonic_cheat.png" },
+  },
+  {
+    key: "tails", name: "Tails", rarity: "epic",
+    ability: "Ability not yet revealed.",
+    rates: { base: null, gold: null, cheat: null },
+    icons: { base: "tails_basic.png", gold: "tails_gold.png", cheat: "tails_cheat.png" },
+  },
+  {
+    key: "shadow", name: "Shadow", rarity: "epic",
+    ability: "Ability not yet revealed.",
+    rates: { base: null, gold: null, cheat: null },
+    icons: { base: "shadow_basic.png", gold: "shadow_gold.png", cheat: "shadow_cheat.png" },
+  },
+  {
+    key: "jackrabbit", name: "Jackrabbit", rarity: "legendary",
+    ability: "Ability not yet revealed.",
+    rates: { base: null, gold: null, cheat: null },
+    icons: { base: "jackrabbit_basic.png", gold: "jackrabbit_gold.png", cheat: "jackrabbit_cheat.png" },
+  },
+  {
+    key: "klombo", name: "Klombo", rarity: "mythic",
+    ability: "Ability not yet revealed.",
+    rates: { base: null, gold: null, cheat: null },
+    icons: { base: "klombo_basic.png", gold: "klombo_gold.png", cheat: "klombo_cheat.png" },
+  },
+  {
+    key: "crown", name: "Crown", rarity: "mythic",
+    ability: "Ability not yet revealed.",
+    rates: { base: null, gold: null, cheat: null },
+    icons: { base: "crown_basic.png", gold: "crown_gold.png", cheat: "crown_cheat.png" },
+  },
+  {
+    key: "xray", name: "X-Ray", rarity: "mythic",
+    ability: "Ability not yet revealed.",
+    rates: { base: null },
+    icons: { base: "xray_basic.png" },
+    baseOnly: true,
+  },
+  {
+    key: "pond", name: "Pond", rarity: "mythic",
+    ability: "Ability not yet revealed.",
+    rates: { base: null },
+    icons: { base: "pond_basic.png" },
+    baseOnly: true,
+  },
+  {
+    key: "honey", name: "Honey", rarity: "mythic",
+    ability: "Ability not yet revealed.",
+    rates: { base: null },
+    icons: { base: "honey_basic.png" },
+    baseOnly: true,
+  },
+  {
+    key: "dumpster", name: "Dumpster Dive", rarity: "mythic",
+    ability: "Ability not yet revealed.",
+    rates: { base: null },
+    icons: { base: "dumpster_basic.png" },
+    baseOnly: true,
+  },
+  {
+    key: "bullet", name: "Bullet", rarity: "mythic",
+    ability: "Ability not yet revealed.",
+    rates: { base: null },
+    icons: { base: "bullet_basic.png" },
+    baseOnly: true,
+  },
 ];
 
 // Expand creatures -> flat sprite list (stable order = encode/decode order) ---
-const THEME_ORDER = ["base", "gold", "gummy", "galaxy", "holofoil", "rift", "gem", "quack"];
+const THEME_ORDER = ["base", "gold", "gummy", "galaxy", "holofoil", "rift", "gem", "quack", "cheat"];
 // Themes currently live in-game. Add new ones here as Epic releases them.
-const RELEASED_THEMES = new Set(["base", "gold", "gummy", "galaxy", "holofoil", "gem", "rift", "quack"]);
+const RELEASED_THEMES = new Set(["base", "gold", "gummy", "galaxy", "holofoil", "gem", "rift", "quack", "cheat"]);
 
 const SPRITES = (() => {
   const out = [];

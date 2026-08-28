@@ -93,10 +93,17 @@ const $ = (sel) => document.querySelector(sel);
 
 // Creature display order for the row layout
 const CREATURE_DISPLAY_ORDER = [
+  // Season 1
   "water","earth","fire","duck","ghost","dream",
   "demon","punk","king","burntpeanut","zeropoint",
   "fishy","striker","aura","boss","grim",
   "air","seven","wick","batman","pollo","vini","llama","peely","ironmouse",
+  // Season 2 — Override
+  "bush","jonesy","adventure","8bit","stormking",
+  "killswitch","sonic","tails","shadow",
+  "jackrabbit",
+  "klombo","crown",
+  "xray","pond","honey","dumpster","bullet",
 ];
 
 function miniCardHTML(s) {
@@ -761,6 +768,7 @@ renderGrid();
     cube: "rift", rift: "rift",
     gem: "gem",
     quack: "quack",
+    cheat: "cheat",
   };
 
   // Creature name → key; longest first so "zero point" beats "zero"
