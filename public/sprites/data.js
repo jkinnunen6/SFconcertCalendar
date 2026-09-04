@@ -29,7 +29,8 @@ const THEMES = {
   gem:      { label: "Gem",      color: "#4dffc3" },
   rift:     { label: "Cube",     color: "#ff6bff" },
   quack:    { label: "Quack",    color: "#ffde59" },
-  cheat:    { label: "Cheat",    color: "#39ff14" },
+  cheat:      { label: "Cheat Master", color: "#39ff14" },
+  loothacker: { label: "Loot Hacker",  color: "#ff6a00" },
 };
 
 const RARITY = {
@@ -352,81 +353,80 @@ const CREATURES = [
   {
     key: "bush", name: "Bush", rarity: "rare",
     ability: "Ability not yet revealed.",
-    rates: { base: null, gold: null, cheat: null },
-    icons: { base: "bush_basic.png", gold: "bush_gold.png", cheat: "bush_cheat.png" },
+    rates: { base: null, gold: null, cheat: null, loothacker: null },
+    icons: { base: "bush_basic.png", gold: "bush_gold.png", cheat: "bush_cheat.png", loothacker: "bush_loothacker.png" },
   },
   {
     key: "jonesy", name: "Jonesy", rarity: "rare",
     ability: "Ability not yet revealed.",
-    rates: { base: null, gold: null, cheat: null },
-    icons: { base: "jonesy_basic.png", gold: "jonesy_gold.png", cheat: "jonesy_cheat.png" },
+    rates: { base: null, gold: null, cheat: null, loothacker: null },
+    icons: { base: "jonesy_basic.png", gold: "jonesy_gold.png", cheat: "jonesy_cheat.png", loothacker: "jonesy_loothacker.png" },
   },
   {
     key: "adventure", name: "Adventure", rarity: "rare",
     ability: "Ability not yet revealed.",
-    rates: { base: null, gold: null, cheat: null },
-    icons: { base: "adventure_basic.png", gold: "adventure_gold.png", cheat: "adventure_cheat.png" },
+    rates: { base: null, gold: null, cheat: null, loothacker: null },
+    icons: { base: "adventure_basic.png", gold: "adventure_gold.png", cheat: "adventure_cheat.png", loothacker: "adventure_loothacker.png" },
   },
   {
     key: "8bit", name: "8-Bit", rarity: "rare",
     ability: "Ability not yet revealed.",
-    rates: { base: null, gold: null, cheat: null },
-    icons: { base: "8bit_basic.png", gold: "8bit_gold.png", cheat: "8bit_cheat.png" },
+    rates: { base: null, gold: null, cheat: null, loothacker: null },
+    icons: { base: "8bit_basic.png", gold: "8bit_gold.png", cheat: "8bit_cheat.png", loothacker: "8bit_loothacker.png" },
   },
   {
     key: "stormking", name: "Storm Scout", rarity: "rare",
     ability: "Ability not yet revealed.",
-    rates: { base: null, gold: null, cheat: null },
-    icons: { base: "stormking_basic.png", gold: "stormking_gold.png", cheat: "stormking_cheat.png" },
+    rates: { base: null, gold: null, cheat: null, loothacker: null },
+    icons: { base: "stormking_basic.png", gold: "stormking_gold.png", cheat: "stormking_cheat.png", loothacker: "stormking_loothacker.png" },
   },
   {
     key: "killswitch", name: "Killswitch", rarity: "epic",
     ability: "Ability not yet revealed.",
-    rates: { base: null, gold: null, cheat: null },
-    icons: { base: "killswitch_basic.png", gold: "killswitch_gold.png", cheat: "killswitch_cheat.png" },
+    rates: { base: null, gold: null, cheat: null, loothacker: null },
+    icons: { base: "killswitch_basic.png", gold: "killswitch_gold.png", cheat: "killswitch_cheat.png", loothacker: "killswitch_loothacker.png" },
   },
   {
     key: "sonic", name: "Sonic", rarity: "epic",
     ability: "Ability not yet revealed.",
-    rates: { base: null, gold: null, cheat: null },
-    icons: { base: "sonic_basic.png", gold: "sonic_gold.png", cheat: "sonic_cheat.png" },
+    rates: { base: null, gold: null, cheat: null, loothacker: null },
+    icons: { base: "sonic_basic.png", gold: "sonic_gold.png", cheat: "sonic_cheat.png", loothacker: "sonic_loothacker.png" },
   },
   {
     key: "tails", name: "Tails", rarity: "epic",
     ability: "Ability not yet revealed.",
-    rates: { base: null, gold: null, cheat: null },
-    icons: { base: "tails_basic.png", gold: "tails_gold.png", cheat: "tails_cheat.png" },
+    rates: { base: null, gold: null, cheat: null, loothacker: null },
+    icons: { base: "tails_basic.png", gold: "tails_gold.png", cheat: "tails_cheat.png", loothacker: "tails_loothacker.png" },
   },
   {
     key: "shadow", name: "Shadow", rarity: "epic",
     ability: "Ability not yet revealed.",
-    rates: { base: null, gold: null, cheat: null },
-    icons: { base: "shadow_basic.png", gold: "shadow_gold.png", cheat: "shadow_cheat.png" },
+    rates: { base: null, gold: null, cheat: null, loothacker: null },
+    icons: { base: "shadow_basic.png", gold: "shadow_gold.png", cheat: "shadow_cheat.png", loothacker: "shadow_loothacker.png" },
   },
   {
     key: "jackrabbit", name: "Jackrabbit", rarity: "legendary",
     ability: "Ability not yet revealed.",
-    rates: { base: null, gold: null, cheat: null },
-    icons: { base: "jackrabbit_basic.png", gold: "jackrabbit_gold.png", cheat: "jackrabbit_cheat.png" },
+    rates: { base: null, gold: null, cheat: null, loothacker: null },
+    icons: { base: "jackrabbit_basic.png", gold: "jackrabbit_gold.png", cheat: "jackrabbit_cheat.png", loothacker: "jackrabbit_loothacker.png" },
   },
   {
     key: "klombo", name: "Klombo", rarity: "mythic",
     ability: "Ability not yet revealed.",
-    rates: { base: null, gold: null, cheat: null },
-    icons: { base: "klombo_basic.png", gold: "klombo_gold.png", cheat: "klombo_cheat.png" },
+    rates: { base: null, gold: null, cheat: null, loothacker: null },
+    icons: { base: "klombo_basic.png", gold: "klombo_gold.png", cheat: "klombo_cheat.png", loothacker: "klombo_loothacker.png" },
   },
   {
     key: "crown", name: "Crown", rarity: "mythic",
     ability: "Ability not yet revealed.",
-    rates: { base: null, gold: null, cheat: null },
-    icons: { base: "crown_basic.png", gold: "crown_gold.png", cheat: "crown_cheat.png" },
+    rates: { base: null, gold: null, cheat: null, loothacker: null },
+    icons: { base: "crown_basic.png", gold: "crown_gold.png", cheat: "crown_cheat.png", loothacker: "crown_loothacker.png" },
   },
   {
     key: "xray", name: "X-Ray", rarity: "mythic",
     ability: "Ability not yet revealed.",
-    rates: { base: null },
-    icons: { base: "xray_basic.png" },
-    baseOnly: true,
+    rates: { base: null, gold: null, cheat: null, loothacker: null },
+    icons: { base: "xray_basic.png", gold: "xray_gold.png", cheat: "xray_cheat.png", loothacker: "xray_loothacker.png" },
   },
   {
     key: "pond", name: "Pond", rarity: "mythic",
@@ -456,12 +456,31 @@ const CREATURES = [
     icons: { base: "bullet_basic.png" },
     baseOnly: true,
   },
+  {
+    key: "onigiri", name: "Onigiri", rarity: "rare",
+    ability: "Ability not yet revealed.",
+    rates: { base: null, gold: null, cheat: null, loothacker: null },
+    icons: { base: "onigiri_basic.png", gold: "onigiri_gold.png", cheat: "onigiri_cheat.png", loothacker: "onigiri_loothacker.png" },
+  },
+  {
+    key: "overshield", name: "Overshield", rarity: "epic",
+    ability: "Ability not yet revealed.",
+    rates: { base: null, gold: null, cheat: null, loothacker: null },
+    icons: { base: "overshield_basic.png", gold: "overshield_gold.png", cheat: "overshield_cheat.png", loothacker: "overshield_loothacker.png" },
+  },
+  {
+    key: "megaman", name: "Mega Man", rarity: "mythic",
+    ability: "Ability not yet revealed.",
+    rates: { base: null },
+    icons: { base: "megaman_basic.png" },
+    baseOnly: true,
+  },
 ];
 
 // Expand creatures -> flat sprite list (stable order = encode/decode order) ---
-const THEME_ORDER = ["base", "gold", "gummy", "galaxy", "holofoil", "rift", "gem", "quack", "cheat"];
+const THEME_ORDER = ["base", "gold", "gummy", "galaxy", "holofoil", "rift", "gem", "quack", "cheat", "loothacker"];
 // Themes currently live in-game. Add new ones here as Epic releases them.
-const RELEASED_THEMES = new Set(["base", "gold", "gummy", "galaxy", "holofoil", "gem", "rift", "quack", "cheat"]);
+const RELEASED_THEMES = new Set(["base", "gold", "gummy", "galaxy", "holofoil", "gem", "rift", "quack", "cheat", "loothacker"]);
 
 const SPRITES = (() => {
   const out = [];
