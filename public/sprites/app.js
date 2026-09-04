@@ -828,7 +828,7 @@ renderGrid();
   for (const s of SPRITES) {
     if (seen.has(s.creature)) continue;
     seen.add(s.creature);
-    creatureIndex.push({ name: s.creatureName.toLowerCase(), key: s.creature });
+    creatureIndex.push({ name: s.creatureName.toLowerCase().replace(/[^a-z0-9 ]/g, " ").replace(/\s+/g, " ").trim(), key: s.creature });
   }
   creatureIndex.sort((a, b) => b.name.length - a.name.length);
 
