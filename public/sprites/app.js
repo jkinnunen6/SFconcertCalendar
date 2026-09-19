@@ -24,6 +24,7 @@ const S2_CREATURE_KEYS = new Set([
   "killswitch","sonic","tails","shadow","jackrabbit",
   "klombo","crown","xray","pond","honey","dumpster","bullet",
   "onigiri","overshield","megaman",
+  "blinky","crash","birthday","morgana",
 ]);
 
 function spriteSeasonOf(s) { return S2_CREATURE_KEYS.has(s.creature) ? 2 : 1; }
@@ -116,6 +117,7 @@ const CREATURE_DISPLAY_ORDER = [
   "klombo","crown",
   "xray","pond","honey","dumpster","bullet",
   "onigiri","overshield","megaman",
+  "blinky","crash","birthday","morgana",
 ];
 
 function miniCardHTML(s) {
@@ -820,6 +822,7 @@ renderGrid();
     quack: "quack",
     cheat: "cheat",
     loothacker: "loothacker", loot: "loothacker", hacker: "loothacker",
+    bountyhunter: "bountyhunter", bounty: "bountyhunter", hunter: "bountyhunter",
   };
 
   // Creature name → key; longest first so "zero point" beats "zero"
