@@ -22,9 +22,9 @@ let activeSeason = 2;
 const S2_CREATURE_KEYS = new Set([
   "bush","jonesy","adventure","8bit","stormking",
   "killswitch","sonic","tails","shadow","jackrabbit",
-  "klombo","crown","xray","pond","honey","dumpster","bullet",
+  "klombo","crown","xray","pond","dumpster","honey","bullet",
   "onigiri","overshield","megaman",
-  "blinky","crash","birthday","morgana",
+  "blinky","crash","spookydash","birthday","morgana","vampire","thedeer",
 ]);
 
 function spriteSeasonOf(s) { return S2_CREATURE_KEYS.has(s.creature) ? 2 : 1; }
@@ -115,9 +115,9 @@ const CREATURE_DISPLAY_ORDER = [
   "killswitch","sonic","tails","shadow",
   "jackrabbit",
   "klombo","crown",
-  "xray","pond","honey","dumpster","bullet",
+  "xray","pond","dumpster","honey","bullet",
   "onigiri","overshield","megaman",
-  "blinky","crash","birthday","morgana",
+  "blinky","crash","spookydash","birthday","morgana","vampire","thedeer",
 ];
 
 function miniCardHTML(s) {
@@ -823,6 +823,7 @@ renderGrid();
     cheat: "cheat",
     loothacker: "loothacker", loot: "loothacker", hacker: "loothacker",
     bountyhunter: "bountyhunter", bounty: "bountyhunter", hunter: "bountyhunter",
+    trickortreat: "trickortreat", trick: "trickortreat", treat: "trickortreat", halloween: "trickortreat",
   };
 
   // Creature name → key; longest first so "zero point" beats "zero"
