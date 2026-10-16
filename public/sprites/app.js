@@ -24,7 +24,7 @@ const S2_CREATURE_KEYS = new Set([
   "killswitch","sonic","tails","shadow","jackrabbit",
   "klombo","crown","xray","pond","dumpster","honey","bullet",
   "onigiri","overshield","megaman",
-  "blinky","crash","spookydash","birthday","morgana","vampire","thedeer",
+  "blinky","crash","spookydash","birthday","morgana","onewishwillow","vampire","thedeer",
 ]);
 
 function spriteSeasonOf(s) { return S2_CREATURE_KEYS.has(s.creature) ? 2 : 1; }
@@ -117,7 +117,7 @@ const CREATURE_DISPLAY_ORDER = [
   "klombo","crown",
   "xray","pond","dumpster","honey","bullet",
   "onigiri","overshield","megaman",
-  "blinky","crash","spookydash","birthday","morgana","vampire","thedeer",
+  "blinky","crash","spookydash","birthday","morgana","onewishwillow","vampire","thedeer",
 ];
 
 function miniCardHTML(s) {

@@ -355,20 +355,20 @@ const CREATURES = [
   {
     key: "bush", name: "Bush", rarity: "rare",
     ability: "Ability not yet revealed.",
-    rates: { base: null, gold: null, cheat: null, loothacker: null, bountyhunter: null, trickortreat: null },
-    icons: { base: "bush_basic.png", gold: "bush_gold.png", cheat: "bush_cheat.png", loothacker: "bush_loothacker.png", bountyhunter: "bush_bountyhunter.png", trickortreat: "bush_trickortreat.png" },
+    rates: { base: null, gold: null, cheat: null, loothacker: null, bountyhunter: null, trickortreat: null, quack: null },
+    icons: { base: "bush_basic.png", gold: "bush_gold.png", cheat: "bush_cheat.png", loothacker: "bush_loothacker.png", bountyhunter: "bush_bountyhunter.png", trickortreat: "bush_trickortreat.png", quack: "bush_quack.png" },
   },
   {
     key: "jonesy", name: "Jonesy", rarity: "rare",
     ability: "Ability not yet revealed.",
-    rates: { base: null, gold: null, cheat: null, loothacker: null, bountyhunter: null, trickortreat: null },
-    icons: { base: "jonesy_basic.png", gold: "jonesy_gold.png", cheat: "jonesy_cheat.png", loothacker: "jonesy_loothacker.png", bountyhunter: "jonesy_bountyhunter.png", trickortreat: "jonesy_trickortreat.png" },
+    rates: { base: null, gold: null, cheat: null, loothacker: null, bountyhunter: null, trickortreat: null, quack: null },
+    icons: { base: "jonesy_basic.png", gold: "jonesy_gold.png", cheat: "jonesy_cheat.png", loothacker: "jonesy_loothacker.png", bountyhunter: "jonesy_bountyhunter.png", trickortreat: "jonesy_trickortreat.png", quack: "jonesy_quack.png" },
   },
   {
     key: "adventure", name: "Adventure", rarity: "rare",
     ability: "Ability not yet revealed.",
-    rates: { base: null, gold: null, cheat: null, loothacker: null, bountyhunter: null, trickortreat: null },
-    icons: { base: "adventure_basic.png", gold: "adventure_gold.png", cheat: "adventure_cheat.png", loothacker: "adventure_loothacker.png", bountyhunter: "adventure_bountyhunter.png", trickortreat: "adventure_trickortreat.png" },
+    rates: { base: null, gold: null, cheat: null, loothacker: null, bountyhunter: null, trickortreat: null, quack: null },
+    icons: { base: "adventure_basic.png", gold: "adventure_gold.png", cheat: "adventure_cheat.png", loothacker: "adventure_loothacker.png", bountyhunter: "adventure_bountyhunter.png", trickortreat: "adventure_trickortreat.png", quack: "adventure_quack.png" },
   },
   {
     key: "8bit", name: "8-Bit", rarity: "rare",
@@ -391,8 +391,8 @@ const CREATURES = [
   {
     key: "spookydash", name: "Spooky Dash", rarity: "rare",
     ability: "Ability not yet revealed.",
-    rates: { base: null, gold: null, cheat: null, loothacker: null, bountyhunter: null, trickortreat: null },
-    icons: { base: "spookydash_basic.png", gold: "spookydash_gold.png", cheat: "spookydash_cheat.png", loothacker: "spookydash_loothacker.png", bountyhunter: "spookydash_bountyhunter.png", trickortreat: "spookydash_trickortreat.png" },
+    rates: { base: null, gold: null, cheat: null, loothacker: null, bountyhunter: null, trickortreat: null, quack: null },
+    icons: { base: "spookydash_basic.png", gold: "spookydash_gold.png", cheat: "spookydash_cheat.png", loothacker: "spookydash_loothacker.png", bountyhunter: "spookydash_bountyhunter.png", trickortreat: "spookydash_trickortreat.png", quack: "spookydash_quack.png" },
   },
   {
     key: "crash", name: "Crash Bandicoot", rarity: "epic",
@@ -411,6 +411,12 @@ const CREATURES = [
     ability: "Ability not yet revealed.",
     rates: { base: null, gold: null, cheat: null, loothacker: null, bountyhunter: null, trickortreat: null },
     icons: { base: "morgana_basic.png", gold: "morgana_gold.png", cheat: "morgana_cheat.png", loothacker: "morgana_loothacker.png", bountyhunter: "morgana_bountyhunter.png", trickortreat: "morgana_trickortreat.png" },
+  },
+  {
+    key: "onewishwillow", name: "One Wish Willow", rarity: "epic",
+    ability: "Ability not yet revealed.",
+    rates: { base: null, gold: null, cheat: null, loothacker: null, bountyhunter: null, trickortreat: null },
+    icons: { base: "onewishwillow_basic.png", gold: "onewishwillow_gold.png", cheat: "onewishwillow_cheat.png", loothacker: "onewishwillow_loothacker.png", bountyhunter: "onewishwillow_bountyhunter.png", trickortreat: "onewishwillow_trickortreat.png" },
   },
   {
     key: "sonic", name: "Sonic", rarity: "epic",
@@ -451,8 +457,8 @@ const CREATURES = [
   {
     key: "klombo", name: "Klombo", rarity: "mythic",
     ability: "Ability not yet revealed.",
-    rates: { base: null, gold: null, cheat: null, loothacker: null, bountyhunter: null, trickortreat: null },
-    icons: { base: "klombo_basic.png", gold: "klombo_gold.png", cheat: "klombo_cheat.png", loothacker: "klombo_loothacker.png", bountyhunter: "klombo_bountyhunter.png", trickortreat: "klombo_trickortreat.png" },
+    rates: { base: null, gold: null, cheat: null, loothacker: null, bountyhunter: null, trickortreat: null, quack: null },
+    icons: { base: "klombo_basic.png", gold: "klombo_gold.png", cheat: "klombo_cheat.png", loothacker: "klombo_loothacker.png", bountyhunter: "klombo_bountyhunter.png", trickortreat: "klombo_trickortreat.png", quack: "klombo_quack.png" },
   },
   {
     key: "crown", name: "Crown", rarity: "mythic",
@@ -481,9 +487,8 @@ const CREATURES = [
   {
     key: "honey", name: "Honey", rarity: "mythic",
     ability: "Ability not yet revealed.",
-    rates: { base: null },
-    icons: { base: "honey_basic.png" },
-    baseOnly: true,
+    rates: { base: null, gold: null, cheat: null, loothacker: null, bountyhunter: null, trickortreat: null },
+    icons: { base: "honey_basic.png", gold: "honey_gold.png", cheat: "honey_cheat.png", loothacker: "honey_loothacker.png", bountyhunter: "honey_bountyhunter.png", trickortreat: "honey_trickortreat.png" },
   },
   {
     key: "bullet", name: "Bullet", rarity: "mythic",
