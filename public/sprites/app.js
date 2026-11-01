@@ -17,7 +17,7 @@ const filters = {
   hideMastered: false, groupBy: false, showUnreleased: true, // Galaxy shown by default
 };
 
-let activeSeason = 2;
+let activeSeason = 3;
 
 const S2_CREATURE_KEYS = new Set([
   "bush","jonesy","adventure","8bit","stormking",
@@ -27,7 +27,15 @@ const S2_CREATURE_KEYS = new Set([
   "blinky","crash","spookydash","birthday","morgana","onewishwillow","vampire","thedeer",
 ]);
 
-function spriteSeasonOf(s) { return S2_CREATURE_KEYS.has(s.creature) ? 2 : 1; }
+const S3_CREATURE_KEYS = new Set([
+  "halfpeeld","barryofish","repete","wayfinder",
+  "exmarks","chester","lilsquibbly","kelper",
+  "lilflacko","liluzivertjr","plundarrgh","transpondersnail","sweetdreams",
+]);
+
+function spriteSeasonOf(s) {
+  return S3_CREATURE_KEYS.has(s.creature) ? 3 : S2_CREATURE_KEYS.has(s.creature) ? 2 : 1;
+}
 
 function activeLevels() { return sharedMode ? sharedLevels : state.levels; }
 function statusOf(id) { return activeLevels()[id] || 0; }
@@ -118,6 +126,10 @@ const CREATURE_DISPLAY_ORDER = [
   "xray","pond","dumpster","honey","bullet",
   "onigiri","overshield","megaman",
   "blinky","crash","spookydash","birthday","morgana","onewishwillow","vampire","thedeer",
+  // Season 3 — Treasure Hunters
+  "halfpeeld","barryofish","repete","wayfinder",
+  "exmarks","chester","lilsquibbly","kelper",
+  "lilflacko","liluzivertjr","plundarrgh","transpondersnail","sweetdreams",
 ];
 
 function miniCardHTML(s) {
@@ -241,24 +253,30 @@ function renderMeters() {
   const all = releasedSprites();
   const s1 = all.filter((s) => spriteSeasonOf(s) === 1);
   const s2 = all.filter((s) => spriteSeasonOf(s) === 2);
+  const s3 = all.filter((s) => spriteSeasonOf(s) === 3);
 
   const s1col = s1.filter((s) => isOwned(s.id)).length;
   const s1mas = s1.filter((s) => isMastered(s.id)).length;
   const s2col = s2.filter((s) => isOwned(s.id)).length;
   const s2mas = s2.filter((s) => isMastered(s.id)).length;
+  const s3col = s3.filter((s) => isOwned(s.id)).length;
+  const s3mas = s3.filter((s) => isMastered(s.id)).length;
 
   const s1ColEl = $("#s1TabCol"), s1MasEl = $("#s1TabMas");
   const s2ColEl = $("#s2TabCol"), s2MasEl = $("#s2TabMas");
+  const s3ColEl = $("#s3TabCol"), s3MasEl = $("#s3TabMas");
   if (s1ColEl) s1ColEl.innerHTML = `<b>${s1col}</b> / ${s1.length}`;
   if (s1MasEl) s1MasEl.innerHTML = `<b>${s1mas}</b> / ${s1.length}`;
   if (s2ColEl) s2ColEl.innerHTML = `<b>${s2col}</b> / ${s2.length}`;
   if (s2MasEl) s2MasEl.innerHTML = `<b>${s2mas}</b> / ${s2.length}`;
+  if (s3ColEl) s3ColEl.innerHTML = `<b>${s3col}</b> / ${s3.length}`;
+  if (s3MasEl) s3MasEl.innerHTML = `<b>${s3mas}</b> / ${s3.length}`;
 
   // Header meters reflect the active season
-  const set = activeSeason === 2 ? s2 : s1;
+  const set = activeSeason === 3 ? s3 : activeSeason === 2 ? s2 : s1;
   const total = set.length;
-  const owned = activeSeason === 2 ? s2col : s1col;
-  const mastered = activeSeason === 2 ? s2mas : s1mas;
+  const owned = activeSeason === 3 ? s3col : activeSeason === 2 ? s2col : s1col;
+  const mastered = activeSeason === 3 ? s3mas : activeSeason === 2 ? s2mas : s1mas;
   $("#collCount").innerHTML = `<b>${owned}</b> / ${total}`;
   $("#masCount").innerHTML = `<b>${mastered}</b> / ${total}`;
   $("#collBar").style.width = total ? (owned / total) * 100 + "%" : "0%";
@@ -824,6 +842,8 @@ renderGrid();
     loothacker: "loothacker", loot: "loothacker", hacker: "loothacker",
     bountyhunter: "bountyhunter", bounty: "bountyhunter", hunter: "bountyhunter",
     trickortreat: "trickortreat", trick: "trickortreat", treat: "trickortreat", halloween: "trickortreat",
+    fortune: "fortune", treasure: "fortune",
+    cursed: "cursed", curse: "cursed",
   };
 
   // Creature name → key; longest first so "zero point" beats "zero"

@@ -51,10 +51,26 @@
 
   <!-- Season switcher -->
   <div class="season-bar" id="seasonBar">
-    <button class="season-tab active" data-season="2">
+    <button class="season-tab active" data-season="3">
+      <div class="stab-head">
+        <span class="stab-badge">S3</span>
+        <span class="stab-label">Treasure Hunters</span>
+      </div>
+      <div class="stab-stats">
+        <div class="stab-metric">
+          <span class="stab-metric-label">Collected</span>
+          <span class="stab-metric-val" id="s3TabCol"><b>0</b> / 0</span>
+        </div>
+        <div class="stab-metric">
+          <span class="stab-metric-label">Mastered</span>
+          <span class="stab-metric-val" id="s3TabMas"><b>0</b> / 0</span>
+        </div>
+      </div>
+    </button>
+    <button class="season-tab" data-season="2">
       <div class="stab-head">
         <span class="stab-badge">S2</span>
-        <span class="stab-label">Override</span>
+        <span class="stab-label">Override — Archive</span>
       </div>
       <div class="stab-stats">
         <div class="stab-metric">
@@ -114,6 +130,8 @@
         <button class="chip" data-theme="loothacker" aria-pressed="false" style="--chip-c:#ff6a00">Loot Hacker</button>
         <button class="chip" data-theme="bountyhunter" aria-pressed="false" style="--chip-c:#ff3636">Bounty Hunter</button>
         <button class="chip" data-theme="trickortreat" aria-pressed="false" style="--chip-c:#f97316">Trick or Treat</button>
+        <button class="chip" data-theme="fortune" aria-pressed="false" style="--chip-c:#f59e0b">Fortune</button>
+        <button class="chip" data-theme="cursed" aria-pressed="false" style="--chip-c:#a855f7">Cursed</button>
       </div>
     </div>
 

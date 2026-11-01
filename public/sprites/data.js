@@ -33,6 +33,8 @@ const THEMES = {
   loothacker:   { label: "Loot Hacker",   color: "#ff6a00" },
   bountyhunter: { label: "Bounty Hunter", color: "#ff3636" },
   trickortreat: { label: "Trick or Treat", color: "#f97316" },
+  fortune:      { label: "Fortune",        color: "#f59e0b" },
+  cursed:       { label: "Cursed",         color: "#a855f7" },
 };
 
 const RARITY = {
@@ -522,12 +524,94 @@ const CREATURES = [
     rates: { base: null, gold: null, cheat: null, loothacker: null, bountyhunter: null, trickortreat: null },
     icons: { base: "thedeer_basic.png", gold: "thedeer_gold.png", cheat: "thedeer_cheat.png", loothacker: "thedeer_loothacker.png", bountyhunter: "thedeer_bountyhunter.png", trickortreat: "thedeer_trickortreat.png" },
   },
+  // ── Season 3 ("Treasure Hunters") ─────────────────────────────────────────
+  {
+    key: "halfpeeld", name: "Halfpeel'd", rarity: "rare",
+    ability: "Marks nearby eliminations on the map, with the radius increasing per level.",
+    rates: { base: null, fortune: null, cursed: null },
+    icons: { base: "halfpeeld_basic.png", fortune: "halfpeeld_fortune.png", cursed: "halfpeeld_cursed.png" },
+  },
+  {
+    key: "barryofish", name: "Barry O'Fish", rarity: "rare",
+    ability: "Reduces sprint stamina drain when in water. Grants Slap effect at level 5.",
+    rates: { base: null, fortune: null, cursed: null },
+    icons: { base: "barryofish_basic.png", fortune: "barryofish_fortune.png", cursed: "barryofish_cursed.png" },
+  },
+  {
+    key: "repete", name: "Re-Pete", rarity: "rare",
+    ability: "Increases your reload speed. Sometimes, reloading will also refund your ammo.",
+    rates: { base: null, fortune: null, cursed: null },
+    icons: { base: "repete_basic.png", fortune: "repete_fortune.png", cursed: "repete_cursed.png" },
+  },
+  {
+    key: "wayfinder", name: "Wayfinder", rarity: "rare",
+    ability: "Reveals nearby Sprites and grants additional items when opening Buried Chests.",
+    rates: { base: null, fortune: null, cursed: null },
+    icons: { base: "wayfinder_basic.png", fortune: "wayfinder_fortune.png", cursed: "wayfinder_cursed.png" },
+  },
+  {
+    key: "exmarks", name: "Exmarks", rarity: "epic",
+    ability: "Reveals nearby Treasure Maps and Wanted Posters. Spawns a Treasure Map at level 5.",
+    rates: { base: null, fortune: null, cursed: null },
+    icons: { base: "exmarks_basic.png", fortune: "exmarks_fortune.png", cursed: "exmarks_cursed.png" },
+  },
+  {
+    key: "chester", name: "Chester", rarity: "epic",
+    ability: "Chance to get extra loot when opening Treasure Chests. Also nullifies fall damage.",
+    rates: { base: null, fortune: null, cursed: null },
+    icons: { base: "chester_basic.png", fortune: "chester_fortune.png", cursed: "chester_cursed.png" },
+  },
+  {
+    key: "lilsquibbly", name: "Lil' Squibbly", rarity: "epic",
+    ability: "Automatically fishes a Fishing Hole when you jump into it and grants additional items.",
+    rates: { base: null, fortune: null, cursed: null },
+    icons: { base: "lilsquibbly_basic.png", fortune: "lilsquibbly_fortune.png", cursed: "lilsquibbly_cursed.png" },
+  },
+  {
+    key: "kelper", name: "Kelper", rarity: "epic",
+    ability: "Replenishes your health over time when you're in water. Amount healed increases per level.",
+    rates: { base: null, fortune: null },
+    icons: { base: "kelper_basic.png", fortune: "kelper_fortune.png" },
+  },
+  {
+    key: "lilflacko", name: "Lil' Flacko", rarity: "legendary",
+    ability: "Creates a small shockwave when you land, which knocks back enemies. Knockback strength increased per level.",
+    rates: { base: null, fortune: null, cursed: null },
+    icons: { base: "lilflacko_basic.png", fortune: "lilflacko_fortune.png", cursed: "lilflacko_cursed.png" },
+  },
+  {
+    key: "liluzivertjr", name: "Lil' Uzi Vert Jr.", rarity: "legendary",
+    ability: "Restoring Shields grants the Chug Splash effect, with cooldown decreasing per level.",
+    rates: { base: null, fortune: null, cursed: null },
+    icons: { base: "liluzivertjr_basic.png", fortune: "liluzivertjr_fortune.png", cursed: "liluzivertjr_cursed.png" },
+  },
+  {
+    key: "plundarrgh", name: "Plundarrgh", rarity: "mythic",
+    ability: "Grants increased movement and pickaxe speed when opening chests.",
+    rates: { base: null, fortune: null, cursed: null },
+    icons: { base: "plundarrgh_basic.png", fortune: "plundarrgh_fortune.png", cursed: "plundarrgh_cursed.png" },
+  },
+  {
+    key: "transpondersnail", name: "Transponder Snail", rarity: "legendary",
+    ability: "Grants extra resources on pickup, with amount gained increasing per level up. Works for teammates, too.",
+    rates: { base: null },
+    icons: { base: "transpondersnail_basic.png" },
+    baseOnly: true,
+  },
+  {
+    key: "sweetdreams", name: "Sweet Dreams", rarity: "rare",
+    ability: "Ability not yet revealed.",
+    rates: { base: null },
+    icons: { base: "sweetdreams_basic.png" },
+    baseOnly: true,
+    unreleased: true,
+  },
 ];
 
 // Expand creatures -> flat sprite list (stable order = encode/decode order) ---
-const THEME_ORDER = ["base", "gold", "gummy", "galaxy", "holofoil", "rift", "gem", "quack", "cheat", "loothacker", "bountyhunter", "trickortreat"];
+const THEME_ORDER = ["base", "gold", "gummy", "galaxy", "holofoil", "rift", "gem", "quack", "cheat", "loothacker", "bountyhunter", "trickortreat", "fortune", "cursed"];
 // Themes currently live in-game. Add new ones here as Epic releases them.
-const RELEASED_THEMES = new Set(["base", "gold", "gummy", "galaxy", "holofoil", "gem", "rift", "quack", "cheat", "loothacker", "bountyhunter", "trickortreat"]);
+const RELEASED_THEMES = new Set(["base", "gold", "gummy", "galaxy", "holofoil", "gem", "rift", "quack", "cheat", "loothacker", "bountyhunter", "trickortreat", "fortune", "cursed"]);
 
 const SPRITES = (() => {
   const out = [];
