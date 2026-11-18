@@ -31,6 +31,7 @@ const S3_CREATURE_KEYS = new Set([
   "halfpeeld","barryofish","repete","wayfinder",
   "exmarks","chester","lilsquibbly","kelper",
   "lilflacko","liluzivertjr","plundarrgh","transpondersnail","sweetdreams",
+  "squiplash","minimiku","zee","siroscar",
 ]);
 
 function spriteSeasonOf(s) {
@@ -128,8 +129,9 @@ const CREATURE_DISPLAY_ORDER = [
   "blinky","crash","spookydash","birthday","morgana","onewishwillow","vampire","thedeer",
   // Season 3 — Treasure Hunters
   "halfpeeld","barryofish","repete","wayfinder",
-  "exmarks","chester","lilsquibbly","kelper",
-  "lilflacko","liluzivertjr","plundarrgh","transpondersnail","sweetdreams",
+  "exmarks","chester","lilsquibbly","kelper","squiplash",
+  "lilflacko","liluzivertjr","plundarrgh","minimiku",
+  "transpondersnail","sweetdreams","zee","siroscar",
 ];
 
 function miniCardHTML(s) {

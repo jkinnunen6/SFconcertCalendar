@@ -570,8 +570,8 @@ const CREATURES = [
   {
     key: "kelper", name: "Kelper", rarity: "epic",
     ability: "Replenishes your health over time when you're in water. Amount healed increases per level.",
-    rates: { base: null, fortune: null },
-    icons: { base: "kelper_basic.png", fortune: "kelper_fortune.png" },
+    rates: { base: null, fortune: null, cursed: null },
+    icons: { base: "kelper_basic.png", fortune: "kelper_fortune.png", cursed: "kelper_cursed.png" },
   },
   {
     key: "lilflacko", name: "Lil' Flacko", rarity: "legendary",
@@ -599,11 +599,36 @@ const CREATURES = [
     baseOnly: true,
   },
   {
-    key: "sweetdreams", name: "Sweet Dreams", rarity: "rare",
-    ability: "Ability not yet revealed.",
+    key: "sweetdreams", name: "Sweet Dreams", rarity: "mythic",
+    ability: "Grants extra resources on pickup, with amount gained increasing per level up. Works for teammates, too.",
     rates: { base: null },
     icons: { base: "sweetdreams_basic.png" },
     baseOnly: true,
+  },
+  {
+    key: "squiplash", name: "Squiplash", rarity: "epic",
+    ability: "When you're low health, deploys a healing smoke bomb.",
+    rates: { base: null, fortune: null, cursed: null },
+    icons: { base: "squiplash_basic.png", fortune: "squiplash_fortune.png", cursed: "squiplash_cursed.png" },
+  },
+  {
+    key: "minimiku", name: "Mini Miku", rarity: "mythic",
+    ability: "Drops a Friendship Bubble when you emote with another player.",
+    rates: { base: null, fortune: null, cursed: null },
+    icons: { base: "minimiku_basic.png", fortune: "minimiku_fortune.png", cursed: "minimiku_cursed.png" },
+  },
+  {
+    key: "zee", name: "Zee", rarity: "mythic",
+    ability: "Grants Zero Point dash charges that regenerate over time. Regen time and max charges increase per level.",
+    rates: { base: null },
+    icons: { base: "zee_basic.png" },
+    baseOnly: true,
+  },
+  {
+    key: "siroscar", name: "Sir Oscar the Second", rarity: "epic",
+    ability: "Ability not yet revealed.",
+    rates: { base: null, fortune: null, cursed: null },
+    icons: { base: "siroscar_basic.png", fortune: "siroscar_fortune.png", cursed: "siroscar_cursed.png" },
     unreleased: true,
   },
 ];
